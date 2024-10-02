@@ -1,0 +1,13 @@
+prefix=D:/Bear/Python3/Apartment-Management/venv/Library
+exec_prefix=D:/Bear/Python3/Apartment-Management/venv/Library
+libdir=D:/Bear/Python3/Apartment-Management/venv/Library/lib
+sharedlibdir=D:/Bear/Python3/Apartment-Management/venv/Library/lib
+includedir=D:/Bear/Python3/Apartment-Management/venv/Library/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

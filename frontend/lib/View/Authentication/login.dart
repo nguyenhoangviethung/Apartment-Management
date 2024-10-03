@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Authentication/register.dart';
 
 import 'forget_password.dart';
 
@@ -154,7 +155,7 @@ class _LoginState extends State<Login> {
                                 child: const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('SIGN IN',style: TextStyle(fontSize: 25),),
+                                    Text('Login',style: TextStyle(fontSize: 25),),
                                   ],
                                 )
                             );
@@ -180,7 +181,7 @@ class _LoginState extends State<Login> {
                                       ),
                                     ),
                                     onTap: (){
-                                      // Navigator.push(context, MaterialPageRoute(builder: (context) =>Signup() ));
+                                       Navigator.push(context, MaterialPageRoute(builder: (context) =>const Register() ));
                                     }
                                 );
                               }

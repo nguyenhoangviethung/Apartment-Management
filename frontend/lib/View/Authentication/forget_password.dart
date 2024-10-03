@@ -26,8 +26,8 @@ class _ForgetPasswordState extends State<ForgetPasword> {
           },
           child:Stack(
             children: [
-              Image.asset(
-                'assets/images/background.jpg',
+              Image.network(
+                'https://i.pinimg.com/564x/c3/4c/81/c34c81e2284e9bcaa20dbc20b91152c3.jpg',
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
@@ -35,23 +35,27 @@ class _ForgetPasswordState extends State<ForgetPasword> {
               SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(height: 220), // Khoảng cách phía trên
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    const SizedBox(height: 220), // Khoảng cách phía trên
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
                       child: Row (
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Image.asset(
-                            'assets/images/reset-password.png',
-                            color: const Color.fromRGBO(240, 245, 255, 1),
-                            colorBlendMode: BlendMode.modulate,
+                          // Image.asset(
+                          //   'assets/images/reset-password.png',
+                          //   color: const Color.fromRGBO(240, 245, 255, 1),
+                          //   colorBlendMode: BlendMode.modulate,
+                          // ),
+                          Icon(
+                            Icons.lock,
+                            size: 40,
                           ),
-                          const SizedBox(
+                          SizedBox(
                             width: 15,
                           ),
-                          const Text(
-                            'Forgot Password?',
+                          Text(
+                            'Reset Password?',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
@@ -73,11 +77,14 @@ class _ForgetPasswordState extends State<ForgetPasword> {
                           color: Colors.black,
                         ),
                         // obscureText: !_showpass,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Email', // Dòng chữ chỉ dẫn nổi lên
                           floatingLabelBehavior: FloatingLabelBehavior.auto, // Hiệu ứng nổi
-                          border: OutlineInputBorder(), // Viền cho ô
+                          border: const OutlineInputBorder(), // Viền cho ô
+                          filled: true,
+                          fillColor: Colors.white54,
                         ),
+
                       ),
                     ),
 

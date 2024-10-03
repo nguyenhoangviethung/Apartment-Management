@@ -30,10 +30,10 @@ class _LoginState extends State<Login> {
           child: Stack(
             children: [
               Image.network(
-                'https://img.freepik.com/free-vector/blue-fluid-background-frame_53876-99019.jpg',
+                'https://i.pinimg.com/564x/c3/4c/81/c34c81e2284e9bcaa20dbc20b91152c3.jpg',
+                fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
-                fit: BoxFit.cover,
               ),
               SingleChildScrollView(
                 child: Column(
@@ -50,8 +50,8 @@ class _LoginState extends State<Login> {
                           child: Image.asset(
                             'assets/images/login_image.jpg',
                             fit: BoxFit.cover,
-                            color: const Color.fromRGBO(220, 245, 255, 1),
-                            colorBlendMode: BlendMode.modulate,
+                            // color: const Color.fromRGBO(220, 245, 255, 1),
+                            // colorBlendMode: BlendMode.modulate,
                           ),
                         )
                     ),
@@ -92,10 +92,12 @@ class _LoginState extends State<Login> {
                           color: Colors.black,
                         ),
                         obscureText: !_showpass,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Username', // Dòng chữ chỉ dẫn nổi lên
                           floatingLabelBehavior: FloatingLabelBehavior.auto, // Hiệu ứng nổi
-                          border: OutlineInputBorder(), // Viền cho ô
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ), // Viền cho ô
                         ),
                       ),
                     ),
@@ -113,10 +115,12 @@ class _LoginState extends State<Login> {
                               color: Colors.black,
                             ),
                             obscureText: !_showpass,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Password',
-                              labelStyle: TextStyle(color: Colors.black54, fontSize: 15),
-                              border: OutlineInputBorder(),
+                              labelStyle: const TextStyle(color: Colors.black54, fontSize: 15),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           ),
                           Padding(

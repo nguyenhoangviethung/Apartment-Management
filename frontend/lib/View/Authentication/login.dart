@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Authentication/forgotPassword.dart';
 import 'package:frontend/View/Authentication/register.dart';
-
-import 'forget_password.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -30,12 +29,12 @@ class _LoginState extends State<Login> {
           },
           child: Stack(
             children: [
-              Image.network(
-                'https://i.pinimg.com/564x/c3/4c/81/c34c81e2284e9bcaa20dbc20b91152c3.jpg',
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
+              // Image.network(
+              //   'https://i.pinimg.com/564x/c3/4c/81/c34c81e2284e9bcaa20dbc20b91152c3.jpg',
+              //   fit: BoxFit.cover,
+              //   width: double.infinity,
+              //   height: double.infinity,
+              // ),
               SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,8 +50,8 @@ class _LoginState extends State<Login> {
                           child: Image.asset(
                             'assets/images/login_image.jpg',
                             fit: BoxFit.cover,
-                            // color: const Color.fromRGBO(220, 245, 255, 1),
-                            // colorBlendMode: BlendMode.modulate,
+                            color: const Color.fromRGBO(220, 245, 255, 1),
+                            colorBlendMode: BlendMode.modulate,
                           ),
                         )
                     ),
@@ -65,7 +64,8 @@ class _LoginState extends State<Login> {
                           'Hello',
                           style: TextStyle(
                             fontSize: 30,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w700,
+                            // color: Colors.blue[700],
                           ),
                         ),
                       ),
@@ -77,7 +77,8 @@ class _LoginState extends State<Login> {
                           'Welcome Back',
                           style: TextStyle(
                             fontSize: 30,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w700,
+                            // color: Colors.blue[700],
                           ),
                         ),
                       ),
@@ -149,13 +150,16 @@ class _LoginState extends State<Login> {
                                   // Navigator.push(context, MaterialPageRoute(builder: (context) => Home1()));
                                 },
                                 style: TextButton.styleFrom(
-                                  backgroundColor: Colors.cyan,
+                                  backgroundColor: Colors.blue,
                                   foregroundColor: Colors.white,
                                 ),
                                 child: const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('Login',style: TextStyle(fontSize: 25),),
+                                    Text(
+                                      'Login',
+                                      style: TextStyle(fontSize: 25),
+                                    ),
                                   ],
                                 )
                             );
@@ -194,11 +198,11 @@ class _LoginState extends State<Login> {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.cyan,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                   onTap: (){
-                                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=> ForgetPasword()));
+                                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=> const ForgotPassword()));
                                   },
                                 );
                               }

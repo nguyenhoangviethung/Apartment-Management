@@ -45,7 +45,7 @@ class _RegisterState extends State<Register> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Icon(Icons.account_circle, size: 50, color: Colors.blue),
+                      Icon(Icons.account_circle, size: 50, color: Colors.grey[700]),
                       SizedBox(height: 8),
                       const Text(
                         'Register',

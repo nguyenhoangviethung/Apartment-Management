@@ -19,8 +19,4 @@ def create_app(config_class=Config):
     def test():
         return '<h1>THIS IS TEST FROM INIT</h1>'
     
-    db.init_app(app)
-
-    from api.auth import routes
-    app.register_blueprint(routes.auth)
     return app

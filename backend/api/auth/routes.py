@@ -43,12 +43,12 @@ def check_attribute():
 
 @auth_bp.route('/register', methods=['POST','GET'])
 def register():
-    print('register called')
-    data = request.get_json()
+    # print('register called')
+    
 
-    user_name = data.get('user_name')
-    password = data.get('password')
-    email = data.get('email')
+    user_name = request.form['user_name']
+    password = request.form['password']
+    email = request.form['email']
 
     check = Users.query.filter_by(username = user_name).first()
     if check:
@@ -62,7 +62,7 @@ def register():
             'email': email,
             'user_name': user_name,
             'password': password,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+            'exp': datetime.datetime.now() + datetime.timedelta(hours=1)
         },
         key = current_app.config['SECRET_KEY'],
         algorithm='HS256'

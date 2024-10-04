@@ -9,7 +9,7 @@ class Users(db.Model):
     __tablename__ = 'Users'
     user_id = db.Column(BINARY(16), primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    password_hash = db.Column(db.String(100), nullable=False)
+    password_hash = db.Column(db.String(512), nullable=False)
     user_role = db.Column(ENUM('admin', 'user'), default='user')
     user_email = db.Column(db.String(100), unique=True)
     last_login = db.Column(db.DateTime)

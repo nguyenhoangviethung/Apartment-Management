@@ -93,7 +93,6 @@ class _LoginState extends State<Login> {
                           fontWeight: FontWeight.w500,
                           color: Colors.black,
                         ),
-                        obscureText: !_showpass,
                         decoration: InputDecoration(
                           labelText: 'Username', // Dòng chữ chỉ dẫn nổi lên
                           floatingLabelBehavior: FloatingLabelBehavior.auto, // Hiệu ứng nổi

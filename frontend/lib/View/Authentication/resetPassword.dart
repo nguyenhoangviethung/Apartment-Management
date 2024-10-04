@@ -176,7 +176,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   }
   void showornot_confirmPass(){
     setState(() {
-      _showpass=!_showpass;
+      _showConfirmPass=!_showConfirmPass;
     });
   }
 }

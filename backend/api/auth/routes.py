@@ -5,9 +5,7 @@ from flask import g, redirect, url_for, session, abort, request, jsonify, curren
 from functools import wraps
 from flask_mail import Mail, Message
 import jwt, datetime
-import uuid
-from werkzeug.security import generate_password_hash
-from flask import flash, redirect, render_template, request, url_for, session
+from flask import flash, redirect, request, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
 from flask_mail import Message
@@ -60,7 +58,8 @@ def register():
             'email': email,
             'user_name': user_name,
             'password': password,
-            'exp': datetime.datetime.now() + datetime.timedelta(hours=1)
+            # todo
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=30)
         },
         key = current_app.config['SECRET_KEY'],
         algorithm='HS256'
@@ -89,11 +88,10 @@ def confirm_email(token):
         data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms='HS256')
 
         email = data.get('email')
-        user_name = data.get('username')
+        user_name = data.get('user_name')
         password = data.get('password')
 
         new_user = Users(
-            user_id = uuid.uuid4().bytes,
             username = user_name,
             password_hash = generate_password_hash(password),
             user_email = email
@@ -151,3 +149,8 @@ def forgot_password():
         flash('Reset code has been sent to your email!')
         return abort(200)
     
+@auth_bp.route('/logout')
+def logout():
+    session.clear()
+
+    return "logout"

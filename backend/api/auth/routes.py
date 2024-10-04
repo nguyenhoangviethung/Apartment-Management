@@ -1,10 +1,8 @@
 from api.auth import auth_bp
 from api.extensions import db
-from sqlalchemy import select
 from api.models.models import *
 from flask import g, redirect, url_for, session, abort, request, jsonify, current_app
 from functools import wraps
-from flask_jwt_extended import create_access_token
 from flask_mail import Mail, Message
 import jwt, datetime
 import uuid
@@ -42,22 +40,19 @@ def check_attribute():
     else:
         g.user = None
 
-
-
 @auth_bp.route('/register', methods=['POST','GET'])
 def register():
     # print('register called')
     
-
-    user_name = request.form['user_name']
+    user_name = request.form['username']
     password = request.form['password']
     email = request.form['email']
 
-    check = Users.query.filter_by(username = user_name).first()
-    if check:
+    check_username = Users.query.filter_by(username = user_name).first()
+    if check_username:
         return jsonify({"error": "user_name already exists"}), 400
-    check = Users.query.filter_by(user_email = email).first()
-    if check:
+    check_mail = Users.query.filter_by(user_email = email).first()
+    if check_mail:
         return jsonify({"error": "user_email already exists"}), 400
     
     token = jwt.encode(
@@ -94,7 +89,7 @@ def confirm_email(token):
         data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms='HS256')
 
         email = data.get('email')
-        user_name = data.get('user_name')
+        user_name = data.get('username')
         password = data.get('password')
 
         new_user = Users(
@@ -113,49 +108,39 @@ def confirm_email(token):
     except jwt.ExpiredSignatureError:
         return jsonify({"message": "Token expired!"}), 400
     
-    
 
-
-@auth_bp.route('/')
-def index():
-    return render_template('auth/index.html')
-
-@auth_bp.route('/login')
-def login():
-    return render_template('auth/login.html')
-
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=('GET', "POST"))
 def login_post():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        remember = True if request.form.get('remember') else False
+
+        user = Users.query.filter_by(username = username).first()
+
+        # check if the user actually exists
+        if not user or not check_password_hash(user.password_hash, password):
+            flash('Please check your login details and try again.')
+            return abort(403) # if the user doesn't exist or password is wrong, reload the page
+        
+        session.clear()    
+        session.setdefault('user_id', user.user_id)
+        session.setdefault('user_role', user.user_role)
+        
+        
+        login_user(user, remember=remember)
     
-    username = request.form.get('username')
-    password = request.form.get('password')
-    remember = True if request.form.get('remember') else False
-
-    user = db.query(Users).filter_by(username = username).first()
-
-    # check if the user actually exists
-    if not user or not check_password_hash(user.password_hash, password):
-        flash('Please check your login details and try again.')
-        return redirect(url_for('auth.login'),code = 401) # if the user doesn't exist or password is wrong, reload the page
-    session.clear()    
-    session.setdefault('user_id',user.user_id)
-    session.setdefault('user_role',user.user_role)
+        return abort(200)
     
-    
-    login_user(user, remember=remember)
-
-   
-    return redirect(url_for('main.index'))
-
 @auth_bp.route('/forgot_password/', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
         
-        user = db.query(Users).filter_by(email=email).first()
+        user = Users.query.filter_by(email=email).first()
         if not user:
             flash('No account registered with this email!!')
-            return redirect(url_for('auth.forgot_password'))
+            return abort(404)
 
         msg = Message(
             'Code for validation',
@@ -164,6 +149,5 @@ def forgot_password():
         )
         mail.send(msg)
         flash('Reset code has been sent to your email!')
-        return redirect(url_for('auth.login'))
+        return abort(200)
     
-    return render_template('auth/forgot_password.html')

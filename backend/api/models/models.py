@@ -2,10 +2,10 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.mysql import BINARY, ENUM
 from sqlalchemy import ForeignKey
 from werkzeug.security import generate_password_hash, check_password_hash
+from api.extensions import db
+from flask_login import UserMixin
 
-db = SQLAlchemy()
-
-class Users(db.Model):
+class Users(UserMixin, db.Model):
     __tablename__ = 'Users'
     user_id = db.Column(BINARY(16), primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)

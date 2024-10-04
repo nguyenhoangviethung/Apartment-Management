@@ -1,45 +1,66 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, NVARCHAR, CHAR, Enum, BINARY
-from sqlalchemy.orm import relationship
-from api.extensions import db
-from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.mysql import BINARY, ENUM
+from sqlalchemy import ForeignKey
+from werkzeug.security import generate_password_hash, check_password_hash
+
+db = SQLAlchemy()
 
 class Users(db.Model):
-    __tablename__ = 'users'
-    user_id = Column(BINARY(16), nullable=False, primary_key=True, unique=True)
-    user_name = Column(NVARCHAR(40), nullable=False)
-    password_hash = Column(String(255), nullable=False)
-    user_role = Column(Enum('admin', 'user'), default='user')
+    __tablename__ = 'Users'
+    user_id = db.Column(BINARY(16), primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password_hash = db.Column(db.String(100), nullable=False)
+    user_role = db.Column(ENUM('admin', 'user'), default='user')
+    user_email = db.Column(db.String(100), unique=True)
+    last_login = db.Column(db.DateTime)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
 
 class Households(db.Model):
-    __tablename__ = 'households'
-    household_id = Column(BINARY(16), nullable=False, primary_key=True, unique=True)
-    household_name = Column(NVARCHAR(40), nullable=False)
-    apartment_number = Column(NVARCHAR(10), nullable=False)
-    floor = Column(Integer, nullable=False)
-    area = Column(Float, nullable=False)
-    phone_number = Column(Integer(), nullable=False)
-    num_residents = Column(Integer, nullable=False)
+    __tablename__ = 'Households'
+    household_id = db.Column(BINARY(16), primary_key=True)
+    household_name = db.Column(db.String(40))
+    apartment_number = db.Column(db.String(10), nullable=False)
+    floor = db.Column(db.Integer, nullable=False)
+    area = db.Column(db.DECIMAL(5, 2), nullable=False)
+    phone_number = db.Column(db.String(15))
+    num_residents = db.Column(db.Integer)
+    managed_by = db.Column(BINARY(16), ForeignKey('Users.user_id'))
+
 
 class Residents(db.Model):
-    __tablename__ = 'residents'
-    resident_id = Column(BINARY(16), nullable=False, primary_key=True, unique=True)
-    household_id = Column(BINARY(16), ForeignKey(Households.household_id))
+    __tablename__ = 'Residents'
+    resident_id = db.Column(BINARY(16), primary_key=True)
+    household_id = db.Column(BINARY(16), ForeignKey('Households.household_id'))
+    resident_name = db.Column(db.String(40), nullable=False)
+    date_of_birth = db.Column(db.Date)
+    id_number = db.Column(db.String(20), unique=True)
+    temporary_absence = db.Column(db.Boolean, default=False)
+    temporary_residence = db.Column(db.Boolean, default=False)
 
-class Contributions(db.Model):
-    __tablename__ = 'contributions'
-    contribution_id = Column(BINARY(16), nullable=False, primary_key=True, unique=True)
-    household_id = Column(BINARY(16), ForeignKey(Households.household_id))
-    contribution_amount = Column(Float, default=0)
-    contribtion_date = Column(DateTime, default=datetime.now())
 
 class Fees(db.Model):
-    __tablename__ = 'fees'
-    fee_id = Column(BINARY(16), primary_key=True, nullable=False, unique=True)
-    household_id = Column(BINARY(16), ForeignKey(Households.household_id))
-    service_rate = Column(Float, nullable=False)
-    management_rate = Column(Float, nullable=False)
-    amount = Column(Float, nullable=False)
-    due_date = Column(DateTime, nullable=False)
-    status = Column(Boolean, default=False, nullable=False)
+    __tablename__ = 'Fees'
+    fee_id = db.Column(BINARY(16), primary_key=True)
+    household_id = db.Column(BINARY(16), ForeignKey('Households.household_id'))
+    amount = db.Column(db.DECIMAL(10, 2), nullable=False)
+    due_date = db.Column(db.Date)
+    status = db.Column(ENUM('Đã thanh toán', 'Chưa thanh toán'), default='Chưa thanh toán')
+    created_by = db.Column(BINARY(16), ForeignKey('Users.user_id'))
+    updated_by = db.Column(BINARY(16), ForeignKey('Users.user_id'))
+    manage_rate = db.Column(db.Float)
+    service_rate = db.Column(db.Float)
 
 
+class Contributions(db.Model):
+    __tablename__ = 'Contributions'
+    contribution_id = db.Column(BINARY(16), primary_key=True)
+    household_id = db.Column(BINARY(16), ForeignKey('Households.household_id'))
+    contribution_type = db.Column(db.String(40))
+    contribution_amount = db.Column(db.DECIMAL(10, 2))
+    contribution_date = db.Column(db.Date)

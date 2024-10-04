@@ -6,7 +6,6 @@ from flask import g, redirect, url_for, session, abort, request
 from functools import wraps
 
 
-
 def login_require(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -34,31 +33,6 @@ def check_attribute():
     else:
         g.user = None
 
-@auth_bp.post('/add')
-def add():
-    name, password = request.form['user_name'], request.form['password']
-    user = db.session.query(Users).filter_by(user_name=name, password_hash=password).one_or_none()
-    if user is None:
-        return "somthing went wrong"
-    
-    session.clear()
-    session.setdefault('user_id', user.user_id)
-    session.setdefault('user_role', user.user_role)
 
-    return "PASS LOGIN"
 
-@auth_bp.route('/admin')
-@admin_required
-def admin():
-    return "admin"
-
-@auth_bp.route('/logout')
-def logout():
-    session.clear()
-    return "clear session"
-
-@auth_bp.route('/login')
-@login_require
-def login():
-    return "access success"
 

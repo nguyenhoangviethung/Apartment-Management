@@ -24,20 +24,8 @@ class _RegisterState extends State<Register> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Container(
-          // decoration: const BoxDecoration(
-          //   image: DecorationImage(
-          //     image: AssetImage('assets/images/background.jpg'),
-          //     fit: BoxFit.cover,
-          //   ),
-          // ),
           child: Stack(
             children: [
-              Image.network(
-                'https://i.pinimg.com/564x/c3/4c/81/c34c81e2284e9bcaa20dbc20b91152c3.jpg',
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
               Center(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(16),
@@ -57,12 +45,16 @@ class _RegisterState extends State<Register> {
                       TextFormField(
                         controller: _username,
                         decoration: InputDecoration(
+                          labelText: 'USERNAME', // Label text hiển thị trên viền
+                          prefixIcon: Icon(Icons.person), // Icon cho trường username
                           filled: true,
                           fillColor: Colors.white,
-                          hintText: 'USERNAME',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(
+                              color: Colors.black,
+                              width: 2,
+                            ),
                           ),
                         ),
                       ),
@@ -71,12 +63,16 @@ class _RegisterState extends State<Register> {
                       TextFormField(
                         controller: _email,
                         decoration: InputDecoration(
+                          labelText: 'EMAIL', // Label text hiển thị trên viền
+                          prefixIcon: Icon(Icons.email), // Icon cho trường email
                           filled: true,
                           fillColor: Colors.white,
-                          hintText: 'EMAIL',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(
+                              color: Colors.black,
+                              width: 2,
+                            ),
                           ),
                         ),
                       ),
@@ -86,12 +82,16 @@ class _RegisterState extends State<Register> {
                         controller: _password,
                         obscureText: !_showpass,
                         decoration: InputDecoration(
+                          labelText: 'PASSWORD', // Label text hiển thị trên viền
+                          prefixIcon: Icon(Icons.lock), // Icon cho trường password
                           filled: true,
                           fillColor: Colors.white,
-                          hintText: 'PASSWORD',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(
+                              color: Colors.black,
+                              width: 2,
+                            ),
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -111,12 +111,16 @@ class _RegisterState extends State<Register> {
                         controller: _confirmpass,
                         obscureText: !_showpass,
                         decoration: InputDecoration(
+                          labelText: 'CONFIRM PASSWORD', // Label text hiển thị trên viền
+                          prefixIcon: Icon(Icons.lock), // Icon cho trường confirm password
                           filled: true,
                           fillColor: Colors.white,
-                          hintText: 'CONFIRM PASSWORD',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(
+                              color: Colors.black,
+                              width: 2,
+                            ),
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -133,14 +137,16 @@ class _RegisterState extends State<Register> {
                       SizedBox(height: 55),
                       // Sign up button
                       ElevatedButton(
-                        child: Text('SIGN UP',
-                          style: TextStyle(fontSize: 24,
-                              color: Colors.black,
+                        child: Text(
+                          'SIGN UP',
+                          style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold),
-
-                          textAlign: TextAlign.center,),
+                          textAlign: TextAlign.center,
+                        ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[500],
+                          backgroundColor: Colors.blue[500],
                           padding: EdgeInsets.symmetric(vertical: 24),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -161,5 +167,3 @@ class _RegisterState extends State<Register> {
     );
   }
 }
-
-

@@ -98,7 +98,6 @@ def register():
     except Exception as e:
         return jsonify({'message': 'send confirm-email failure', 'error': str(e)})
     
-
 @auth_bp.route('/confirm_email/<token>', methods=['POST','GET'])
 def confirm_email(token):
     try:
@@ -122,7 +121,7 @@ def confirm_email(token):
         return jsonify({'message': 'Token invalid!'}), 400
     except jwt.ExpiredSignatureError:
         return jsonify({"message": "Token expired!"}), 400
-    
+
 
 @auth_bp.route('/login', methods=('GET', "POST"))
 def login_post():
@@ -145,26 +144,29 @@ def login_post():
         
         login_user(user, remember=remember)
     
-        return abort(200)
+        return jsonify({"message": "user registration successful"}), 200
+    return jsonify({"message": "Login page loaded"}), 200
     
 @auth_bp.route('/forgot_password/', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
         
-        user = Users.query.filter_by(email=email).first()
+        user = Users.query.filter_by(user_email=email).first()
         if not user:
             flash('No account registered with this email!!')
             return abort(404)
-
+        mail = Mail(current_app)
         msg = Message(
             'Code for validation',
             recipients=[email],  # email passed from the form
-            body='Your password reset code is: 123456'
+            body='Your password reset code is: 123456',
+            sender = 'Thelake2004@gmail.com'
+            
         )
         mail.send(msg)
         flash('Reset code has been sent to your email!')
-        return abort(200)
+        return jsonify({"message": "Mail sent successful"}), 200
     
 @auth_bp.route('/logout')
 def logout():

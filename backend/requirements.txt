@@ -25,7 +25,6 @@ fastjsonschema==2.20.0
 filelock==3.13.1
 Flask==3.0.3
 Flask-Cors==5.0.0
-Flask-Mail==0.10.0
 flask-marshmallow==1.2.1
 Flask-SQLAlchemy==3.1.1
 fonttools==4.53.0

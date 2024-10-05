@@ -9,5 +9,5 @@ def create_app(config_class=Config):
     db.init_app(app)
 
     from api.auth import routes
-    app.register_blueprint(routes.auth)
+    app.register_blueprint(routes.auth_bp)
     return app

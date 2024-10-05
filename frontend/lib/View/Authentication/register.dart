@@ -37,7 +37,7 @@ class _RegisterState extends State<Register> {
                       SizedBox(height: 8),
                       const Text(
                         'Register',
-                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.blue),
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: Colors.blue),
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 28),
@@ -142,7 +142,7 @@ class _RegisterState extends State<Register> {
                           style: TextStyle(
                               fontSize: 24,
                               color: Colors.white,
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.w600),
                           textAlign: TextAlign.center,
                         ),
                         style: ElevatedButton.styleFrom(

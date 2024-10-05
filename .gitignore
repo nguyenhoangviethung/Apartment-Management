@@ -1,2 +1,3 @@
-backend/__pycache__/
 src/ultralytics/
+**/__pycache__/
+*.pyc

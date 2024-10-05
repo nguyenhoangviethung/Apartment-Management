@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash
 from api.auth import auth_bp
 import re, dns.resolver
 
-@auth_bp.route('/register', methods=['POST','GET'])
+@auth_bp.route('/register', methods=['POST'])
 def register():
     print('register called')
     user_name = request.form.get('user_name')
@@ -44,9 +44,9 @@ def register():
         record = dns.resolver.resolve(domain, 'MX')
         mail = Mail(current_app)
         msg = Message(
-            subject = 'confirm_email DO NOT SEND THIS EMAIL TO ANY OTHER!!!',
-            body = f'''
-            Please confirm your email address!
+            subject = 'DO NOT SEND THIS EMAIL TO ANY OTHER!!!',
+            body = f'''We are manager of CNPM Landing. Welcome to our apartment!!!  
+            First, please confirm your email address!
             Click here to confirm your email address
             {confirm_link}
             ''',
@@ -54,7 +54,7 @@ def register():
             recipients = [email]
         )
         mail.send(msg)
-        return jsonify({'message': 'send confirm-email success'})
+        return jsonify({'message': 'send confirm-email successfully'})
     except Exception as e:
         return jsonify({'message': 'send confirm-email failure', 'error': str(e)})
     

@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS households, Users, residents, contributions;
 CREATE TABLE Users (
     user_id BINARY(16) not null PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
-    password_hash VARCHAR(100) NOT NULL,  
+    password_hash VARCHAR(512) NOT NULL,  
     user_role ENUM('admin', 'user') DEFAULT 'user',  
     user_email varchar(100) unique,
     last_login DATETIME

@@ -1,23 +1,12 @@
 from api.auth import auth_bp
 from api.extensions import db
 from api.models.models import *
-from flask import g, redirect, url_for, session, abort, request, jsonify, current_app
+from flask import g, url_for, session, abort, request, jsonify, current_app, flash
 from functools import wraps
 from flask_mail import Mail, Message
 import jwt, datetime
-from flask import flash, redirect, request, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
-from flask_mail import Message
-from api.extensions import mail
-from flask import Blueprint, request, jsonify, url_for,current_app, session
-from flask_jwt_extended import create_access_token
-from flask_mail import Mail, Message
-import jwt, datetime
-from ..models.models import *
-import uuid
-from werkzeug.security import generate_password_hash
-from api.auth import auth_bp
 import re, dns.resolver
 
 def login_require(f):
@@ -25,7 +14,7 @@ def login_require(f):
     def wrap(*args, **kwargs):
         if g.get('user') is None:
             # unauthorized
-            return redirect(url_for(endpoint='test'), code=401)
+            return jsonify({"message": "chua login"}), 401
         return f(*args, **kwargs)
     
     return wrap
@@ -35,7 +24,7 @@ def admin_required(f):
     def wrap(*args, **kwargs):
         if not g.get('user') or g.get('user').user_role != 'admin':
             # forbidden
-            return abort(403)  
+            return jsonify({"message": "you are not admin"}), 403  
         return f(*args, **kwargs)
     return wrap
 
@@ -47,8 +36,7 @@ def check_attribute():
     else:
         g.user = None
 
-
-@auth_bp.route('/register', methods=['POST','GET'])
+@auth_bp.route('/register', methods=('GET', 'POST'))
 def register():
     print('register called')
     user_name = request.form.get('user_name')
@@ -72,13 +60,13 @@ def register():
             'email': email,
             'user_name': user_name,
             'password_hash': password_hash,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
         },
         key = current_app.config['SECRET_KEY'],
         algorithm='HS256'
     )
 
-    confirm_link = url_for('auth.confirm_email', token=token, _external=True)
+    confirm_link = url_for('auth.confirm-email', token=token, _external=True)
     try:
         domain = email.split('@')[1]
         record = dns.resolver.resolve(domain, 'MX')
@@ -98,7 +86,7 @@ def register():
     except Exception as e:
         return jsonify({'message': 'send confirm-email failure', 'error': str(e)})
     
-@auth_bp.route('/confirm_email/<token>', methods=['POST','GET'])
+@auth_bp.route('/confirm-email/<token>', methods=['POST','GET'])
 def confirm_email(token):
     try:
         data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms='HS256')
@@ -122,14 +110,15 @@ def confirm_email(token):
     except jwt.ExpiredSignatureError:
         return jsonify({"message": "Token expired!"}), 400
 
-
 @auth_bp.route('/login', methods=('GET', "POST"))
 def login_post():
     if request.method == 'POST':
-        username = request.form.get('username')
+        username = request.form.get('user_name')
         password = request.form.get('password')
-        remember = True if request.form.get('remember') else False
-
+        remember = False
+        if request.form.get('remember') == 'True':
+            remember = True
+            print('remember is True')
         user = Users.query.filter_by(username = username).first()
 
         # check if the user actually exists
@@ -143,19 +132,18 @@ def login_post():
         
         
         login_user(user, remember=remember)
-    
-        return jsonify({"message": "user registration successful"}), 200
+        
+        return jsonify({"message": "login successful"}), 200
     return jsonify({"message": "Login page loaded"}), 200
     
-@auth_bp.route('/forgot_password/', methods=['GET', 'POST'])
+@auth_bp.route('/forgot-password/', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
         
         user = Users.query.filter_by(user_email=email).first()
         if not user:
-            flash('No account registered with this email!!')
-            return abort(404)
+            return jsonify({"message": "No account registered with this email!!"}), 404
         mail = Mail(current_app)
         msg = Message(
             'Code for validation',
@@ -172,4 +160,5 @@ def forgot_password():
 def logout():
     session.clear()
 
-    return "logout"
+    return jsonify({"message": "logout"}), 200
+

@@ -37,7 +37,7 @@ class _RegisterState extends State<Register> {
                       SizedBox(height: 8),
                       const Text(
                         'Register',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.blue),
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 28),

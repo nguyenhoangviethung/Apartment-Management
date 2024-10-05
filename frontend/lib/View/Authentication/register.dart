@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Authentication/login.dart';
 
 void main() {
-  runApp(const Register());
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Register(),
+    );
+  }
 }
 
 class Register extends StatefulWidget {
@@ -20,150 +33,177 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Container(
-          child: Stack(
-            children: [
-              Center(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Icon(Icons.account_circle, size: 50, color: Colors.grey[700]),
-                      SizedBox(height: 8),
-                      const Text(
-                        'Register',
-                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: Colors.blue),
+    return Scaffold(
+      body: Container(
+        child: Stack(
+          children: [
+            Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Icon(Icons.account_circle, size: 50, color: Colors.grey[700]),
+                    SizedBox(height: 8),
+                    const Text(
+                      'Register',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 28),
+                    // Username field
+                    TextFormField(
+                      controller: _username,
+                      decoration: InputDecoration(
+                        labelText: 'USERNAME',
+                        prefixIcon: Icon(Icons.person),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black, width: 2),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 28),
+                    // Email field
+                    TextFormField(
+                      controller: _email,
+                      decoration: InputDecoration(
+                        labelText: 'EMAIL',
+                        prefixIcon: Icon(Icons.email),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black, width: 2),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 28),
+                    TextFormField(
+                      controller: _password,
+                      obscureText: !_showpass,
+                      decoration: InputDecoration(
+                        labelText: 'PASSWORD',
+                        prefixIcon: Icon(Icons.lock),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black, width: 2),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showpass ? Icons.visibility : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _showpass = !_showpass;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 28),
+                    // Confirm Password field
+                    TextFormField(
+                      controller: _confirmpass,
+                      obscureText: !_showpass,
+                      decoration: InputDecoration(
+                        labelText: 'CONFIRM PASSWORD',
+                        prefixIcon: Icon(Icons.lock),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.black, width: 2),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showpass ? Icons.visibility : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _showpass = !_showpass;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 55),
+                    // Sign up button
+                    ElevatedButton(
+                      child: Text(
+                        'SIGN UP',
+                        style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 28),
-                      // Username field
-                      TextFormField(
-                        controller: _username,
-                        decoration: InputDecoration(
-                          labelText: 'USERNAME', // Label text hiển thị trên viền
-                          prefixIcon: Icon(Icons.person), // Icon cho trường username
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                              width: 2,
-                            ),
-                          ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[500],
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      SizedBox(height: 28),
-                      // Email field
-                      TextFormField(
-                        controller: _email,
-                        decoration: InputDecoration(
-                          labelText: 'EMAIL', // Label text hiển thị trên viền
-                          prefixIcon: Icon(Icons.email), // Icon cho trường email
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 28),
-                      // Password field with show/hide functionality
-                      TextFormField(
-                        controller: _password,
-                        obscureText: !_showpass,
-                        decoration: InputDecoration(
-                          labelText: 'PASSWORD', // Label text hiển thị trên viền
-                          prefixIcon: Icon(Icons.lock), // Icon cho trường password
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                              width: 2,
-                            ),
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _showpass ? Icons.visibility : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _showpass = !_showpass;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 28),
-                      // Confirm Password field
-                      TextFormField(
-                        controller: _confirmpass,
-                        obscureText: !_showpass,
-                        decoration: InputDecoration(
-                          labelText: 'CONFIRM PASSWORD', // Label text hiển thị trên viền
-                          prefixIcon: Icon(Icons.lock), // Icon cho trường confirm password
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: Colors.black,
-                              width: 2,
-                            ),
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _showpass ? Icons.visibility : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _showpass = !_showpass;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 55),
-                      // Sign up button
-                      ElevatedButton(
-                        child: Text(
-                          'SIGN UP',
-                          style: TextStyle(
-                              fontSize: 24,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600),
-                          textAlign: TextAlign.center,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[500],
-                          padding: EdgeInsets.symmetric(vertical: 24),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        onPressed: () {
-                          // Handle sign up logic
-                        },
-                      ),
-                    ],
-                  ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Center(
+                                child: Text('Success',
+                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600,color: Colors.blue)),
+                              ),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Register completed',
+
+                                    textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600,color: Colors.blue),
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                Center(
+                                  child: TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Login(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
+

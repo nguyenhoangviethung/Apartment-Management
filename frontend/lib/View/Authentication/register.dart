@@ -31,6 +31,9 @@ class _RegisterState extends State<Register> {
   final _password = TextEditingController();
   final _confirmpass = TextEditingController();
 
+  // Biến trạng thái để theo dõi nút Sign Up
+  bool _isSignUpPressed = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,6 +89,7 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     SizedBox(height: 28),
+                    // Password field
                     TextFormField(
                       controller: _password,
                       obscureText: !_showpass,
@@ -148,29 +152,41 @@ class _RegisterState extends State<Register> {
                         textAlign: TextAlign.center,
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[500],
+                        backgroundColor:
+                        _isSignUpPressed ? Colors.green : Colors.blue[500],
                         padding: EdgeInsets.symmetric(vertical: 24),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       onPressed: () {
+                        setState(() {
+                          _isSignUpPressed = true; // Thay đổi màu nút thành green
+                        });
+                        // Hiển thị hộp thoại thông báo đăng ký thành công
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Center(
-                                child: Text('Success',
-                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600,color: Colors.blue)),
+                                child: Text(
+                                  'Success',
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.blue),
+                                ),
                               ),
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
                                     'Register completed',
-
                                     textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600,color: Colors.blue),
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.blue),
                                   ),
                                 ],
                               ),
@@ -205,5 +221,3 @@ class _RegisterState extends State<Register> {
     );
   }
 }
-
-

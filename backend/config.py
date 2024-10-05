@@ -1,6 +1,11 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 class Config:
     SECRET_KEY = 'dev'
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:Dungdepzai1!@localhost/cnpm'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'+ os.getenv('MYSQL_USER') + ':' + os.getenv('MYSQL_PASSWORD') + '@localhost/'+ os.getenv('MYSQL_DATABASE')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     MAIL_SERVER = 'smtp.gmail.com'

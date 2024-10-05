@@ -1,3 +1,4 @@
 src/ultralytics/
 **/__pycache__/
 *.pyc
+*.env

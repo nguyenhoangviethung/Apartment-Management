@@ -31,7 +31,6 @@ class _RegisterState extends State<Register> {
   final _password = TextEditingController();
   final _confirmpass = TextEditingController();
 
-  // Biến trạng thái để theo dõi nút Sign Up
   bool _isSignUpPressed = false;
 
   @override
@@ -47,7 +46,6 @@ class _RegisterState extends State<Register> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Icon và chữ Register nằm ngay dưới icon
                     Column(
                       children: [
                         Icon(Icons.account_circle,
@@ -64,14 +62,11 @@ class _RegisterState extends State<Register> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16), // Khoảng cách nhỏ trước khi xuống dòng
-
-                    // Dòng chứa "Already have an account?" ở ngoài cùng bên trái
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         GestureDetector(
                           onTap: () {
-                            // Chuyển về màn hình Login khi ấn vào
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
@@ -91,7 +86,6 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(height: 28),
 
-                    // Username field
                     TextFormField(
                       controller: _username,
                       decoration: InputDecoration(
@@ -106,7 +100,6 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     SizedBox(height: 28),
-                    // Email field
                     TextFormField(
                       controller: _email,
                       decoration: InputDecoration(
@@ -121,7 +114,6 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     SizedBox(height: 28),
-                    // Password field
                     TextFormField(
                       controller: _password,
                       obscureText: !_showpass,
@@ -147,7 +139,6 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     SizedBox(height: 28),
-                    // Confirm Password field
                     TextFormField(
                       controller: _confirmpass,
                       obscureText: !_showpass,
@@ -173,7 +164,6 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     SizedBox(height: 55),
-                    // Sign up button
                     ElevatedButton(
                       child: Text(
                         'SIGN UP',

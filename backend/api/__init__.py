@@ -10,8 +10,6 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     db.init_app(app)
-    with app.app_context():
-        db.create_all()
 
     from api.auth import auth_bp
     app.register_blueprint(auth_bp)

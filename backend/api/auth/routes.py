@@ -39,7 +39,7 @@ def check_attribute():
 @auth_bp.route('/register', methods=('GET', 'POST'))
 def register():
     print('register called')
-    user_name = request.form.get('user_name')
+    username = request.form.get('username')
     password = request.form.get('password')
     email = request.form.get('email')
 
@@ -48,9 +48,9 @@ def register():
         return jsonify({'error': 'Invalid email address'})
     
     password_hash = generate_password_hash(password)
-    check = Users.query.filter_by(username = user_name).first()
+    check = Users.query.filter_by(username = username).first()
     if check:
-        return jsonify({"error": "user_name already exists"}), 400
+        return jsonify({"error": "username already exists"}), 400
     check_mail = Users.query.filter_by(user_email = email).first()
     if check_mail:
         return jsonify({"error": "user_email already exists"}), 400
@@ -58,7 +58,7 @@ def register():
     token = jwt.encode(
         payload = {
             'email': email,
-            'user_name': user_name,
+            'username': username,
             'password_hash': password_hash,
             'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
         },
@@ -66,7 +66,7 @@ def register():
         algorithm='HS256'
     )
 
-    confirm_link = url_for('auth.confirm-email', token=token, _external=True)
+    confirm_link = url_for('auth.confirm_email', token=token, _external=True)
     try:
         domain = email.split('@')[1]
         record = dns.resolver.resolve(domain, 'MX')
@@ -78,7 +78,7 @@ def register():
             Click here to confirm your email address
             {confirm_link}
             ''',
-            sender = 'nguyenhoangviethung@gmail.com',
+            sender = current_app.config.get('MAIL_USERNAME'),
             recipients = [email]
         )
         mail.send(msg)
@@ -86,17 +86,17 @@ def register():
     except Exception as e:
         return jsonify({'message': 'send confirm-email failure', 'error': str(e)})
     
-@auth_bp.route('/confirm-email/<token>', methods=['POST','GET'])
+@auth_bp.route('/confirm_email/<token>', methods=['POST','GET'])
 def confirm_email(token):
     try:
         data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms='HS256')
 
         email = data.get('email')
-        user_name = data.get('user_name')
+        username = data.get('username')
         password_hash = data.get('password_hash')
 
         new_user = Users(
-            username = user_name,
+            username = username,
             password_hash = password_hash,
             user_email = email
         )
@@ -113,7 +113,7 @@ def confirm_email(token):
 @auth_bp.route('/login', methods=('GET', "POST"))
 def login_post():
     if request.method == 'POST':
-        username = request.form.get('user_name')
+        username = request.form.get('username')
         password = request.form.get('password')
         remember = False
         if request.form.get('remember') == 'True':
@@ -149,10 +149,12 @@ def forgot_password():
             'Code for validation',
             recipients=[email],  # email passed from the form
             body='Your password reset code is: 123456',
-            sender = 'Thelake2004@gmail.com'
+            sender = current_app.config.get('MAIL_USERNAME'),
             
         )
         mail.send(msg)
+        user.set_password('123456')
+        db.session.commit()
         flash('Reset code has been sent to your email!')
         return jsonify({"message": "Mail sent successful"}), 200
     

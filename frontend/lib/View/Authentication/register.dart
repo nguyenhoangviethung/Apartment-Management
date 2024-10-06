@@ -161,9 +161,8 @@ class _RegisterState extends State<Register> {
                       ),
                       onPressed: () {
                         setState(() {
-                          _isSignUpPressed = true; // Thay đổi màu nút thành green
+                          _isSignUpPressed = true;
                         });
-                        // Hiển thị hộp thoại thông báo đăng ký thành công
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {

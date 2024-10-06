@@ -1,20 +1,24 @@
 from api.auth import auth_bp
 from api.extensions import db
 from api.models.models import *
-from flask import g, url_for, session, abort, request, jsonify, current_app, flash
+from flask import g, url_for, session, abort, request, jsonify, current_app, flash, redirect
 from functools import wraps
 from flask_mail import Mail, Message
 import jwt, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
 import re, dns.resolver
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def login_require(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         if g.get('user') is None:
             # unauthorized
-            return jsonify({"message": "chua login"}), 401
+            return redirect(url_for('test'), code=403)
         return f(*args, **kwargs)
     
     return wrap
@@ -38,7 +42,7 @@ def check_attribute():
 
 @auth_bp.route('/register', methods=('GET', 'POST'))
 def register():
-    print('register called')
+    # print('register called')
     user_name = request.form.get('user_name')
     password = request.form.get('password')
     email = request.form.get('email')
@@ -66,7 +70,7 @@ def register():
         algorithm='HS256'
     )
 
-    confirm_link = url_for('auth.confirm-email', token=token, _external=True)
+    confirm_link = url_for('auth.confirm_email', token=token, _external=True)
     try:
         domain = email.split('@')[1]
         record = dns.resolver.resolve(domain, 'MX')
@@ -78,15 +82,17 @@ def register():
             Click here to confirm your email address
             {confirm_link}
             ''',
-            sender = 'nguyenhoangviethung@gmail.com',
+            sender = os.getenv('MAIL_USERNAME'),
             recipients = [email]
         )
         mail.send(msg)
-        return jsonify({'message': 'send confirm-email success'})
+        # success
+        return jsonify({'message': 'send confirm-email success'}), 200
     except Exception as e:
-        return jsonify({'message': 'send confirm-email failure', 'error': str(e)})
+        # server error
+        return jsonify({'message': 'send confirm-email failure', 'error': str(e)}), 500
     
-@auth_bp.route('/confirm-email/<token>', methods=['POST','GET'])
+@auth_bp.route('/confirm_email/<token>', methods=['POST','GET'])
 def confirm_email(token):
     try:
         data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms='HS256')
@@ -106,8 +112,10 @@ def confirm_email(token):
 
         return jsonify({"message": "user registration successful"}), 200
     except jwt.InvalidTokenError:
+        # user error
         return jsonify({'message': 'Token invalid!'}), 400
     except jwt.ExpiredSignatureError:
+        # user error
         return jsonify({"message": "Token expired!"}), 400
 
 @auth_bp.route('/login', methods=('GET', "POST"))
@@ -124,7 +132,7 @@ def login_post():
         # check if the user actually exists
         if not user or not check_password_hash(user.password_hash, password):
             flash('Please check your login details and try again.')
-            return abort(403) # if the user doesn't exist or password is wrong, reload the page
+            return redirect(url_for('test'), code=403)
         
         session.clear()    
         session.setdefault('user_id', user.user_id)
@@ -149,7 +157,7 @@ def forgot_password():
             'Code for validation',
             recipients=[email],  # email passed from the form
             body='Your password reset code is: 123456',
-            sender = 'Thelake2004@gmail.com'
+            sender = os.getenv('MAIL_USERNAME')
             
         )
         mail.send(msg)

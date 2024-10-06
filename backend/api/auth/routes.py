@@ -48,7 +48,7 @@ def register():
 
     check_username = Users.query.filter_by(username = username).first()
     if check_username:
-        return jsonify({"error": "user_name already exists"}), 400
+        return jsonify({"error": "username already exists"}), 400
     check_mail = Users.query.filter_by(user_email = email).first()
     if check_mail:
         return jsonify({"error": "user_email already exists"}), 400
@@ -56,7 +56,7 @@ def register():
     token = jwt.encode(
         payload = {
             'email': email,
-            'user_name': username,
+            'username': username,
             'password': password,
             # todo
             'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=30)
@@ -74,7 +74,7 @@ def register():
             Click here to confirm your email address
             {confirm_link}
             ''',
-            sender = 'nguyenhoangviethung@gmail.com',
+            sender = current_app.config['MAIL_USERNAME'],
             recipients = [email]
         )
         mail.send(msg)
@@ -88,11 +88,11 @@ def confirm_email(token):
         data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms='HS256')
 
         email = data.get('email')
-        user_name = data.get('user_name')
+        username = data.get('username')
         password = data.get('password')
 
         new_user = Users(
-            username = user_name,
+            username = username,
             password_hash = generate_password_hash(password),
             user_email = email
         )

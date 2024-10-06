@@ -113,10 +113,10 @@ def confirm_email(token):
         return jsonify({"message": "user registration successful"}), 200
     except jwt.InvalidTokenError:
         # user error
-        return jsonify({'message': 'Token invalid!'}), 400
+        return jsonify({'message': 'Token invalid!'}), 401
     except jwt.ExpiredSignatureError:
         # user error
-        return jsonify({"message": "Token expired!"}), 400
+        return jsonify({"message": "Token expired!"}), 401
 
 @auth_bp.route('/login', methods=('GET', "POST"))
 def login_post():

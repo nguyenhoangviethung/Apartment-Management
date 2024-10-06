@@ -47,18 +47,50 @@ class _RegisterState extends State<Register> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(Icons.account_circle, size: 50, color: Colors.grey[700]),
-                    SizedBox(height: 8),
-                    const Text(
-                      'Register',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.blue,
-                      ),
-                      textAlign: TextAlign.center,
+                    // Icon và chữ Register nằm ngay dưới icon
+                    Column(
+                      children: [
+                        Icon(Icons.account_circle,
+                            size: 50, color: Colors.grey[700]),
+                        SizedBox(height: 8),
+                        const Text(
+                          'Register',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.blue,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16), // Khoảng cách nhỏ trước khi xuống dòng
+
+                    // Dòng chứa "Already have an account?" ở ngoài cùng bên trái
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            // Chuyển về màn hình Login khi ấn vào
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Login(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "Already have an account?",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 28),
+
                     // Username field
                     TextFormField(
                       controller: _username,

@@ -13,7 +13,8 @@ class Users(UserMixin, db.Model):
     user_role = db.Column(ENUM('admin', 'user'), default='user')
     user_email = db.Column(db.String(100), unique=True)
     last_login = db.Column(db.DateTime)
-
+    def get_id(self):
+        return self.user_id 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

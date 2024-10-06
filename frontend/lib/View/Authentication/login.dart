@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Authentication/forgotPassword.dart';
 import 'package:frontend/View/Authentication/register.dart';
@@ -13,9 +12,9 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   bool _showpass=false;
 
-  void login(username,password) async{
-
-  }
+  // void login(username,password) async{
+  //
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +40,6 @@ class _LoginState extends State<Login> {
                   children: [
                     const SizedBox(height: 50),
 
-                    // Buildings image
                     Container(
                         margin: const EdgeInsets.fromLTRB(20, 50, 20, 0),
                         alignment: Alignment.center,
@@ -74,7 +72,7 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.fromLTRB(20, 0,0, 2),
                       child: Center(
                         child: Text(
-                          'Welcome Back',
+                          'Welcome Back!',
                           style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w700,
@@ -94,11 +92,11 @@ class _LoginState extends State<Login> {
                           color: Colors.black,
                         ),
                         decoration: InputDecoration(
-                          labelText: 'Username', // Dòng chữ chỉ dẫn nổi lên
-                          floatingLabelBehavior: FloatingLabelBehavior.auto, // Hiệu ứng nổi
+                          labelText: 'Username',
+                          floatingLabelBehavior: FloatingLabelBehavior.auto,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                          ), // Viền cho ô
+                          ),
                         ),
                       ),
                     ),
@@ -180,7 +178,7 @@ class _LoginState extends State<Login> {
                                       'Sign up?',
                                       style: TextStyle(
                                         fontSize: 20,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     onTap: (){
@@ -196,8 +194,8 @@ class _LoginState extends State<Login> {
                                     'Forgot Password?',
                                     style: TextStyle(
                                       fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
                                     ),
                                   ),
                                   onTap: (){

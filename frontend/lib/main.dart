@@ -5,6 +5,6 @@ import 'package:frontend/View/Authentication/register.dart';
 
 void main() {
    //runApp(const Register());
-  //runApp(const Login());
-   runApp(const ForgotPassword());
+  runApp(const Login());
+  //  runApp(const ForgotPassword());
 }

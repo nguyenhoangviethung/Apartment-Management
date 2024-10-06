@@ -11,11 +11,7 @@ class Config:
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
-<<<<<<< HEAD
-    MAIL_PASSWORD = 'pofr qfsm ivkw jyvr'
-=======
     MAIL_PASSWORD = os.getenv('APP_PASSWORD')
->>>>>>> a45d2bdfc90fac9171300a8792e137d218c493bc
     MAIL_USE_SSL = True
     MAIL_USE_TLS = False
     SWAGGER_URL = os.getenv('SWAGGER_URL')

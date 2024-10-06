@@ -42,13 +42,8 @@ def check_attribute():
 
 @auth_bp.route('/register', methods=('GET', 'POST'))
 def register():
-<<<<<<< HEAD
-    print('register called')
-    username = request.form.get('username')
-=======
     # print('register called')
-    user_name = request.form.get('user_name')
->>>>>>> a45d2bdfc90fac9171300a8792e137d218c493bc
+    username = request.form.get('user_name')
     password = request.form.get('password')
     email = request.form.get('email')
 
@@ -87,11 +82,7 @@ def register():
             Click here to confirm your email address
             {confirm_link}
             ''',
-<<<<<<< HEAD
-            sender = current_app.config.get('MAIL_USERNAME'),
-=======
             sender = os.getenv('MAIL_USERNAME'),
->>>>>>> a45d2bdfc90fac9171300a8792e137d218c493bc
             recipients = [email]
         )
         mail.send(msg)
@@ -166,11 +157,7 @@ def forgot_password():
             'Code for validation',
             recipients=[email],  # email passed from the form
             body='Your password reset code is: 123456',
-<<<<<<< HEAD
-            sender = current_app.config.get('MAIL_USERNAME'),
-=======
             sender = os.getenv('MAIL_USERNAME')
->>>>>>> a45d2bdfc90fac9171300a8792e137d218c493bc
             
         )
         mail.send(msg)

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Authentication/login.dart';
-
+import 'package:frontend/View/Home/home_page.dart';
+import 'package:http/http.dart' as http;
 
 
 class Register extends StatefulWidget {
@@ -13,11 +14,67 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   bool _showpass = false;
   bool _showconfirmpass =false;
+  bool isSingup =false;
 
   final _username = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _confirmpass = TextEditingController();
+
+
+
+
+  Future<void> _registerUser(String username, String email, String password, String confirmPassword) async {
+    setState(() {
+      isSingup = true;
+    });
+
+    if (password != confirmPassword) {
+      print("Passwords do not match!");
+      setState(() {
+        isSingup = false;
+      });
+      return;
+    }
+
+    print('cwdwdhqijqi');
+
+    final url = Uri.parse('https://apartment-management-kjj9.onrender.com/auth/register');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'username': username,
+        'email': email,
+        'password': password,
+      },
+    );
+
+    print('ndiqdoqijsqq');
+
+    setState(() {
+      isSingup = false;
+    });
+
+    if (response.statusCode == 200) {
+      print('success');
+      // Chuyển hướng đến trang Login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Login()),
+      );
+    } else if (response.statusCode == 400) {
+      // Xử lý lỗi người dùng đã tồn tại nếu cần
+      print('User already exists.');
+    } else {
+      // Xử lý lỗi chung
+      print('Error: ${response.statusCode}');
+    }
+  }
+
+
 
 
   @override
@@ -71,7 +128,7 @@ class _RegisterState extends State<Register> {
                     Icon(Icons.account_circle, size: 50, color: Colors.grey[700]),
                     const SizedBox(height: 8),
                     const Text(
-                      'Register',
+                      'Create a new account',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
@@ -171,8 +228,10 @@ class _RegisterState extends State<Register> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: () {},
-                      child: const Text(
+                      onPressed: () {
+                        _registerUser(_username.text, _email.text, _password.text,_confirmpass.text);
+                      },
+                      child: isSingup? const CircularProgressIndicator(color: Colors.white,): const Text(
                         'SIGN UP',
                         style: TextStyle(
                             fontSize: 24,

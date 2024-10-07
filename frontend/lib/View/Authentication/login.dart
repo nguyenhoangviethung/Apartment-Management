@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Authentication/forgotPassword.dart';
 import 'package:frontend/View/Authentication/register.dart';
+import 'package:frontend/View/Home/home_page.dart';
+import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -11,10 +13,47 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool _showpass=false;
+  bool _islogin=false;
+  final _username = TextEditingController();
+  final _password = TextEditingController();
 
-  // void login(username,password) async{
-  //
-  // }
+  Future<void> _login(String username, String password, bool remember) async {
+    setState(() {
+      _islogin = true;
+    });
+    print('123');
+    final url = Uri.parse('https://apartment-management-kjj9.onrender.com/auth/login');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'username': username,
+        'password': password,
+        'remember': remember.toString(),
+      },
+    );
+    print('456');
+    setState(() {
+      _islogin = false;
+    });
+
+    if (response.statusCode == 200) {
+      print('Login successful');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+
+    } else if (response.statusCode == 403) {
+      print('Login failed, incorrect details');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +125,7 @@ class _LoginState extends State<Login> {
                     Container(
                       margin: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                       child: TextFormField(
+                        controller: _username,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -108,6 +148,7 @@ class _LoginState extends State<Login> {
                         alignment: Alignment.centerRight,
                         children: [
                           TextFormField(
+                            controller: _password,
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
@@ -138,31 +179,30 @@ class _LoginState extends State<Login> {
                     ),
 
                     // Sign in button
+                    // Sign in button
                     Container(
                       margin: const EdgeInsets.fromLTRB(50, 30, 50, 0),
                       child: Builder(
                           builder: (context) {
                             return TextButton(
-                                onPressed: (){
-                                  // Navigator.push(context, MaterialPageRoute(builder: (context) => Home1()));
+                                onPressed: () {
+                                  _login(_username.text, _password.text, false);
                                 },
                                 style: TextButton.styleFrom(
                                   backgroundColor: Colors.blue,
                                   foregroundColor: Colors.white,
                                 ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Login',
-                                      style: TextStyle(fontSize: 25),
-                                    ),
-                                  ],
-                                )
-                            );
-                          }
-                      ),
+                                child: Center(
+                                  child: _islogin
+                                      ? const CircularProgressIndicator(color: Colors.white)
+                                      : const Text(
+                                    'Login',
+                                    style: TextStyle(fontSize: 25),
+                                  ),
+                                ));
+                          }),
                     ),
+
 
                     // (Sign up, forgot password) row
                     Container(

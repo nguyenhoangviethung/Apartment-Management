@@ -3,3 +3,4 @@ src/ultralytics/
 *.pyc
 *.env
 backend/src/ultralytics/
+venv/

@@ -5,6 +5,8 @@ info:
   version: 1.0.0
 servers:
   - url: http://localhost:5000
+  - url: https://apartment-management-kjj9.onrender.com/
+  - url: https://apartment-management-oy7f.onrender.com/
 
 paths:
   /auth/register:

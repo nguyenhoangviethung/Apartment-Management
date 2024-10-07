@@ -43,7 +43,7 @@ def check_attribute():
 @auth_bp.route('/register', methods=('GET', 'POST'))
 def register():
     # print('register called')
-    username = request.form.get('user_name')
+    username = request.form.get('username')
     password = request.form.get('password')
     email = request.form.get('email')
 

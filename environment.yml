@@ -1,4 +1,4 @@
-name: .\venv
+name: flask
 channels:
   - defaults
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
   - libffi=3.4.4=hd77b12b_1
   - openssl=3.0.15=h827c3e9_0
   - pip=24.2=py312haa95532_0
-  - python=3.12.4=h14ffc60_1
+  - python=3.12.5=h14ffc60_1
   - setuptools=75.1.0=py312haa95532_0
   - sqlite=3.45.3=h2bbff1b_0
   - tk=8.6.14=h0416ee5_0
@@ -19,29 +19,11 @@ dependencies:
   - xz=5.4.6=h8cc25b3_1
   - zlib=1.2.13=h8cc25b3_1
   - pip:
-      - blinker==1.8.2
-      - cachelib==0.13.0
-      - cffi==1.17.1
-      - click==8.1.7
       - cryptography==43.0.1
-      - dnspython==2.6.1
-      - flask==3.0.3
-      - flask-jwt-extended==4.6.0
+      - dnspython==2.7.0
       - flask-login==0.6.3
       - flask-mail==0.10.0
-      - flask-session==0.8.0
-      - flask-sqlalchemy==3.1.1
       - flask-swagger-ui==4.11.1
-      - greenlet==3.1.1
-      - itsdangerous==2.2.0
-      - jinja2==3.1.4
-      - markupsafe==2.1.5
-      - msgspec==0.18.6
-      - pycparser==2.22
       - pyjwt==2.9.0
-      - pymysql==1.1.1
       - python-dotenv==1.0.1
-      - sqlalchemy==2.0.35
-      - typing-extensions==4.12.2
-      - werkzeug==3.0.4
-prefix: .\venv
+prefix: C:\Users\Admin\.conda\envs\flask

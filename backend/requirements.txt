@@ -10,9 +10,11 @@ Flask-Mail==0.10.0
 Flask-SQLAlchemy==3.1.1
 flask-swagger-ui==4.11.1
 greenlet==3.1.1
+gunicorn==23.0.0
 itsdangerous==2.2.0
 Jinja2==3.1.4
 MarkupSafe==2.1.5
+packaging==24.1
 pycparser==2.22
 PyJWT==2.9.0
 PyMySQL==1.1.1

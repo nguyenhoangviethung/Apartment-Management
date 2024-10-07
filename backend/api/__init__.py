@@ -5,6 +5,7 @@ from api.models.models import *
 from api.models.models import db
 from flask_login import LoginManager
 from flask_swagger_ui import get_swaggerui_blueprint
+from flask_cors import CORS
 
 def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
@@ -20,6 +21,8 @@ def create_app(config_class=Config):
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
+
+    CORS(app)
     @login_manager.user_loader
     def load_user(user_id):
         return Users.query.get(user_id)

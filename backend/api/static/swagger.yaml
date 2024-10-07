@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  title: auth api
+  description: API documentation for authentication
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        description: User registration data
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Registration success message
+        '400':
+          description: Registration failed, user already exists
+  
+  /auth/confirm_email/{token}:
+    get:
+      summary: Confirm email address
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User registration successful
+        '400':
+          description: Invalid or expired token
+
+  /auth/login:
+    post:
+      summary: Login to the system
+      requestBody:
+        description: User login data
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                remember:
+                  type: boolean
+      responses:
+        '200':
+          description: Login successful
+        '403':
+          description: Login failed, incorrect details
+
+  /auth/forgot-password:
+    post:
+      summary: Send password reset email
+      requestBody:
+        description: Email for password reset
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Password reset email sent
+        '404':
+          description: No account registered with the provided email
+  
+  /auth/logout:
+    get:
+      summary: Logout from the system
+      responses:
+        '200':
+          description: Logout successful

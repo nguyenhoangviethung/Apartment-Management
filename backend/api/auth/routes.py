@@ -10,6 +10,7 @@ from flask_login import login_user
 import re, dns.resolver
 import os
 from dotenv import load_dotenv
+import random
 
 load_dotenv()
 
@@ -148,6 +149,9 @@ def login_post():
 def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
+        validation_code = str(random.randint(1000, 9999))
+        session['validation_code'] = validation_code
+        session['reset_email'] = email
         
         user = Users.query.filter_by(user_email=email).first()
         if not user:
@@ -156,15 +160,47 @@ def forgot_password():
         msg = Message(
             'Code for validation',
             recipients=[email],  # email passed from the form
-            body='Your password reset code is: 123456',
+            body=f'Your password reset code is: {validation_code}',
             sender = os.getenv('MAIL_USERNAME')
             
         )
         mail.send(msg)
-        user.set_password('123456')
-        db.session.commit()
         flash('Reset code has been sent to your email!')
         return jsonify({"message": "Mail sent successful"}), 200
+    
+@auth_bp.route('/validation-code', methods=['GET', 'POST'])
+def validation_code():
+    if request.method == 'POST':
+        input_code = request.form.get('code')
+
+        stored_code = session.get('validation_code')
+
+        # Check if the entered code matches the stored code
+        if input_code == stored_code:
+            flash('Code validated successfully! Now you can reset your password.')
+            session.pop('validation_code', None)
+            
+
+            return redirect(url_for('auth.reset_password'))  # Example: redirect to reset password page
+        else:
+            flash('Invalid code. Please try again.')
+            return redirect(url_for('auth.validation_code')),403
+
+    return jsonify({"message" :"This is validation code api"}),200
+
+@auth_bp.route('/reset_password', methods=['GET', 'POST'])
+def validation_code():
+    if request.method == 'POST':
+        new_password = request.form.get('new_password')
+        stored_email = session.get('reset_email')
+        new_password_hash = generate_password_hash(new_password)
+        
+        user = Users.query.filter_by(user_email=stored_email).first()
+        user.password_hash = new_password_hash
+        
+        db.session.commit()
+        session.pop('reset_email', None)
+        return jsonify({"message" :"Password has been reset!!!"}),200
     
 @auth_bp.route('/logout')
 def logout():

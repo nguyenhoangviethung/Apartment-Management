@@ -64,19 +64,12 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus(); // Ẩn bàn phím khi nhấn ra ngoài
           },
           child: Stack(
             children: [
-              // Image.network(
-              //   'https://i.pinimg.com/564x/c3/4c/81/c34c81e2284e9bcaa20dbc20b91152c3.jpg',
-              //   fit: BoxFit.cover,
-              //   width: double.infinity,
-              //   height: double.infinity,
-              // ),
               SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

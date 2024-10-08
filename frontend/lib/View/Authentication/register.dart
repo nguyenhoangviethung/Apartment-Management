@@ -3,6 +3,8 @@ import 'package:frontend/View/Authentication/login.dart';
 import 'package:frontend/View/Home/home_page.dart';
 import 'package:http/http.dart' as http;
 
+import 'emailVerification.dart';
+
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -61,9 +63,13 @@ class _RegisterState extends State<Register> {
     if (response.statusCode == 200) {
       print('success');
       // Chuyển hướng đến trang Login
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => Login()),
+      // );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Login()),
+        MaterialPageRoute(builder: (context) => const EmailVerification(previousScreen: 'Register')),
       );
     } else if (response.statusCode == 400) {
       // Xử lý lỗi người dùng đã tồn tại nếu cần

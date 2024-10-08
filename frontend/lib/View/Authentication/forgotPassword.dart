@@ -32,7 +32,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       if (response.statusCode == 200) {
         // Xử lý khi email khôi phục mật khẩu đã được gửi
         print('Password reset email sent');
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>EmailVerification()));
+        // Navigator.push(context, MaterialPageRoute(builder: (context)=>EmailVerification()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const EmailVerification(previousScreen: 'ForgotPassword')),
+        );
         // Ví dụ: Thông báo cho người dùng
       } else if (response.statusCode == 404) {
         // Xử lý khi không có tài khoản với email đã cung cấp
@@ -81,74 +85,79 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               }
           ),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 40),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Mail Address Here',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Enter the email address associated with your account.',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextFormField(
-                controller: _email,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: const Icon(Icons.email),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus(); // Ẩn bàn phím khi nhấn ra ngoài
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 40),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  'Mail Address Here',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Builder(
-                  builder: (context) {
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: () {
-                        _forgotpass(_email.text);
-                      },
-                      child: _isforgot? const CircularProgressIndicator(color: Colors.white): const Text(
-                          'Recover Password',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                          ),
-                      ),
-                    );
-                  }
+              const SizedBox(height: 10),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  'Enter the email address associated with your account.',
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextFormField(
+                  controller: _email,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: const Icon(Icons.email),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Builder(
+                    builder: (context) {
+                      return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () {
+                          _forgotpass(_email.text);
+                        },
+                        child: _isforgot? const CircularProgressIndicator(color: Colors.white): const Text(
+                            'Recover Password',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                        ),
+                      );
+                    }
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

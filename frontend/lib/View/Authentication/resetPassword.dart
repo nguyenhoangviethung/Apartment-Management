@@ -41,7 +41,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const EmailVerification()),
+                      MaterialPageRoute(builder: (context) => const EmailVerification(previousScreen: 'ForgotPassword',)),
                     );
                   },
                 );

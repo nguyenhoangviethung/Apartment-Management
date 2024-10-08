@@ -46,10 +46,6 @@ def register():
     username = request.form.get('username')
     password = request.form.get('password')
     email = request.form.get('email')
-
-    regex = r'^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    if re.match(regex, email) is None:
-        return jsonify({'error': 'Invalid email address'})
     
     password_hash = generate_password_hash(password)
     check = Users.query.filter_by(username = username).first()
@@ -59,6 +55,10 @@ def register():
     if check_mail:
         return jsonify({"error": "user_email already exists"}), 400
     
+    regex = r'^\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    if re.match(regex, email) is None:
+        return jsonify({'error': 'Invalid email address'}), 400
+     
     token = jwt.encode(
         payload = {
             'email': email,

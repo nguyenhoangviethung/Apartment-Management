@@ -52,7 +52,7 @@ class _RegisterState extends State<Register> {
                             size: 50, color: Colors.grey[700]),
                         SizedBox(height: 8),
                         const Text(
-                          'Register',
+                          'Create a new account',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w600,

@@ -50,6 +50,24 @@ class _LoginState extends State<Login> {
             context,
             MaterialPageRoute(builder: (context) => const HomePage()),
           );
+          // showDialog(
+          //   context: context,
+          //   builder: (BuildContext context) {
+          //     return AlertDialog(
+          //       title: const Text('Login success'),
+          //       content: const Text('Go to Home Page'),
+          //       actions: [
+          //         TextButton(
+          //           onPressed: () {
+          //             Navigator.of(context).pop(); // Đóng hộp thoại
+          //           },
+          //           child: const Text('ok'),
+          //         ),
+          //       ],
+          //     );
+          //   },
+          // );
+
         }
       } else {
         print('Login failed, incorrect details');

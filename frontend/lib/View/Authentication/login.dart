@@ -21,48 +21,52 @@ class _LoginState extends State<Login> {
     setState(() {
       _islogin = true;
     });
-    print('123');
-    final url = Uri.parse('https://apartment-management-kjj9.onrender.com/auth/login');
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: {
-        'username': username,
-        'password': password,
-        'remember': remember.toString(),
-      },
-    );
-    print('456');
-    setState(() {
-      _islogin = false;
-    });
 
-    if (response.statusCode == 200) {
-      print('Login successful');
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+    try {
+      final url = Uri.parse('https://apartment-management-kjj9.onrender.com/auth/login');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'username': username,
+          'password': password,
+          'remember': remember.toString(),
+        },
       );
 
-    } else if (response.statusCode == 403) {
-      print('Login failed, incorrect details');
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+      setState(() {
+        _islogin = false;
+      });
+
+      if (response.statusCode == 200) {
+
+        print('Login successful');
+
+        // Chuyển hướng ngay sau khi đăng nhập thành công
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }
+      } else {
+        print('Login failed, incorrect details');
+
+      }
+    } catch (error) {
+      print('Error occurred: $error');
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: GestureDetector(
-            onTap: () {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: GestureDetector(
+          onTap: () {
             FocusScope.of(context).unfocus(); // Ẩn bàn phím khi nhấn ra ngoài
           },
           child: Stack(
@@ -222,7 +226,7 @@ class _LoginState extends State<Login> {
                                       ),
                                     ),
                                     onTap: (){
-                                       Navigator.push(context, MaterialPageRoute(builder: (context) =>const Register() ));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) =>const Register() ));
                                     }
                                 );
                               }
@@ -239,7 +243,7 @@ class _LoginState extends State<Login> {
                                     ),
                                   ),
                                   onTap: (){
-                                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=> const ForgotPassword()));
+                                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> const ForgotPassword()));
                                   },
                                 );
                               }
@@ -252,7 +256,6 @@ class _LoginState extends State<Login> {
               ),
             ],
           )
-        ),
       ),
     );
   }

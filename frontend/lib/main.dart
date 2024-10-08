@@ -5,6 +5,11 @@ import 'package:frontend/View/Authentication/register.dart';
 
 void main() {
    //runApp(const Register());
-  runApp(const Login());
+  runApp(
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Login(),
+      )
+  );
   //  runApp(const ForgotPassword());
 }

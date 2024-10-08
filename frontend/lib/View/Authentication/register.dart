@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Authentication/login.dart';
-import 'package:frontend/View/Home/home_page.dart';
 import 'package:http/http.dart' as http;
-
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -13,31 +11,34 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   bool _showpass = false;
-  bool _showconfirmpass =false;
-  bool isSingup =false;
+  bool _showconfirmpass = false;
+  bool isSingup = false;
 
   final _username = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _confirmpass = TextEditingController();
 
-
-
-
   Future<void> _registerUser(String username, String email, String password, String confirmPassword) async {
     setState(() {
       isSingup = true;
     });
 
-    if (password != confirmPassword) {
-      print("Passwords do not match!");
+    if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      _showDialog("Registration Failed", "Please fill in all the fields!");
       setState(() {
         isSingup = false;
       });
       return;
     }
 
-    print('cwdwdhqijqi');
+    if (password != confirmPassword) {
+      _showDialog("Registration Failed", "Passwords do not match!");
+      setState(() {
+        isSingup = false;
+      });
+      return;
+    }
 
     final url = Uri.parse('https://apartment-management-kjj9.onrender.com/auth/register');
     final response = await http.post(
@@ -52,30 +53,44 @@ class _RegisterState extends State<Register> {
       },
     );
 
-    print('ndiqdoqijsqq');
-
     setState(() {
       isSingup = false;
     });
 
     if (response.statusCode == 200) {
-      print('success');
-      // Chuyển hướng đến trang Login
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Login()),
-      );
+      _showDialog("Registration Successful", "You have successfully registered.");
     } else if (response.statusCode == 400) {
-      // Xử lý lỗi người dùng đã tồn tại nếu cần
-      print('User already exists.');
+      _showDialog("Registration Failed", "User already exists.");
     } else {
-      // Xử lý lỗi chung
-      print('Error: ${response.statusCode}');
+      _showDialog("Registration Failed", "Error: ${response.statusCode}");
     }
   }
 
-
-
+  void _showDialog(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Đóng dialog
+                if (title == "Registration Successful") {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Login()),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,34 +107,31 @@ class _RegisterState extends State<Register> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          leading: Builder(
-              builder: (context) {
-                return IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 30,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Login()),
-                    );
-                  },
+          leading: Builder(builder: (context) {
+            return IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                size: 30,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Login()),
                 );
-              }
-          ),
+              },
+            );
+          }),
         ),
         body: GestureDetector(
           onTap: () {
-            FocusScope.of(context).unfocus(); // Ẩn bàn phím khi nhấn ra ngoài
+            FocusScope.of(context).unfocus();
           },
           child: Stack(
             children: [
               SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(
@@ -142,12 +154,12 @@ class _RegisterState extends State<Register> {
                       controller: _username,
                       decoration: InputDecoration(
                         labelText: 'USERNAME',
-                        prefixIcon: Icon(Icons.person),
+                        prefixIcon: const Icon(Icons.person),
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.black, width: 2),
+                          borderSide: const BorderSide(color: Colors.black, width: 2),
                         ),
                       ),
                     ),
@@ -193,7 +205,6 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     const SizedBox(height: 28),
-                    // Confirm Password field
                     TextFormField(
                       controller: _confirmpass,
                       obscureText: !_showconfirmpass,
@@ -219,7 +230,6 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     const SizedBox(height: 55),
-                    // Sign up button
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
@@ -229,9 +239,18 @@ class _RegisterState extends State<Register> {
                         ),
                       ),
                       onPressed: () {
-                        _registerUser(_username.text, _email.text, _password.text,_confirmpass.text);
+                        _registerUser(
+                          _username.text,
+                          _email.text,
+                          _password.text,
+                          _confirmpass.text,
+                        );
                       },
-                      child: isSingup? const CircularProgressIndicator(color: Colors.white,): const Text(
+                      child: isSingup
+                          ? const CircularProgressIndicator(
+                        color: Colors.white,
+                      )
+                          : const Text(
                         'SIGN UP',
                         style: TextStyle(
                             fontSize: 24,

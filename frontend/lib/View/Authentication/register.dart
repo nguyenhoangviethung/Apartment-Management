@@ -77,7 +77,7 @@ class _RegisterState extends State<Register> {
             TextButton(
               child: const Text("OK"),
               onPressed: () {
-                Navigator.of(context).pop(); // Đóng dialog
+                Navigator.of(context).pop(); 
                 if (title == "Registration Successful") {
                   Navigator.pushReplacement(
                     context,

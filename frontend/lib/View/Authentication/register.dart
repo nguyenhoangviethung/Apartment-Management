@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/login.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,7 +26,7 @@ class _RegisterState extends State<Register> {
     });
 
     if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      _showDialog("Registration Failed", "Please fill in all the fields!");
+      showinform(context,"Registration Failed", "Please fill in all the fields!");
       setState(() {
         isSingup = false;
       });
@@ -33,7 +34,7 @@ class _RegisterState extends State<Register> {
     }
 
     if (password != confirmPassword) {
-      _showDialog("Registration Failed", "Passwords do not match!");
+      showinform(context,"Registration Failed", "Passwords do not match!");
       setState(() {
         isSingup = false;
       });
@@ -58,39 +59,14 @@ class _RegisterState extends State<Register> {
     });
 
     if (response.statusCode == 200) {
-      _showDialog("Registration Successful", "You have successfully registered.");
+      showinform(context,"Registration Successful", "You have successfully registered.");
     } else if (response.statusCode == 400) {
-      _showDialog("Registration Failed", "User already exists.");
+      showinform(context,"Registration Failed", "User already exists.");
     } else {
-      _showDialog("Registration Failed", "Error: ${response.statusCode}");
+      showinform(context,"Registration Failed", "Error: ${response.statusCode}");
     }
   }
 
-  void _showDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop(); 
-                if (title == "Registration Successful") {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Login()),
-                  );
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

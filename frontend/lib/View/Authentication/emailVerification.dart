@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'resetPassword.dart';
-
+import 'package:http/http.dart' as http;
 import 'forgotPassword.dart';
 
 class EmailVerification extends StatefulWidget {
@@ -11,6 +11,33 @@ class EmailVerification extends StatefulWidget {
 }
 
 class _EmailVerificationState extends State<EmailVerification> {
+
+  Future<void> confirmEmail(String token) async {
+    const String urlBase = 'https://your-api-url.com/confirm_email';
+
+    try {
+      final response = await http.get(
+        Uri.parse('$urlBase/$token'), // Thêm token vào đường dẫn API
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Email xác nhận thành công
+        print('Email confirmation successful');
+        // Bạn có thể điều hướng người dùng hoặc hiển thị thông báo thành công
+      } else if (response.statusCode == 400) {
+        // Token không hợp lệ hoặc đã hết hạn
+        print('Invalid or expired token');
+        // Hiển thị thông báo lỗi cho người dùng
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      // Xử lý lỗi mạng hoặc các vấn đề khác
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

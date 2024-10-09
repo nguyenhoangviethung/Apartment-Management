@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/forgotPassword.dart';
 import 'package:frontend/View/Authentication/register.dart';
 import 'package:frontend/View/Home/home_page.dart';
@@ -21,7 +22,13 @@ class _LoginState extends State<Login> {
     setState(() {
       _islogin = true;
     });
-
+    if (username.isEmpty  || password.isEmpty) {
+      showinform(context, "Registration Failed", "Please fill in all the fields!");
+      setState(() {
+        _islogin = false;
+      });
+      return;
+    }
     try {
       final url = Uri.parse('https://apartment-management-kjj9.onrender.com/auth/login');
       final response = await http.post(
@@ -42,35 +49,9 @@ class _LoginState extends State<Login> {
 
       if (response.statusCode == 200) {
 
-        print('Login successful');
-
-        // Chuyển hướng ngay sau khi đăng nhập thành công
-        if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
-          // showDialog(
-          //   context: context,
-          //   builder: (BuildContext context) {
-          //     return AlertDialog(
-          //       title: const Text('Login success'),
-          //       content: const Text('Go to Home Page'),
-          //       actions: [
-          //         TextButton(
-          //           onPressed: () {
-          //             Navigator.of(context).pop(); // Đóng hộp thoại
-          //           },
-          //           child: const Text('ok'),
-          //         ),
-          //       ],
-          //     );
-          //   },
-          // );
-
-        }
-      } else {
-        print('Login failed, incorrect details');
+        showinform(context, 'Login Successful', '');
+      } else if(response.statusCode==403){
+        showinform(context, 'Login Failed', 'Icorrect Details');
 
       }
     } catch (error) {
@@ -89,12 +70,6 @@ class _LoginState extends State<Login> {
           },
           child: Stack(
             children: [
-              // Image.network(
-              //   'https://i.pinimg.com/564x/c3/4c/81/c34c81e2284e9bcaa20dbc20b91152c3.jpg',
-              //   fit: BoxFit.cover,
-              //   width: double.infinity,
-              //   height: double.infinity,
-              // ),
               SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

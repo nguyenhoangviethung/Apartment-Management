@@ -28,7 +28,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       return;
     }
 
-    const String url = 'https://apartment-management-kjj9.onrender.com/auth/forgot_password';
+    const String url = 'https://apartment-management-kjj9.onrender.com/auth/forgot-password';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -42,11 +42,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       setState(() {
         _isforgot=false;
       });
+      print(response.body);
+      print('wdwbdwd');
+      print(response.statusCode);
       if (response.statusCode == 200) {
+        print('123');
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const EmailVerification()));
       } else if (response.statusCode == 404) {
+        print('456');
         showinform(context, 'Failed', 'No account registered with the provided email');
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const EmailVerification()));// delete after
+        // Navigator.push(context, MaterialPageRoute(builder: (context)=>const EmailVerification()));// delete after
+      }else{
+        print('xwhdwd');
       }
     } catch (e) {
       print('Error occurred: $e');

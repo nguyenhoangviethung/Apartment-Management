@@ -10,6 +10,7 @@ from flask_login import login_user
 import re, dns.resolver
 import os
 from dotenv import load_dotenv
+import random
 
 load_dotenv()
 
@@ -18,7 +19,7 @@ def login_require(f):
     def wrap(*args, **kwargs):
         if g.get('user') is None:
             # unauthorized
-            return redirect(url_for('test'), code=403)
+            return jsonify({"message" : "Check login fail"}), 403
         return f(*args, **kwargs)
     
     return wrap
@@ -40,7 +41,7 @@ def check_attribute():
     else:
         g.user = None
 
-@auth_bp.route('/register', methods=('GET', 'POST'))
+@auth_bp.post('/register')
 def register():
     # print('register called')
     username = request.form.get('username')
@@ -132,7 +133,7 @@ def login_post():
         # check if the user actually exists
         if not user or not check_password_hash(user.password_hash, password):
             flash('Please check your login details and try again.')
-            return redirect(url_for('test'), code=403)
+            return jsonify({"message" : "login failed"}), 403
         
         session.clear()    
         session.setdefault('user_id', user.user_id)
@@ -149,22 +150,59 @@ def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
         
-        user = Users.query.filter_by(user_email=email).first()
-        if not user:
+        user = Users.query.filter_by(user_email=email).one_or_none()
+        if user is None:
             return jsonify({"message": "No account registered with this email!!"}), 404
-        mail = Mail(current_app)
-        msg = Message(
-            'Code for validation',
-            recipients=[email],  # email passed from the form
-            body='Your password reset code is: 123456',
-            sender = os.getenv('MAIL_USERNAME')
+        else:
+            validation_code = str(random.randint(1000, 9999))
+            session['validation_code'] = validation_code
+            session['reset_email'] = email
+
+            mail = Mail(current_app)
+            msg = Message(
+                'Code for validation',
+                recipients=[email],  # email passed from the form
+                body=f'Your password reset code is: {validation_code}',
+                sender = os.getenv('MAIL_USERNAME')
+            )
+
+            mail.send(msg)
+            flash('Reset code has been sent to your email!')
+
+            return jsonify({"message": "Mail sent successful"}), 200
+    
+@auth_bp.route('/validation-code', methods=['GET', 'POST'])
+def validation():
+    if request.method == 'POST':
+        input_code = request.form.get('code')
+
+        stored_code = session.get('validation_code')
+
+        # Check if the entered code matches the stored code
+        if input_code == stored_code:
+            flash('Code validated successfully! Now you can reset your password.')
+            session.pop('validation_code', None)
             
-        )
-        mail.send(msg)
-        user.set_password('123456')
+
+            return jsonify({"message": "validate successfully"}), 200  # Example: redirect to reset password page
+        else:
+            flash('Invalid code. Please try again.')
+            return jsonify({"message": "invalid code"})
+
+    return jsonify({"message" :"This is validation GET code api"}), 200
+
+@auth_bp.route('/reset-password', methods=['GET', 'POST'])
+def validation_code():
+    if request.method == 'POST':
+        new_password = request.form.get('new_password')
+        stored_email = session.get('reset_email')
+        
+        user = Users.query.filter_by(user_email=stored_email).first()
+        user.set_password(new_password)
+        
         db.session.commit()
-        flash('Reset code has been sent to your email!')
-        return jsonify({"message": "Mail sent successful"}), 200
+        session.pop('reset_email', None)
+        return jsonify({"message" :"Password has been reset!!!"}), 200
     
 @auth_bp.route('/logout')
 def logout():

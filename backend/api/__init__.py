@@ -10,7 +10,8 @@ from flask_cors import CORS
 def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_class)
-
+    CORS(app)
+    
     db.init_app(app)
     with app.app_context():
         db.create_all()
@@ -22,7 +23,7 @@ def create_app(config_class=Config):
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
 
-    CORS(app)
+    
     @login_manager.user_loader
     def load_user(user_id):
         return Users.query.get(user_id)

@@ -31,6 +31,10 @@ def create_app(config_class=Config):
     swagger_bp = get_swaggerui_blueprint(app.config.get('SWAGGER_URL'), app.config.get('API_URL'), config={'app_name': 'auth api'})
     app.register_blueprint(swagger_bp, url_prefix= app.config.get('SWAGGER_URL'))                                       
 
+    from api.admin import admin_bp
+    app.register_blueprint(admin_bp)
+
+
     @app.route('/')
     def test():
         return '<h1>THIS IS INDEX FROM INIT</h1>'

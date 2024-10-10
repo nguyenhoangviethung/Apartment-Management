@@ -1,19 +1,18 @@
 openapi: 3.0.0
 info:
-  title: auth api
-  description: API documentation for authentication
-  version: 1.0.0
+  title: "Authentication API"
+  description: "APIs for user authentication, including registration, login, forgot password, and password reset."
+  version: "1.0.1"
 servers:
   - url: http://localhost:5000
   - url: https://apartment-management-kjj9.onrender.com/
   - url: https://apartment-management-oy7f.onrender.com/
-
 paths:
   /auth/register:
     post:
-      summary: Register a new user
+      summary: "Register a new user"
+      description: "Registers a new user with a username, email, and password."
       requestBody:
-        description: User registration data
         required: true
         content:
           application/x-www-form-urlencoded:
@@ -22,36 +21,43 @@ paths:
               properties:
                 username:
                   type: string
-                password:
-                  type: string
+                  example: "john_doe"
                 email:
                   type: string
+                  example: "john@example.com"
+                password:
+                  type: string
+                  example: "password123"
       responses:
-        '200':
-          description: Registration success message
-        '400':
-          description: Registration failed, user already exists
-  
+        200:
+          description: "Confirmation email sent"
+        400:
+          description: "Username or email already exists"
+        500:
+          description: "Failed to send confirmation email"
+
   /auth/confirm_email/{token}:
     get:
-      summary: Confirm email address
+      summary: "Confirm user's email"
+      description: "Confirms the user's email via the token received."
       parameters:
-        - name: token
-          in: path
-          required: true
+        - in: path
+          name: token
           schema:
             type: string
+          required: true
+          description: "Email confirmation token"
       responses:
-        '200':
-          description: User registration successful
-        '400':
-          description: Invalid or expired token
+        200:
+          description: "User registration successful"
+        401:
+          description: "Invalid or expired token"
 
   /auth/login:
     post:
-      summary: Login to the system
+      summary: "User login"
+      description: "Allows a registered user to log in by providing username and password."
       requestBody:
-        description: User login data
         required: true
         content:
           application/x-www-form-urlencoded:
@@ -60,21 +66,24 @@ paths:
               properties:
                 username:
                   type: string
+                  example: "john_doe"
                 password:
                   type: string
+                  example: "password123"
                 remember:
                   type: boolean
+                  example: false
       responses:
-        '200':
-          description: Login successful
-        '403':
-          description: Login failed, incorrect details
+        200:
+          description: "Login successful"
+        403:
+          description: "Login failed, check credentials"
 
-  /auth/forgot-password:
+  /auth/forgot-password/:
     post:
-      summary: Send password reset email
+      summary: "Forgot password"
+      description: "Sends a validation code to the user's email to reset the password."
       requestBody:
-        description: Email for password reset
         required: true
         content:
           application/x-www-form-urlencoded:
@@ -83,15 +92,57 @@ paths:
               properties:
                 email:
                   type: string
+                  example: "john@example.com"
       responses:
-        '200':
-          description: Password reset email sent
-        '404':
-          description: No account registered with the provided email
-  
+        200:
+          description: "Validation code sent"
+        404:
+          description: "No account registered with this email"
+
+  /auth/validation-code:
+    post:
+      summary: "Validate the code"
+      description: "Validates the code sent to the user's email for password reset."
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  example: "1234"
+      responses:
+        200:
+          description: "Code validated successfully"
+        400:
+          description: "Invalid code"
+
+  /auth/reset-password:
+    post:
+      summary: "Reset password"
+      description: "Allows a user to reset their password after validating the code."
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                new_password:
+                  type: string
+                  example: "newpassword123"
+      responses:
+        200:
+          description: "Password has been reset"
+        404:
+          description: "No email stored in session"
+
   /auth/logout:
     get:
-      summary: Logout from the system
+      summary: "Logout"
+      description: "Logs out the current user and clears the session."
       responses:
-        '200':
-          description: Logout successful
+        200:
+          description: "Logout successful"

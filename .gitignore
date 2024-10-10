@@ -4,3 +4,4 @@
 *.env
 backend/src/ultralytics/
 venv/
+github/

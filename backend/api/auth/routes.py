@@ -145,7 +145,7 @@ def login_post():
         return jsonify({"message": "login successful"}), 200
     return jsonify({"message": "Login page loaded"}), 200
     
-@auth_bp.route('/forgot-password/', methods=['GET', 'POST'])
+@auth_bp.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')

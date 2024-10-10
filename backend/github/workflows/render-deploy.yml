@@ -1,5 +1,6 @@
 name: Deploy to Render with Gunicorn
-
+uses: JorgeLNJunior/render-deploy@v1.4.4
+            
 on:
   push:
     branches:

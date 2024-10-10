@@ -59,7 +59,7 @@ class _RegisterState extends State<Register> {
     });
 
     if (response.statusCode == 200) {
-      showinform(context,"Registration Successful", "You have successfully registered.");
+      showinform(context,"Registration Successful", "Check email to verify your account");
     } else if (response.statusCode == 400) {
       showinform(context,"Registration Failed", "User already exists.");
     } else {

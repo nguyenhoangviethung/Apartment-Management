@@ -24,7 +24,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       setState(() {
         _isforgot = false;
       });
-      showinform(context, '', "Please fill in all the fields!");
+      showinform(context, 'Invalid email', "Please fill in all the fields!");
       return;
     }
 
@@ -42,6 +42,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       setState(() {
         _isforgot=false;
       });
+      print(response.headers);
       print(response.body);
       print('wdwbdwd');
       print(response.statusCode);
@@ -50,7 +51,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const EmailVerification()));
       } else if (response.statusCode == 404) {
         print('456');
-        showinform(context, 'Failed', 'No account registered with the provided email');
+        showinform(context, 'Wrong email', 'No account registered with the provided email');
         // Navigator.push(context, MaterialPageRoute(builder: (context)=>const EmailVerification()));// delete after
       }else{
         print('xwhdwd');

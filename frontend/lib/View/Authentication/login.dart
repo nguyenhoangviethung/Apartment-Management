@@ -48,7 +48,10 @@ class _LoginState extends State<Login> {
       });
 
       if (response.statusCode == 200) {
-
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
         showinform(context, 'Login Successful', '');
       } else if(response.statusCode==403){
         showinform(context, 'Login Failed', 'Icorrect Details');

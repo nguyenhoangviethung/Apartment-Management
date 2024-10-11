@@ -187,7 +187,7 @@ def validation():
             return jsonify({"message": "validate successfully"}), 200  # Example: redirect to reset password page
         else:
             flash('Invalid code. Please try again.')
-            return jsonify({"message": "invalid code"})
+            return jsonify({"message": "invalid code"}), 400
 
     return jsonify({"message" :"This is validation GET code api"}), 200
 

@@ -89,6 +89,43 @@ paths:
         '404':
           description: No account registered with the provided email
   
+  /auth/validation-code:
+    post:
+      summary: Try to validate the code
+      requestBody:
+        description: The code which requires checking
+        required = true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                input_code:
+                  type: string
+      responses:
+        '200':  
+          description: validate successfully
+        '400':
+          description: invalid code 
+
+  /auth/reset-password:
+    post:
+      summary: Update the password in database
+      requestBody:
+        description: The new password
+        required = true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                new_password:
+                  type: string
+      responses:
+        '200':  
+          description: Password has been reset!!!
+        
+
   /auth/logout:
     get:
       summary: Logout from the system

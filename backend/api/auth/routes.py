@@ -189,7 +189,7 @@ def validation():
             flash('Invalid code. Please try again.')
             return jsonify({"message": "invalid code"}), 400
 
-    return jsonify({"message" :"This is validation GET code api"}), 200
+    
 
 @auth_bp.route('/reset-password', methods=['GET', 'POST'])
 def validation_code():

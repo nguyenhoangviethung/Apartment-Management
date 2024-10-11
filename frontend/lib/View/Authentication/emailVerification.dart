@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'resetPassword.dart';
 import 'package:http/http.dart' as http;
 import 'forgotPassword.dart';
@@ -11,30 +12,42 @@ class EmailVerification extends StatefulWidget {
 }
 
 class _EmailVerificationState extends State<EmailVerification> {
+  bool  _isload = false;
+  List<TextEditingController> controllers= List.generate(4, (index)=>TextEditingController());
 
-  Future<void> confirmEmail(String token) async {
-    const String urlBase = 'https://your-api-url.com/confirm_email';
-
-    try {
-      final response = await http.get(
-        Uri.parse('$urlBase/$token'), // Thêm token vào đường dẫn API
+  Future<void> validationcode(String code) async{
+    setState(() {
+      _isload=true;
+    });
+    if(code.isEmpty){
+      setState(() {
+        _isload=false;
+      });
+      showinform(context, 'Error', 'Please fill the code');
+      return;
+    }
+    String url='https://apartment-management-kjj9.onrender.com/auth/validation-code';
+    try{
+      final response= await http.post(
+        Uri.parse(url),
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
+        body: {
+          'code':code
+        }
       );
-
-      if (response.statusCode == 200) {
-        // Email xác nhận thành công
-        print('Email confirmation successful');
-        // Bạn có thể điều hướng người dùng hoặc hiển thị thông báo thành công
-      } else if (response.statusCode == 400) {
-        // Token không hợp lệ hoặc đã hết hạn
-        print('Invalid or expired token');
-        // Hiển thị thông báo lỗi cho người dùng
+      setState(() {
+        _isload=false;
+      });
+      print(response.statusCode);
+      if(response.statusCode==200){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const ResetPassword()));
+      }else if(response.statusCode==400){
+        showinform(context, 'Error', 'Invalid code');
       }
-    } catch (e) {
-      print('Error occurred: $e');
-      // Xử lý lỗi mạng hoặc các vấn đề khác
+    }catch(e){
+      print('Error occurred:  $e');
     }
   }
 
@@ -93,13 +106,13 @@ class _EmailVerificationState extends State<EmailVerification> {
                 style: TextStyle(fontSize: 18, color: Colors.black54),
               ),
               const SizedBox(height: 30),
-              // Mã code 4 số
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(4, (index) {
                   return SizedBox(
                     width: 70,
                     child: TextFormField(
+                      controller: controllers[index],
                       textAlign: TextAlign.center,
                       keyboardType: TextInputType.number,
                       maxLength: 1,
@@ -118,18 +131,14 @@ class _EmailVerificationState extends State<EmailVerification> {
                 }),
               ),
               const SizedBox(height: 10),
-              TextButton(
-                onPressed: () {
-                  // Hành động khi nhấn nút "Resend"
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'If you don\'t recieve code: ',
-                      style: TextStyle(fontSize: 18, color: Colors.black45),
-                    ),
-                    Builder(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'If you don\'t recieve code: ',
+                    style: TextStyle(fontSize: 18, color: Colors.black45),
+                  ),
+                  Builder(
                       builder: (context) {
                         return GestureDetector(
                           child: const Text(
@@ -144,9 +153,8 @@ class _EmailVerificationState extends State<EmailVerification> {
                           },
                         );
                       }
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               const SizedBox(height: 30),
               // Nút "Verify and Proceed"
@@ -161,12 +169,14 @@ class _EmailVerificationState extends State<EmailVerification> {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ResetPassword()),
-                    );
+                    String _code='';
+                    for(var controller in controllers){
+                      _code+= controller.text;
+                    }
+                    print('Code: $_code');
+                    validationcode(_code);
                   },
-                  child: const Text(
+                  child: _isload? const CircularProgressIndicator(color: Colors.white,): const Text(
                     'Verify and Proceed',
                     style: TextStyle(
                       fontSize: 20,

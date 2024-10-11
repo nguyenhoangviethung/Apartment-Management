@@ -42,19 +42,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       setState(() {
         _isforgot=false;
       });
-      print(response.headers);
-      print(response.body);
-      print('wdwbdwd');
-      print(response.statusCode);
       if (response.statusCode == 200) {
-        print('123');
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const EmailVerification()));
       } else if (response.statusCode == 404) {
-        print('456');
         showinform(context, 'Wrong email', 'No account registered with the provided email');
-        // Navigator.push(context, MaterialPageRoute(builder: (context)=>const EmailVerification()));// delete after
       }else{
-        print('xwhdwd');
       }
     } catch (e) {
       print('Error occurred: $e');

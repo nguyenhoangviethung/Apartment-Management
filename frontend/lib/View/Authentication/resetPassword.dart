@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/login.dart';
-
+import 'package:http/http.dart'as http;
 import 'emailVerification.dart';
 
 class ResetPassword extends StatefulWidget {
@@ -13,6 +14,51 @@ class ResetPassword extends StatefulWidget {
 class _ResetPasswordState extends State<ResetPassword> {
   bool _showpass = false;
   bool _showConfirmPass = false;
+  bool _isload=false;
+  final _pass =TextEditingController();
+  final _confirmpass=TextEditingController();
+
+  Future<void> resetpassword(String new_password, String confirmpass)async{
+    setState(() {
+      _isload=true;
+    });
+    if(new_password!=confirmpass){
+      setState(() {
+        _isload=false;
+      });
+      showinform(context, 'Error', 'Passwords do not match!');
+      return;
+    }
+    if(new_password.isEmpty || confirmpass.isEmpty){
+      setState(() {
+        _isload=false;
+      });
+      showinform(context, 'Error', 'Please fill in all the fields!');
+      return;
+    }
+    String url='https://apartment-management-kjj9.onrender.com/auth/reset-password';
+    try{
+      final response =await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'new_password': new_password,
+        }
+      );
+      print(response.statusCode);
+      if(response.statusCode==200){
+        showinform(context, 'Successful', 'Password has been reset');
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
+      }else if(response.statusCode==404){
+        showinform(context, 'Error', 'Try again');
+      }
+    }catch(e){
+      print('Error : $e');
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +126,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                     alignment: Alignment.centerRight,
                     children: [
                       TextFormField(
+                        controller: _pass,
                         style: const TextStyle(fontSize: 18),
                         obscureText: !_showpass,
                         decoration: InputDecoration(
@@ -109,6 +156,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                       alignment: Alignment.centerRight,
                       children: [
                         TextFormField(
+                          controller: _confirmpass,
                           style: const TextStyle(fontSize: 18),
                           obscureText: !_showConfirmPass,
                           decoration: InputDecoration(
@@ -146,12 +194,9 @@ class _ResetPasswordState extends State<ResetPassword> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const Login()),
-                            );
+                            resetpassword(_pass.text, _confirmpass.text);
                           },
-                          child: const Text(
+                          child: _isload? CircularProgressIndicator(color: Colors.white,): const Text(
                             'Continue',
                             style: TextStyle(
                               fontSize: 20,

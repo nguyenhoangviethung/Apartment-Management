@@ -179,17 +179,13 @@ def validation():
         stored_code = session.get('validation_code')
 
         # Check if the entered code matches the stored code
-        if input_code == stored_code:
+        if input_code != stored_code:
+            flash('Invalid code. Please try again.')
+            return jsonify({"message": "invalid code"}), 400
+        else:
             flash('Code validated successfully! Now you can reset your password.')
             session.pop('validation_code', None)
-            
-
             return jsonify({"message": "validate successfully"}), 200  # Example: redirect to reset password page
-        else:
-            flash('Invalid code. Please try again.')
-            return jsonify({"message": "invalid code"})
-
-    return jsonify({"message" :"This is validation GET code api"}), 200
 
 @auth_bp.route('/reset-password', methods=['GET', 'POST'])
 def validation_code():

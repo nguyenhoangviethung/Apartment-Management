@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/login.dart';
 import 'package:http/http.dart' as http;
-import 'emailVerification.dart';
+import 'email_verification.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});

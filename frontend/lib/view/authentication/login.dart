@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Authentication/common/show_dialog.dart';
-import 'package:frontend/View/Authentication/forgotPassword.dart';
+import 'package:frontend/View/Authentication/forgot_password.dart';
 import 'package:frontend/View/Authentication/register.dart';
-import 'package:frontend/View/Home/home_page.dart';
+import 'package:frontend/View/Home/main_home.dart';
 import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {

@@ -94,37 +94,36 @@ paths:
                   type: string
                   example: "john@example.com"
       responses:
-        200:
-          description: "Validation code sent"
-        404:
-          description: "No account registered with this email"
-
+        '200':
+          description: Password reset email sent
+        '404':
+          description: No account registered with the provided email
+  
   /auth/validation-code:
     post:
-      summary: "Validate the code"
-      description: "Validates the code sent to the user's email for password reset."
+      summary: Try to validate the code
       requestBody:
-        required: true
+        description: The code which requires checking
+        required = true
         content:
           application/x-www-form-urlencoded:
             schema:
               type: object
               properties:
-                code:
+                input_code:
                   type: string
-                  example: "1234"
       responses:
-        200:
-          description: "Code validated successfully"
-        400:
-          description: "Invalid code"
+        '200':  
+          description: validate successfully
+        '400':
+          description: invalid code 
 
   /auth/reset-password:
     post:
-      summary: "Reset password"
-      description: "Allows a user to reset their password after validating the code."
+      summary: Update the password in database
       requestBody:
-        required: true
+        description: The new password
+        required = true
         content:
           application/x-www-form-urlencoded:
             schema:
@@ -132,12 +131,10 @@ paths:
               properties:
                 new_password:
                   type: string
-                  example: "newpassword123"
       responses:
-        200:
-          description: "Password has been reset"
-        404:
-          description: "No email stored in session"
+        '200':  
+          description: Password has been reset!!!
+        
 
   /auth/logout:
     get:

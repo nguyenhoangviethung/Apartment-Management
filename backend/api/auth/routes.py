@@ -12,6 +12,7 @@ import os
 from dotenv import load_dotenv
 import random
 
+
 load_dotenv()
 
 def login_require(f):
@@ -155,9 +156,16 @@ def forgot_password():
             return jsonify({"message": "No account registered with this email!!"}), 404
         else:
             validation_code = str(random.randint(1000, 9999))
-            session['validation_code'] = validation_code
-            session['reset_email'] = email
-
+            # session['validation_code'] = validation_code
+            # session['reset_email'] = email
+            token = jwt.encode(
+                 payload = {
+                'code':validation_code,        
+                'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)
+            },
+            key = current_app.config['SECRET_KEY'],
+            algorithm='HS256'
+            )
             mail = Mail(current_app)
             msg = Message(
                 'Code for validation',
@@ -167,29 +175,27 @@ def forgot_password():
             )
 
             mail.send(msg)
-            flash('Reset code has been sent to your email!')
-
-            return jsonify({"message": "Mail sent successful"}), 200
+            return jsonify({'token': token}), 200
     
 @auth_bp.route('/validation-code', methods=['GET', 'POST'])
 def validation():
     if request.method == 'POST':
         input_code = request.form.get('code')
-
-        stored_code = session.get('validation_code')
-
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+        else:
+            token = None
+            
+        data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms='HS256')    
+        stored_code = data.get('code')
         # Check if the entered code matches the stored code
         if input_code == stored_code:
-            flash('Code validated successfully! Now you can reset your password.')
-            session.pop('validation_code', None)
-            
-
+            # session.pop('validation_code', None)
             return jsonify({"message": "validate successfully"}), 200  # Example: redirect to reset password page
         else:
-            flash('Invalid code. Please try again.')
-            return jsonify({"message": "invalid code"})
+            return jsonify({"message": "invalid code"}), 400
 
-    return jsonify({"message" :"This is validation GET code api"}), 200
 
 @auth_bp.route('/reset-password', methods=['GET', 'POST'])
 def validation_code():

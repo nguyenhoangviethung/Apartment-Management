@@ -114,19 +114,22 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                     ),
 
                     const SizedBox(height: 20), // Khoảng cách giữa hàng tìm kiếm và lưới
-                    GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // Số cột trong lưới
-                        childAspectRatio: 0.75, // Tỷ lệ chiều rộng/chiều cao của mỗi card
-                        crossAxisSpacing: 10.0, // Khoảng cách giữa các cột
-                        mainAxisSpacing: 10.0, // Khoảng cách giữa các hàng
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: GridView.builder(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1, // Số cột trong lưới
+                          childAspectRatio: 3.0, // Tỷ lệ chiều rộng/chiều cao của mỗi card
+                          // crossAxisSpacing: 10.0, // Khoảng cách giữa các cột
+                          mainAxisSpacing: 10.0, // Khoảng cách giữa các hàng
+                        ),
+                        itemCount: 10, // Số lượng card
+                        itemBuilder: (context, index) {
+                          return ResidentCard(name: 'Name', room: 'Room', phone: 'phone',); // Thay thế bằng ResidentCard của bạn
+                        },
+                        physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
+                        shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
                       ),
-                      itemCount: 10, // Số lượng card
-                      itemBuilder: (context, index) {
-                        return ResidentCard(text: 'Card ${index + 1}',); // Thay thế bằng ResidentCard của bạn
-                      },
-                      physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
-                      shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
                     ),
                   ],
                 ),

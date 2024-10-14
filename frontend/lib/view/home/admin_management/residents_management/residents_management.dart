@@ -69,7 +69,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                                   print('Button Search pressed!');
                                 },
                               ),
-            
+
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10.0), // Góc bo tròn
                                 borderSide: const BorderSide(
@@ -92,7 +92,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                                 ),
                               ),
                             ),
-            
+
                           ),
                         ),
                         const SizedBox(
@@ -124,7 +124,8 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                         ),
                         itemCount: 10, // Số lượng card
                         itemBuilder: (context, index) {
-                          return const ResidentCard(name: 'Do Xuan Chien', room: 'vip-909', phone: '0999999999',); // Thay thế bằng ResidentCard của bạn
+                          return const ResidentCard(name: 'Do Xuan Chien', room: 'vip-909', phoneNumber: '0999999999',
+                            dob: '10/04/2004', age: '20', status: 'Single', idNumber: '102',);
                         },
                         physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
                         shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước

@@ -28,14 +28,15 @@ class _ResidentCardState extends State<ResidentCard> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
-                const Icon(Icons.person_pin_outlined, color: Colors.blue, size: 45,), // Biểu tượng 1
+                Icon(Icons.person_pin_outlined, color: Colors.blue[500]!, size: 45,), // Biểu tượng 1
                 const SizedBox(width: 8), // Khoảng cách giữa icon và text
                 Text(
                   widget.name,
-                  style: const TextStyle(fontSize: 24, color: Colors.black87),
+                  style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -43,24 +44,30 @@ class _ResidentCardState extends State<ResidentCard> {
               padding: const EdgeInsets.only(left: 10),
               child: Row(
                 children: [
-                  Icon(Icons.home_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
-                  const SizedBox(width: 10),
-                  Text(
-                    widget.room,
-                    style: const TextStyle(fontSize: 17, color: Colors.black87),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Icon(Icons.home_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
+                        const SizedBox(width: 10),
+                        Text(
+                          widget.room,
+                          style: const TextStyle(fontSize: 17, color: Colors.black87),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Row(
-                children: [
-                  Icon(Icons.call_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
-                  const SizedBox(width: 10),
-                  Text(
-                    widget.phone,
-                    style: const TextStyle(fontSize: 17, color: Colors.black87),
+
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Icon(Icons.call_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
+                        const SizedBox(width: 10),
+                        Text(
+                          widget.phone,
+                          style: const TextStyle(fontSize: 17, color: Colors.black87),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

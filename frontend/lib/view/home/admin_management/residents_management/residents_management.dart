@@ -119,13 +119,12 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                       child: GridView.builder(
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 1, // Số cột trong lưới
-                          childAspectRatio: 3.0, // Tỷ lệ chiều rộng/chiều cao của mỗi card
-                          // crossAxisSpacing: 10.0, // Khoảng cách giữa các cột
-                          mainAxisSpacing: 10.0, // Khoảng cách giữa các hàng
+                          childAspectRatio: 3.5, // Tỷ lệ chiều rộng/chiều cao của mỗi card
+                          mainAxisSpacing: 20.0, // Khoảng cách giữa các hàng
                         ),
                         itemCount: 10, // Số lượng card
                         itemBuilder: (context, index) {
-                          return ResidentCard(name: 'Name', room: 'Room', phone: 'phone',); // Thay thế bằng ResidentCard của bạn
+                          return const ResidentCard(name: 'Do Xuan Chien', room: 'vip-909', phone: '0999999999',); // Thay thế bằng ResidentCard của bạn
                         },
                         physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
                         shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước

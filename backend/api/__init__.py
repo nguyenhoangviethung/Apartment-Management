@@ -33,6 +33,8 @@ def create_app(config_class=Config):
     from api.admin import admin_bp
     app.register_blueprint(admin_bp)
 
+    from api.pay import pay_bp
+    app.register_blueprint(pay_bp)
 
     @app.route('/')
     def test():

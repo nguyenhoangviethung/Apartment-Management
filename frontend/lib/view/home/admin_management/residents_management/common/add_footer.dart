@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AddFooter extends StatelessWidget {
-  AddFooter({super.key, required this.addActivity});
+  AddFooter({super.key, required this.addNewResident});
 
-  final Function(String) addActivity;
+  final Function addNewResident;
 
   // Tạo các controller riêng cho mỗi trường nhập liệu
   final TextEditingController nameController = TextEditingController();
@@ -24,17 +24,19 @@ class AddFooter extends StatelessWidget {
     final room = roomController.text.trim();
     final phone = phoneController.text.trim();
 
-    if (name.isNotEmpty) {
-      addActivity(name);
-      // Xóa giá trị sau khi thêm
-      nameController.clear();
-      dobController.clear();
-      idController.clear();
-      ageController.clear();
-      statusController.clear();
-      roomController.clear();
-      phoneController.clear();
-    }
+    addNewResident(name, dob, id, age, status, room, phone);
+
+    // if (name.isNotEmpty) {
+    //   addNewResident(name);
+    //   // Xóa giá trị sau khi thêm
+    //   nameController.clear();
+    //   dobController.clear();
+    //   idController.clear();
+    //   ageController.clear();
+    //   statusController.clear();
+    //   roomController.clear();
+    //   phoneController.clear();
+    // }
   }
 
   @override

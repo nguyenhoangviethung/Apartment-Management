@@ -3,6 +3,8 @@ import 'package:frontend/View/Home/main_home.dart';
 import 'package:frontend/view/home/admin_management/residents_management/add_residents/add_residents.dart';
 import 'package:frontend/view/home/admin_management/residents_management/common/resident_card.dart';
 
+import 'common/resident_items.dart';
+
 class ResidentsManagement extends StatefulWidget {
   const ResidentsManagement({super.key});
 
@@ -11,6 +13,8 @@ class ResidentsManagement extends StatefulWidget {
 }
 
 class _ResidentsManagementState extends State<ResidentsManagement> {
+  final ResidentItems item = ResidentItems(name: 'Do Xuan Chien', room: 'vip-909', phoneNumber: '0999999999',
+                                    dob: '10/04/2004', age: '20', status: 'Single', idNumber: '102',);
   @override
   Widget build(BuildContext context) {
     return  GestureDetector(
@@ -127,8 +131,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                       ),
                       itemCount: 10, // Số lượng card
                       itemBuilder: (context, index) {
-                        return const ResidentCard(name: 'Do Xuan Chien', room: 'vip-909', phoneNumber: '0999999999',
-                          dob: '10/04/2004', age: '20', status: 'Single', idNumber: '102',);
+                        return ResidentCard(item: item);
                       },
                       physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
                       shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước

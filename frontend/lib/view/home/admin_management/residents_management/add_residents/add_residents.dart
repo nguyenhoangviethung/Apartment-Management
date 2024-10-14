@@ -14,9 +14,9 @@ class AddResidents extends StatefulWidget {
 class _AddResidentsState extends State<AddResidents> {
   final List<ResidentItems> items = [];
 
-  void handleAddActivity(String name) {
-    final newItem = ResidentItems(name: name, dob: '', idNumber: '',
-        age: '', status: '', room: '', phoneNumber: '');
+  void handleAddNewResident(String name, String dob, String idNumber, String age, String status, String room, String phoneNumber) {
+    final newItem = ResidentItems(name: name, dob: dob, idNumber: idNumber,
+        age: age, status: status, room: room, phoneNumber: phoneNumber);
     setState(() {
       items.add(newItem);
     });
@@ -81,8 +81,7 @@ class _AddResidentsState extends State<AddResidents> {
             horizontal: 30,
           ),
           child: Column(
-            children: items.map((item) => const ResidentCard(name: 'name', dob: 'dob', idNumber: 'idNumber',
-                age: 'age', status: 'status', room: 'room', phoneNumber: 'phoneNumber')).toList(),
+            children: items.map((item) => ResidentCard(item: item)).toList(),
           ),
 
 
@@ -92,7 +91,7 @@ class _AddResidentsState extends State<AddResidents> {
             showModalBottomSheet(
                 context: context, builder: (
                 BuildContext context) {
-              return AddFooter(addActivity: handleAddActivity,);
+              return AddFooter(addNewResident: handleAddNewResident,);
             }
             );
           },

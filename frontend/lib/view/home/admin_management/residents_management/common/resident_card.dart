@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/admin_management/residents_management/common/resident_info.dart';
-
+import 'package:frontend/view/home/admin_management/residents_management/common/resident_items.dart';
 class ResidentCard extends StatefulWidget {
-  final String name;
-  final String dob;
-  final String idNumber;
-  final String age;
-  final String status;
-  final String room;
-  final String phoneNumber;
-
-  const ResidentCard({
-    super.key,
-    required this.name,
-    required this.dob,
-    required this.idNumber,
-    required this.age,
-    required this.status,
-    required this.room,
-    required this.phoneNumber,
-  });
+  // final String name;
+  // final String dob;
+  // final String idNumber;
+  // final String age;
+  // final String status;
+  // final String room;
+  // final String phoneNumber;
+  //
+  // const ResidentCard({
+  //   super.key,
+  //   required this.name,
+  //   required this.dob,
+  //   required this.idNumber,
+  //   required this.age,
+  //   required this.status,
+  //   required this.room,
+  //   required this.phoneNumber,
+  // });
+  final ResidentItems item;
+  const ResidentCard({super.key, required this.item});
 
   @override
   State<ResidentCard> createState() => _ResidentCardState();
@@ -33,8 +35,8 @@ class _ResidentCardState extends State<ResidentCard> {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return ResidentInfo(name: widget.name, dob: widget.dob, idNumber: widget.idNumber,
-                  age: widget.age, status: widget.status, room: widget.room, phoneNumber: widget.phoneNumber);
+              return ResidentInfo(name: widget.item.name, dob: widget.item.dob, idNumber: widget.item.idNumber,
+                  age: widget.item.age, status: widget.item.status, room: widget.item.room, phoneNumber: widget.item.phoneNumber);
             }
         );
       },
@@ -54,7 +56,7 @@ class _ResidentCardState extends State<ResidentCard> {
                   Icon(Icons.person_pin_outlined, color: Colors.blue[500]!, size: 45,), // Biểu tượng 1
                   const SizedBox(width: 8), // Khoảng cách giữa icon và text
                   Text(
-                    widget.name,
+                    widget.item.name,
                     style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -69,7 +71,7 @@ class _ResidentCardState extends State<ResidentCard> {
                           Icon(Icons.home_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
                           const SizedBox(width: 10),
                           Text(
-                            widget.room,
+                            widget.item.room,
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],
@@ -82,7 +84,7 @@ class _ResidentCardState extends State<ResidentCard> {
                           Icon(Icons.call_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
                           const SizedBox(width: 10),
                           Text(
-                            widget.phoneNumber,
+                            widget.item.phoneNumber,
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],

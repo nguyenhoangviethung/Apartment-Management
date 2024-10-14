@@ -1,0 +1,122 @@
+import 'package:flutter/material.dart';
+
+class AddFooter extends StatelessWidget {
+  AddFooter({super.key, required this.addActivity});
+
+  final Function(String) addActivity;
+
+  // Tạo các controller riêng cho mỗi trường nhập liệu
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController dobController = TextEditingController();
+  final TextEditingController idController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController statusController = TextEditingController();
+  final TextEditingController roomController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+
+  void handleOnClick() {
+    // Lấy giá trị từ tất cả các trường nhập liệu
+    final name = nameController.text.trim();
+    final dob = dobController.text.trim();
+    final id = idController.text.trim();
+    final age = ageController.text.trim();
+    final status = statusController.text.trim();
+    final room = roomController.text.trim();
+    final phone = phoneController.text.trim();
+
+    if (name.isNotEmpty) {
+      addActivity(name);
+      // Xóa giá trị sau khi thêm
+      nameController.clear();
+      dobController.clear();
+      idController.clear();
+      ageController.clear();
+      statusController.clear();
+      roomController.clear();
+      phoneController.clear();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 350, // Tăng chiều cao nếu cần
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildTextField('Enter name', nameController),
+            const SizedBox(height: 16),
+            _buildTextField('Enter date of birth', dobController),
+            const SizedBox(height: 16),
+            _buildTextField('Enter id number', idController),
+            const SizedBox(height: 16),
+            _buildTextField('Enter age', ageController),
+            const SizedBox(height: 16),
+            _buildTextField('Enter status', statusController),
+            const SizedBox(height: 16),
+            _buildTextField('Enter room', roomController),
+            const SizedBox(height: 16),
+            _buildTextField('Enter phone number', phoneController),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: handleOnClick,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: const Text(
+                'Add',
+                style: TextStyle(
+                  fontFamily: 'Times New Roman',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.blue, width: 2),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.grey, width: 1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      style: const TextStyle(
+        fontFamily: 'Times New Roman',
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+      ),
+    );
+  }
+}

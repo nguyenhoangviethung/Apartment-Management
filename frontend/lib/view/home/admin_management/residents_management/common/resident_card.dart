@@ -2,24 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/view/home/admin_management/residents_management/common/resident_info.dart';
 import 'package:frontend/view/home/admin_management/residents_management/common/resident_items.dart';
 class ResidentCard extends StatefulWidget {
-  // final String name;
-  // final String dob;
-  // final String idNumber;
-  // final String age;
-  // final String status;
-  // final String room;
-  // final String phoneNumber;
-  //
-  // const ResidentCard({
-  //   super.key,
-  //   required this.name,
-  //   required this.dob,
-  //   required this.idNumber,
-  //   required this.age,
-  //   required this.status,
-  //   required this.room,
-  //   required this.phoneNumber,
-  // });
   final ResidentItems item;
   const ResidentCard({super.key, required this.item});
 

@@ -80,10 +80,19 @@ class _AddResidentsState extends State<AddResidents> {
             vertical: 25,
             horizontal: 30,
           ),
-          child: Column(
-            children: items.map((item) => ResidentCard(item: item)).toList(),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1, // Số cột trong lưới
+              childAspectRatio: 3.5, // Tỷ lệ chiều rộng/chiều cao của mỗi card
+              mainAxisSpacing: 20.0, // Khoảng cách giữa các hàng
+            ),
+            itemCount: items.length, // Sử dụng số lượng phần tử thực tế
+            itemBuilder: (context, index) {
+              return ResidentCard(item: items[index]); // Sử dụng items[index] để lấy từng phần tử
+            },
+            physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
+            shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
           ),
-
 
         ),
         floatingActionButton: FloatingActionButton(

@@ -19,47 +19,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   bool _isforgot =false;
 
 
-  // Future<void> _forgotpass(String email) async {
-  //   setState(() {
-  //     _isforgot=true;
-  //   });
-  //   if(email.isEmpty){
-  //     setState(() {
-  //       _isforgot = false;
-  //     });
-  //     showinform(context, 'Invalid email', "Please fill in all the fields!");
-  //     return;
-  //   }
-  //
-  //   const String url = 'https://apartment-management-kjj9.onrender.com/auth/forgot-password';
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(url),
-  //       headers: {
-  //         'Content-Type': 'application/x-www-form-urlencoded',
-  //       },
-  //       body: {
-  //         'email': email,
-  //       },
-  //     );
-  //     setState(() {
-  //       _isforgot=false;
-  //     });
-  //     print(response.statusCode);
-  //     if (response.statusCode == 200) {
-  //       // final token=jsonDecode(response.body)['token'];
-  //       // SharedPreferences prefs= await SharedPreferences.getInstance();
-  //       // await prefs.setString('token', token);
-  //
-  //       Navigator.push(context, MaterialPageRoute(builder: (context)=>const EmailVerification()));
-  //     } else if (response.statusCode == 404) {
-  //       showinform(context, 'Wrong email', 'No account registered with the provided email');
-  //     }else{
-  //     }
-  //   } catch (e) {
-  //     print('Error occurred: $e');
-  //   }
-  // }
+
 
   Future<void> _forgotpass(String email) async {
     setState(() {
@@ -98,8 +58,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           final token = responseData['token'];
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token);
-
-          // Chuyển đến EmailVerification
           Navigator.push(context, MaterialPageRoute(builder: (context) => const EmailVerification()));
         } else {
           showinform(context, 'Error', 'Token not found in response');

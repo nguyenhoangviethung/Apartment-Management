@@ -45,6 +45,7 @@ class _EmailVerificationState extends State<EmailVerification> {
         _isload=false;
       });
       print(response.statusCode);
+      print('$token');
       if(response.statusCode==200){
         Navigator.push(context, MaterialPageRoute(builder: (context) => const ResetPassword()));
       }else if(response.statusCode==400){

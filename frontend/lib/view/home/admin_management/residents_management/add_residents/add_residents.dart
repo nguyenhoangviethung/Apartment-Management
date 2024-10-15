@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/admin_management/residents_management/add_residents/add_footer.dart';
 import 'package:frontend/view/home/admin_management/residents_management/common/resident_card.dart';
-import 'package:frontend/view/home/admin_management/residents_management/common/resident_items.dart';
+import 'package:frontend/view/home/admin_management/residents_management/common/resident_item.dart';
 import 'package:frontend/view/home/admin_management/residents_management/residents_management.dart';
 import 'package:frontend/view/home/admin_management/residents_management/common/show_dialog.dart';
 
@@ -13,10 +13,10 @@ class AddResidents extends StatefulWidget {
 }
 
 class _AddResidentsState extends State<AddResidents> {
-  final List<ResidentItems> items = [];
+  final List<ResidentItem> items = [];
 
   void handleAddNewResident(String name, String dob, String idNumber, String age, String status, String room, String phoneNumber) {
-    final newItem = ResidentItems(name: name, dob: dob, idNumber: idNumber,
+    final newItem = ResidentItem(name: name, dob: dob, idNumber: idNumber,
         age: age, status: status, room: room, phoneNumber: phoneNumber);
     setState(() {
       items.add(newItem);

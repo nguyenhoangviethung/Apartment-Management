@@ -19,11 +19,15 @@ class AddFooter extends StatelessWidget {
     // Lấy giá trị từ tất cả các trường nhập liệu
     final name = nameController.text.trim();
     final dob = dobController.text.trim();
-    final id = idController.text.trim();
+    var id = idController.text.trim();
     final age = ageController.text.trim();
     final status = statusController.text.trim();
     final room = roomController.text.trim();
     final phone = phoneController.text.trim();
+
+    if(id == '') {
+      id = DateTime.now().toString();
+    }
 
     addNewResident(name, dob, id, age, status, room, phone);
 

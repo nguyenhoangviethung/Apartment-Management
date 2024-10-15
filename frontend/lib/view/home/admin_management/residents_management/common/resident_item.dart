@@ -1,4 +1,4 @@
-class ResidentItems {
+class ResidentItem {
   final String name;
   final String dob;
   final String idNumber;
@@ -7,7 +7,7 @@ class ResidentItems {
   final String room;
   final String phoneNumber;
 
-  const ResidentItems({
+  const ResidentItem({
     required this.name,
     required this.dob,
     required this.idNumber,

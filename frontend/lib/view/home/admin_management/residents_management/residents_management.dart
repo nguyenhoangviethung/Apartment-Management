@@ -3,7 +3,7 @@ import 'package:frontend/View/Home/main_home.dart';
 import 'package:frontend/view/home/admin_management/residents_management/add_residents/add_residents.dart';
 import 'package:frontend/view/home/admin_management/residents_management/common/resident_card.dart';
 
-import 'common/resident_items.dart';
+import 'common/resident_item.dart';
 
 class ResidentsManagement extends StatefulWidget {
   const ResidentsManagement({super.key});
@@ -13,7 +13,7 @@ class ResidentsManagement extends StatefulWidget {
 }
 
 class _ResidentsManagementState extends State<ResidentsManagement> {
-  final ResidentItems item = const ResidentItems(
+  final ResidentItem item = const ResidentItem(
     name: 'Do Xuan Chien',
     room: 'vip-909',
     phoneNumber: '0999999999',
@@ -23,7 +23,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
     idNumber: '102',
   );
 
-  final List<ResidentItems> items = [];
+  final List<ResidentItem> items = [];
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
 
     // Thêm 10 lần giá trị của item vào items
     for (int i = 0; i < 10; i++) {
-      items.add(ResidentItems(
+      items.add(ResidentItem(
         name: '${item.name} $i', // Thêm số thứ tự vào tên để phân biệt
         room: item.room,
         phoneNumber: item.phoneNumber,

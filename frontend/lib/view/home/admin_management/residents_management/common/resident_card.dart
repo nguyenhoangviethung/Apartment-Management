@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/admin_management/residents_management/common/resident_info.dart';
-import 'package:frontend/view/home/admin_management/residents_management/common/resident_items.dart';
+import 'package:frontend/view/home/admin_management/residents_management/common/resident_item.dart';
 class ResidentCard extends StatefulWidget {
-  final ResidentItems item;
+  final ResidentItem item;
   final Function(String) onDelete; // Thêm tham số callback
 
   const ResidentCard({super.key, required this.item, required this.onDelete});

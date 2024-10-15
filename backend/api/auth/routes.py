@@ -214,7 +214,7 @@ def validation_code():
             return jsonify({"message": "Token expired"}), 401
         except jwt.InvalidTokenError:
             return jsonify({"message": "Invalid token"}), 401
-        stored_email = data.get['email']
+        stored_email = data.get('email')
         
         user = Users.query.filter_by(user_email=stored_email).first()
         user.set_password(new_password)

@@ -13,8 +13,42 @@ class ResidentsManagement extends StatefulWidget {
 }
 
 class _ResidentsManagementState extends State<ResidentsManagement> {
-  final ResidentItems item = ResidentItems(name: 'Do Xuan Chien', room: 'vip-909', phoneNumber: '0999999999',
-                                    dob: '10/04/2004', age: '20', status: 'Single', idNumber: '102',);
+  final ResidentItems item = const ResidentItems(
+    name: 'Do Xuan Chien',
+    room: 'vip-909',
+    phoneNumber: '0999999999',
+    dob: '10/04/2004',
+    age: '20',
+    status: 'Single',
+    idNumber: '102',
+  );
+
+  final List<ResidentItems> items = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Thêm 10 lần giá trị của item vào items
+    for (int i = 0; i < 10; i++) {
+      items.add(ResidentItems(
+        name: '${item.name} $i', // Thêm số thứ tự vào tên để phân biệt
+        room: item.room,
+        phoneNumber: item.phoneNumber,
+        dob: item.dob,
+        age: item.age,
+        status: item.status,
+        idNumber: '${int.parse(item.idNumber) + i}', // Tạo ID khác nhau
+      ));
+    }
+  }
+
+  void handleDeleteActivity(String id) {
+    setState(() {
+      items.removeWhere((item) => item.idNumber == id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return  GestureDetector(
@@ -129,9 +163,13 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                         childAspectRatio: 3.5, // Tỷ lệ chiều rộng/chiều cao của mỗi card
                         mainAxisSpacing: 20.0, // Khoảng cách giữa các hàng
                       ),
-                      itemCount: 10, // Số lượng card
+                      itemCount: items.length, // Số lượng card
                       itemBuilder: (context, index) {
-                        return ResidentCard(item: item);
+                        // return ResidentCard(item: item);
+                        return ResidentCard(
+                          item: items[index],
+                          onDelete: handleDeleteActivity, // Truyền callback
+                        );
                       },
                       physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
                       shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước

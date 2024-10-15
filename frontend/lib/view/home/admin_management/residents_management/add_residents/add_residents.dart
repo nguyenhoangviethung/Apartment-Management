@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/view/home/admin_management/residents_management/common/add_footer.dart';
+import 'package:frontend/view/home/admin_management/residents_management/add_residents/add_footer.dart';
 import 'package:frontend/view/home/admin_management/residents_management/common/resident_card.dart';
 import 'package:frontend/view/home/admin_management/residents_management/common/resident_items.dart';
 import 'package:frontend/view/home/admin_management/residents_management/residents_management.dart';
+import 'package:frontend/view/home/admin_management/residents_management/common/show_dialog.dart';
 
 class AddResidents extends StatefulWidget {
   const AddResidents({super.key});
@@ -24,6 +25,7 @@ class _AddResidentsState extends State<AddResidents> {
 
   void handleDeleteActivity(String id) {
     setState(() {
+      items.removeWhere((item) => item.idNumber == id);
     });
   }
 
@@ -70,6 +72,7 @@ class _AddResidentsState extends State<AddResidents> {
               ),
               onPressed: () {
                 print('Save button pressed');
+                showInform(context, 'Saved', 'Đã lưu thông tin thành công');
               },
             ),
           ],
@@ -88,7 +91,10 @@ class _AddResidentsState extends State<AddResidents> {
             ),
             itemCount: items.length, // Sử dụng số lượng phần tử thực tế
             itemBuilder: (context, index) {
-              return ResidentCard(item: items[index]); // Sử dụng items[index] để lấy từng phần tử
+              return ResidentCard(
+                item: items[index],
+                onDelete: handleDeleteActivity, // Truyền callback
+              ); // Sử dụng items[index] để lấy từng phần tử
             },
             physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
             shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
@@ -98,10 +104,10 @@ class _AddResidentsState extends State<AddResidents> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             showModalBottomSheet(
-                context: context, builder: (
-                BuildContext context) {
-              return AddFooter(addNewResident: handleAddNewResident,);
-            }
+              context: context,
+              builder: (BuildContext context) {
+                return AddFooter(addNewResident: handleAddNewResident,);
+              }
             );
           },
           backgroundColor: Colors.blue,

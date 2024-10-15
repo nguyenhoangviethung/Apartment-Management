@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/view/home/admin_management/residents_management/common/show_dialog.dart';
 
 class AddFooter extends StatelessWidget {
   AddFooter({super.key, required this.addNewResident});
@@ -26,17 +27,14 @@ class AddFooter extends StatelessWidget {
 
     addNewResident(name, dob, id, age, status, room, phone);
 
-    // if (name.isNotEmpty) {
-    //   addNewResident(name);
-    //   // Xóa giá trị sau khi thêm
-    //   nameController.clear();
-    //   dobController.clear();
-    //   idController.clear();
-    //   ageController.clear();
-    //   statusController.clear();
-    //   roomController.clear();
-    //   phoneController.clear();
-    // }
+    // Xóa giá trị sau khi thêm
+    nameController.clear();
+    dobController.clear();
+    idController.clear();
+    ageController.clear();
+    statusController.clear();
+    roomController.clear();
+    phoneController.clear();
   }
 
   @override
@@ -74,7 +72,10 @@ class AddFooter extends StatelessWidget {
             _buildTextField('Enter phone number', phoneController),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: handleOnClick,
+              onPressed: () {
+                handleOnClick();
+                FocusScope.of(context).unfocus();
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,

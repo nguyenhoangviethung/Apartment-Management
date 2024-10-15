@@ -3,6 +3,7 @@ import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'reset_password.dart';
 import 'package:http/http.dart' as http;
 import 'forgot_password.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EmailVerification extends StatefulWidget {
   const EmailVerification({super.key});
@@ -28,10 +29,13 @@ class _EmailVerificationState extends State<EmailVerification> {
     }
     String url='https://apartment-management-kjj9.onrender.com/auth/validation-code';
     try{
+      SharedPreferences prefs= await SharedPreferences.getInstance();
+      String? token=prefs.getString('token');
       final response= await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer $token',
         },
         body: {
           'code':code

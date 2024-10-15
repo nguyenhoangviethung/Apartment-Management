@@ -80,7 +80,7 @@ paths:
         403:
           description: "Login failed, check credentials"
 
-  /auth/forgot-password/:
+  /auth/forgot-password:
     post:
       summary: "Forgot password"
       description: "Sends a validation code to the user's email to reset the password."
@@ -104,6 +104,8 @@ paths:
     post:
       summary: "Validate the code"
       description: "Validates the code sent to the user's email for password reset."
+      security:
+        BearerAuth: []
       requestBody:
         required: true
         content:
@@ -124,6 +126,8 @@ paths:
     post:
       summary: "Reset password"
       description: "Allows a user to reset their password after validating the code."
+      security:
+        BearerAuth: []
       requestBody:
         required: true
         content:
@@ -137,6 +141,8 @@ paths:
       responses:
         200:
           description: "Password has been reset"
+        401:
+          description: "Invalid or expired token"  
         404:
           description: "No email stored in session"
 

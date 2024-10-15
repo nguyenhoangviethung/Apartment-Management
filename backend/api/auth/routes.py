@@ -160,6 +160,7 @@ def forgot_password():
             # session['reset_email'] = email
             token = jwt.encode(
                  payload = {
+                'email': email,     
                 'code':validation_code,        
                 'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)
             },
@@ -195,20 +196,30 @@ def validation():
             return jsonify({"message": "invalid code"}), 400
         else:
             flash('Code validated successfully! Now you can reset your password.')
-            session.pop('validation_code', None)
             return jsonify({"message": "validate successfully"}), 200  # Example: redirect to reset password page
 
 @auth_bp.route('/reset-password', methods=['GET', 'POST'])
 def validation_code():
     if request.method == 'POST':
         new_password = request.form.get('new_password')
-        stored_email = session.get('reset_email')
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+        else:
+            return jsonify({"message": "Token missing or invalid"}), 401
+            
+        try:
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            return jsonify({"message": "Token expired"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"message": "Invalid token"}), 401
+        stored_email = data.get['email']
         
         user = Users.query.filter_by(user_email=stored_email).first()
         user.set_password(new_password)
         
         db.session.commit()
-        session.pop('reset_email', None)
         return jsonify({"message" :"Password has been reset!!!"}), 200
     
 @auth_bp.route('/logout')

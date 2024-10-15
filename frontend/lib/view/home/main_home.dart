@@ -3,23 +3,23 @@ import 'package:frontend/view/home/admin_management/admin_management.dart';
 import 'package:frontend/view/home/home_page/home_page.dart';
 
 
-void main() => runApp(const Home());
-
-class Home extends StatelessWidget {
-  const Home({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Quản lý cư dân',
-      theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
-      ),
-      home: const MainHome(),
-    );
-  }
-}
+// void main() => runApp(const Home());
+//
+// class Home extends StatelessWidget {
+//   const Home({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       title: 'Quản lý cư dân',
+//       theme: ThemeData(
+//         primarySwatch: Colors.lightBlue,
+//       ),
+//       home: const MainHome(),
+//     );
+//   }
+// }
 
 class MainHome extends StatefulWidget {
   const MainHome({super.key});
@@ -32,7 +32,7 @@ class _MainHomeState extends State<MainHome> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    Home_Page(),
+    const Home_Page(),
     const Center(child: Text('Rules Screen')),
     const ResidentManagementScreen(),
     const Center(child: Text('Account Screen')),

@@ -3,7 +3,7 @@ import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/login.dart';
 import 'package:http/http.dart'as http;
 import 'email_verification.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class ResetPassword extends StatefulWidget {
   const ResetPassword({super.key});
 
@@ -38,10 +38,13 @@ class _ResetPasswordState extends State<ResetPassword> {
     }
     String url='https://apartment-management-kjj9.onrender.com/auth/reset-password';
     try{
+      SharedPreferences prefs= await SharedPreferences.getInstance();
+      String? token=prefs.getString('token');
       final response =await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer $token',
         },
         body: {
           'new_password': new_password,

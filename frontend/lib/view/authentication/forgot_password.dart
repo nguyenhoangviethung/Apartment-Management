@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/login.dart';
 import 'package:http/http.dart' as http;
 import 'email_verification.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -43,6 +46,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         _isforgot=false;
       });
       if (response.statusCode == 200) {
+        final token=jsonDecode(response.body)['token'];
+        SharedPreferences prefs= await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const EmailVerification()));
       } else if (response.statusCode == 404) {
         showinform(context, 'Wrong email', 'No account registered with the provided email');

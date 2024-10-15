@@ -5,7 +5,9 @@ import os
 from vnpay import VNPAY
 from random import randint
 from api.models.models import *
+from dotenv import load_dotenv
 
+load_dotenv()
 
 @admin_bp.route('/')
 def index():

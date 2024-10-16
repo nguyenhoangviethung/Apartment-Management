@@ -7,7 +7,7 @@ class Config:
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+    JSON_SORT_KEYS = os.getenv('JSON_SORT_KEYS')
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')

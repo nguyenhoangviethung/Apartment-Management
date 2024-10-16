@@ -9,7 +9,22 @@ load_dotenv()
 
 @admin_bp.route('/')
 def index():
-    return "ADMIN INDEX VIEW"    
+    return "ADMIN INDEX VIEW" 
+
+@admin_bp.get('/<house_id>/resident')
+def get_resident(house_id):
+    house_hold = Households.query.filter(house_id == house_id).first()
+    result = jsonify({
+        "house_id": house_id,
+        "household_name": house_hold.household_name,
+        "apartment_number": house_hold.apartment_number,
+        "floor": house_hold.floor,
+        "area": house_hold.area,
+        "phone_number": house_hold.phone_number,
+        "num_residents": house_hold.num_residents,
+        "managed_by": house_hold.managed_by
+    })
+    return result   
 
 @admin_bp.route('/fee/<int:household_id>')
 def fee(household_id):

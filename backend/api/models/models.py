@@ -8,9 +8,10 @@ class Users(UserMixin, db.Model):
     user_id = Column(INTEGER, primary_key=True)
     username = Column(String(100), unique=True, nullable=False)
     password_hash = Column(String(512), nullable=False)
-    user_role = Column(Enum('admin', 'user'), default='user')
+    user_role = Column(Enum('admin', 'user', 'sadmin'), default='user')
     user_email = Column(String(100), unique=True)
     last_login = Column(DateTime, default = None)
+    phone_number = Column(String(15), default = None)
 
 class Households(db.Model):
     __tablename__ = 'Households'
@@ -31,8 +32,8 @@ class Residents(db.Model):
     resident_name = Column(String(40), nullable=False)
     date_of_birth = Column(DateTime, default = None)
     id_number = Column(String(20), unique=True, default = None)
-    temporary_absence = Column(Boolean, default=False)
-    temporary_residence = Column(Boolean, default=False)
+    status = Column(Enum('Tạm trú', 'Tạm vắng', 'Thường trú'), default = 'Thường trú')
+    phone_number = Column(String(15), default = None)
 
 
 class Fees(db.Model):

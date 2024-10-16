@@ -1,7 +1,9 @@
 from api.admin import admin_bp
-from flask import jsonify, request
+from flask import jsonify, request, redirect, url_for
 from api.models.models import *
 from dotenv import load_dotenv
+from helpers import getIP
+from datetime import datetime, timedelta
 
 load_dotenv()
 
@@ -66,4 +68,16 @@ def contribution_fee():
 
     return 'OKE'
     
+@admin_bp.route('/payment')
+def payment():
+    amount = 100000
+    vnp_Amount = amount*100
+    vnp_IpAddr = getIP()
+    vnp_OrderInfo = 'TEST CHUC NANG THANH TOAN'
+    CreateDate = datetime.now()
+    ExpireDate = CreateDate + timedelta(minutes = 10)
+    vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
+    vnp_ExpireDate = ExpireDate.strftime('%Y%m%d%H%M%S')
+
+    return redirect(url_for('pay.payment', vnp_Amount=vnp_Amount, vnp_IpAddr=vnp_IpAddr, vnp_OrderInfo=vnp_OrderInfo, vnp_CreateDate=vnp_CreateDate, vnp_ExpireDate=vnp_ExpireDate))
     

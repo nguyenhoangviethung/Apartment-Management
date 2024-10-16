@@ -11,6 +11,7 @@ import re, dns.resolver
 import os
 from dotenv import load_dotenv
 import random
+from api.models import user_service
 
 load_dotenv()
 
@@ -196,7 +197,7 @@ def validation_code():
         stored_email = session.get('reset_email')
         
         user = Users.query.filter_by(user_email=stored_email).first()
-        user.set_password(new_password)
+        user_service.set_password(user, new_password)
         
         db.session.commit()
         session.pop('reset_email', None)

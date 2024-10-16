@@ -1,17 +1,19 @@
 from flask import Flask
 from config import Config
-from api.extensions import db
+from api.extensions import db, migrate
 from api.models.models import *
 from api.models.models import db
 from flask_login import LoginManager
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 
+
 def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_class)
 
     db.init_app(app)
+    migrate.init_app(app, db)
     with app.app_context():
         db.create_all()
 

@@ -197,7 +197,7 @@ def validation_code():
         stored_email = session.get('reset_email')
         
         user = Users.query.filter_by(user_email=stored_email).first()
-        user_service.set_password(user)
+        user_service.set_password(user, new_password)
         
         db.session.commit()
         session.pop('reset_email', None)

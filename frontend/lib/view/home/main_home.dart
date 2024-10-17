@@ -31,7 +31,7 @@ class _MainHomeState extends State<MainHome> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    Home_Page(),
+    const Home_Page(),
     const Center(child: Text('Rules Screen')),
     const ResidentManagementScreen(),
     const Center(child: Text('Account Screen')),

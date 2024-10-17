@@ -26,6 +26,7 @@ def get_resident(household_id):
     result = {
         "info": [],
     }
+    print(household.managed_by)
     owner = Residents.query.filter(household.managed_by == Residents.resident_id).first()
     result['owner'] = {
             "resident_id": owner.resident_id,

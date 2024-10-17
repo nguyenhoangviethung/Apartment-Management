@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:frontend/view/home/admin_management/admin_management.dart';
 import 'package:frontend/view/home/home_page/home_page.dart';
 
-void main() => runApp(const Home());
 
-class Home extends StatelessWidget {
-  const Home({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Quản lý cư dân',
-      theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
-      ),
-      home: const MainHome(),
-    );
-  }
-}
+// void main() => runApp(const Home());
+//
+// class Home extends StatelessWidget {
+//   const Home({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       title: 'Quản lý cư dân',
+//       theme: ThemeData(
+//         primarySwatch: Colors.lightBlue,
+//       ),
+//       home: const MainHome(),
+//     );
+//   }
+// }
 
 class MainHome extends StatefulWidget {
   const MainHome({super.key});
@@ -31,26 +32,58 @@ class _MainHomeState extends State<MainHome> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    Home_Page(),
+    const Home_Page(),
     const Center(child: Text('Rules Screen')),
     const ResidentManagementScreen(),
     const Center(child: Text('Account Screen')),
   ];
+
+  String _getAppBarTitle() {
+    switch (_currentIndex) {
+      case 1:
+        return 'Rules';
+      case 2:
+        return 'Resident Management';
+      case 3:
+        return 'Account';
+      default:
+        return 'Welcome back';
+    }
+  }
+
+  bool _shouldShowBackButton() {
+    return _currentIndex != 0;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
-        title: const Text('Welcome back',
-            style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.w600)
+        title: Text(
+          _getAppBarTitle(),
+          style: const TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
+        leading: _shouldShowBackButton()
+            ? IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            setState(() {
+              _currentIndex = 0;
+            });
+          },
+        )
+            : null,
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications, color: Colors.white),
             onPressed: () {
-              // Xử lý hành động thông báo
+
             },
           ),
         ],
@@ -67,6 +100,7 @@ class _MainHomeState extends State<MainHome> {
     );
   }
 }
+
 
 class ResidentManagementScreen extends StatelessWidget {
   const ResidentManagementScreen({super.key});
@@ -90,7 +124,8 @@ class ResidentManagementScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 textStyle: const TextStyle(fontSize: 18),
               ),
-              child: const Text('Resident Management'),
+              child: const Text('Resident Management', textAlign: TextAlign.center),
+
             ),
           ),
         ),
@@ -127,6 +162,9 @@ class ResidentManagementDetailScreen extends StatelessWidget {
         title: const Text('Resident Management Detail',
           style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.lightBlue,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
       ),
       body: const Center(
         child: Text('Resident Management Detail Screen'),
@@ -145,6 +183,9 @@ class FeeDetailScreen extends StatelessWidget {
         title: const Text('Fee Detail',
           style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.lightBlue,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
 
       ),
       body: const Center(

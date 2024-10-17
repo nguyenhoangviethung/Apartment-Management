@@ -47,7 +47,7 @@ class _FeeInfoState extends State<FeeInfo> {
       actions: [
         TextButton(
           child: const Center(
-            child: Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+            child: Text("Merci bucu", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
           ),
           onPressed: () {
             Navigator.of(context).pop();

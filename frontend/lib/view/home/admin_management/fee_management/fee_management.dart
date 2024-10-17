@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Home/main_home.dart';
 import 'package:frontend/view/home/admin_management/fee_management/common/fee_item.dart';
+import 'package:frontend/view/home/admin_management/fee_management/common/filter.dart';
+import 'package:frontend/view/home/admin_management/fee_management/fees/charity_activities.dart';
+import 'package:frontend/view/home/admin_management/fee_management/fees/required_fee.dart';
 
 import 'common/fee_card.dart';
 class FeesManagement extends StatefulWidget {
@@ -10,7 +13,7 @@ class FeesManagement extends StatefulWidget {
   State<FeesManagement> createState() => _FeesManagementState();
 }
 
-class _FeesManagementState extends State<FeesManagement> {
+class _FeesManagementState extends State<FeesManagement> with TickerProviderStateMixin {
   final FeeItem item = const FeeItem(
     name: 'Ung ho anh Bay mua World cup',
     fee: '1B USD',
@@ -20,10 +23,13 @@ class _FeesManagementState extends State<FeesManagement> {
   );
 
   final List<FeeItem> items = [];
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+
+    _tabController = TabController(length: 2, vsync: this);
 
     // Thêm 10 lần giá trị của item vào items
     for (int i = 0; i < 5; i++) {
@@ -77,41 +83,63 @@ class _FeesManagementState extends State<FeesManagement> {
                 );
               }
           ),
-        ),
 
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 15),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1, // Số cột trong lưới
-                      childAspectRatio: 3.2, // Tỷ lệ chiều rộng/chiều cao của mỗi card
-                      mainAxisSpacing: 20.0, // Khoảng cách giữa các hàng
-                    ),
-                    itemCount: items.length, // Số lượng card
-                    itemBuilder: (context, index) {
-                      // return ResidentCard(item: item);
-                      return FeeCard(
-                        item: items[index],
-                        onDelete: handleDeleteActivity, // Truyền callback
-                      );
-                    },
-                    physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
-                    shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
-                  ),
-                ),
-              ],
+          actions: [
+            IconButton(
+              icon: const Icon(
+                Icons.search,
+                size: 30,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                print('Search button pressed');
+              },
             ),
+            IconButton(
+              icon: const Icon(
+                Icons.filter_alt_outlined,
+                size: 30,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                print('Filter button pressed');
+                showDialog(
+                  context: context,
+                  builder: (context) => Center(
+                    child: DateFilterPopup(
+                      onDateRangeSelected: (start, end) {
+                        print('Start date: $start');
+                        print('End date: $end');
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+
+          bottom: TabBar(
+            controller: _tabController,
+            labelColor: Colors.white, // Màu văn bản cho tab được chọn
+            unselectedLabelColor: Colors.white60,
+            tabs: const <Widget>[
+              Tab(
+                child: Text('Required Fees', style: TextStyle(fontSize: 18 ),),
+              ),
+              Tab(
+                child: Text('Charity Activities', style: TextStyle(fontSize: 18 ),),
+              ),
+            ],
           ),
         ),
 
+        body: TabBarView(
+          controller: _tabController,
+          children: const <Widget>[
+            RequiredFees(),
+            CharityActivities(),
+          ],
+        ),
       ),
     );
   }

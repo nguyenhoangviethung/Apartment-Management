@@ -130,7 +130,15 @@ def login_post():
             remember = True
             print('remember is True')
         user = Users.query.filter_by(username = username).first()
-
+        token = jwt.encode(
+        payload = {
+            'user_id':  user.user_id ,
+            'role': user.user_role,
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
+        },
+        key = current_app.config['SECRET_KEY'],
+        algorithm='HS256'
+    )
         # check if the user actually exists
         if not user or not check_password_hash(user.password_hash, password):
             flash('Please check your login details and try again.')
@@ -143,7 +151,7 @@ def login_post():
         
         login_user(user, remember=remember)
         
-        return jsonify({"message": "login successful"}), 200
+        return jsonify({"message": "login successful", 'token': token}), 200
     return jsonify({"message": "Login page loaded"}), 200
     
 @auth_bp.route('/forgot-password/', methods=['GET', 'POST'])

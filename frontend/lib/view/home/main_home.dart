@@ -1,25 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/view/home/admin_management/admin_management.dart';
 import 'package:frontend/view/home/home_page/home_page.dart';
 
+import 'management/management.dart';
 
-// void main() => runApp(const Home());
-//
-// class Home extends StatelessWidget {
-//   const Home({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Quản lý cư dân',
-//       theme: ThemeData(
-//         primarySwatch: Colors.lightBlue,
-//       ),
-//       home: const MainHome(),
-//     );
-//   }
-// }
 
 class MainHome extends StatefulWidget {
   const MainHome({super.key});
@@ -34,7 +17,7 @@ class _MainHomeState extends State<MainHome> {
   final List<Widget> _screens = [
     const Home_Page(),
     const Center(child: Text('Rules Screen')),
-    const ResidentManagementScreen(),
+    const Management(),
     const Center(child: Text('Account Screen')),
   ];
 
@@ -43,7 +26,7 @@ class _MainHomeState extends State<MainHome> {
       case 1:
         return 'Rules';
       case 2:
-        return 'Resident Management';
+        return 'Management';
       case 3:
         return 'Account';
       default:
@@ -89,7 +72,29 @@ class _MainHomeState extends State<MainHome> {
         ],
       ),
       body: _screens[_currentIndex],
-      bottomNavigationBar: AdminManagement(
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.lightBlue,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white60,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.rule),
+            label: 'Rules',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Management',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Account',
+          ),
+        ],
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -101,96 +106,3 @@ class _MainHomeState extends State<MainHome> {
   }
 }
 
-
-class ResidentManagementScreen extends StatelessWidget {
-  const ResidentManagementScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ResidentManagementDetailScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-              child: const Text('Resident Management', textAlign: TextAlign.center),
-
-            ),
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FeeDetailScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-              child: const Text('Fee'),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class ResidentManagementDetailScreen extends StatelessWidget {
-  const ResidentManagementDetailScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Resident Management Detail',
-          style: TextStyle(color: Colors.white),),
-        backgroundColor: Colors.lightBlue,
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-      ),
-      body: const Center(
-        child: Text('Resident Management Detail Screen'),
-      ),
-    );
-  }
-}
-
-class FeeDetailScreen extends StatelessWidget {
-  const FeeDetailScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Fee Detail',
-          style: TextStyle(color: Colors.white),),
-        backgroundColor: Colors.lightBlue,
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-
-      ),
-      body: const Center(
-        child: Text('Fee Detail Screen'),
-      ),
-    );
-  }
-}

@@ -64,14 +64,17 @@ def fee(household_id):
 @admin_bp.route('/not-pay')
 def not_pay():
     
-    household_ids = db.session.query(Fees.household_id).filter_by(status = 'Chưa thanh toán').all()
+    date = datetime.now().date()
+    household_ids = db.session.query(Fees.household_id).filter_by(Fees.status == 'Chưa thanh toán').all()
     res = []
-    household_ids = sorted(household_ids)
+    print(household_ids)
+    # household_ids = sorted(household_ids)
     for household_id in household_ids:
         # get household_id
+        
         household_id = household_id[0]
-        service_rate = db.session.query(Fees.service_rate).filter_by(household_id=household_id).scalar() or 0
-        manage_rate = db.session.query(Fees.manage_rate).filter_by(household_id=household_id).scalar() or 0
+        service_rate = db.session.query(Fees.service_rate).filter_by(household_id=household_id).scalar or 0
+        manage_rate = db.session.query(Fees.manage_rate).filter_by(household_id=household_id).first() or 0
         area = db.session.query(Households.area).filter_by(household_id=household_id).scalar() or 0
         amount = (service_rate + manage_rate)*float(area)
 
@@ -81,7 +84,6 @@ def not_pay():
             }
 
         res.append(infor)
-
     result = jsonify(res)
     
     return result, 200
@@ -221,3 +223,31 @@ def update_info(id):
             'status' : request.form.get('status')
         }
         return 200
+    
+@admin_bp.route('/test', methods = ['GET', 'POST'])
+def test():
+    if request.method == 'POST':
+        create_date = datetime.now().date()
+        service_rate = request.form['service_rate']
+        manage_rate = request.form['manage_rate']
+
+        households = db.session.query(Households.household_id, Households.area).all()
+
+        # print(households)
+
+        for household in households:
+            area = household[1]
+            id = household[0]
+            # date = datetime.strptime(create_date, '%Y-%m-%d').date()
+            fee = Fees(
+                amount = (float(service_rate) + float(manage_rate))*float(area),
+                due_date =  create_date + timedelta(days=5),
+                manage_rate = manage_rate,
+                service_rate = service_rate,
+                household_id = id
+            )
+            
+            db.session.add(fee)
+            db.session.commit()
+
+        return "test"

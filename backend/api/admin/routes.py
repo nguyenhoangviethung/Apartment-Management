@@ -18,24 +18,37 @@ load_dotenv()
 def index():
     return "ADMIN INDEX VIEW" 
 
-@admin_bp.get('/<house_id>/resident')
-def get_resident(house_id):
-    residents = RecursionError.query.filter(house_id == house_id)
+@admin_bp.get('/<household_id>/resident')
+def get_resident(household_id):
+    residents = Residents.query.filter(Residents.household_id == household_id)
+    household = Households.query.filter(Households.household_id == household_id).first()
+
     result = {
         "info": [],
-        "owner": "NULL"
+    }
+    owner = Residents.query.filter(household.managed_by == Residents.resident_id).first()
+    result['owner'] = {
+            "resident_id": owner.resident_id,
+            "resident_name": owner.resident_name,
+            "date_of_birth": owner.date_of_birth,
+            "id_number": owner.id_number,
+            "phone_number": owner.phone_number,
+            "status": owner.status
     }
     for resident in residents:
-        result = jsonify({
-            "house_id": house_id,
-            "household_name": resident.household_name,
-            "apartment_number": resident.apartment_number,
-            "floor": resident.floor,
-            "area": resident.area,
+        if resident.resident_id == household.managed_by:
+            continue
+        new_info = {
+            "resident_id": resident.resident_id,
+            "resident_name": resident.resident_name,
+            "date_of_birth": resident.date_of_birth,
+            "id_number": resident.id_number,
             "phone_number": resident.phone_number,
-            "num_residents": resident.num_residents,
-            "managed_by": resident.managed_by
-        })
+            "status": resident.status
+        }
+        result['info'].append(new_info)
+
+    return jsonify(result), 200
 
 @admin_bp.route('/fee/<int:household_id>')
 def fee(household_id):
@@ -78,12 +91,13 @@ def not_pay():
         area = db.session.query(Households.area).filter_by(household_id=household_id).scalar() or 0
         amount = (service_rate + manage_rate)*float(area)
 
-        infor = {
+        info = {
                 'room_number': f'{household_id}',
                 'fee' : f'{amount}'
             }
 
-        res.append(infor)
+        res.append(info)
+
     result = jsonify(res)
     
     return result, 200

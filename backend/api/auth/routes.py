@@ -1,8 +1,7 @@
 from api.auth import auth_bp
 from api.extensions import db
 from api.models.models import *
-from flask import g, url_for, session, abort, request, jsonify, current_app, flash, redirect
-from functools import wraps
+from flask import g, url_for, session, request, jsonify, current_app, flash
 from flask_mail import Mail, Message
 import jwt, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,25 +13,6 @@ import random
 from api.models import user_service
 
 load_dotenv()
-
-def login_require(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if g.get('user') is None:
-            # unauthorized
-            return jsonify({"message" : "Check login fail"}), 403
-        return f(*args, **kwargs)
-    
-    return wrap
-
-def admin_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if not g.get('user') or g.get('user').user_role != 'admin':
-            # forbidden
-            return jsonify({"message": "you are not admin"}), 403  
-        return f(*args, **kwargs)
-    return wrap
 
 @auth_bp.before_app_request
 def check_attribute():

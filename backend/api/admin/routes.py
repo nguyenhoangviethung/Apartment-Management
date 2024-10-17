@@ -8,6 +8,7 @@ from functools import wraps
 from api.admin import admin_bp
 from api.extensions import db
 import jwt
+from api.models import fee_service
 
 load_dotenv()
 
@@ -129,9 +130,6 @@ def payment():
 
     return redirect(url_for('pay.payment', vnp_Amount=vnp_Amount, vnp_IpAddr=vnp_IpAddr, vnp_OrderInfo=vnp_OrderInfo, vnp_CreateDate=vnp_CreateDate, vnp_ExpireDate=vnp_ExpireDate))
     
-
-
-
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -228,7 +226,7 @@ def update_info(id):
             if value is not None:
                 setattr(apartment, field, value)
         try:
-            db.session.commit()
+            db.session.commit() 
             return jsonify({'message': 'Household updated successfully'}), 200
         except Exception as e:
             db.session.rollback()
@@ -241,7 +239,7 @@ def update_info(id):
             'resident_name' : request.form.get('resident_name'),
             'phone_number' : request.form.get('phone_number'),
             'status' : request.form.get('status')
-        }
+        }   
         return 200
     
 @admin_bp.route('/add-fee', methods = ['GET', 'POST'])
@@ -268,8 +266,7 @@ def add_fee():
                 service_rate = service_rate,
                 household_id = id
             )
-            
-            db.session.add(fee)
-            db.session.commit()
+        
+            fee_service.add_fee(fee)
 
         return jsonify({'message': 'add fee successful'}), 200

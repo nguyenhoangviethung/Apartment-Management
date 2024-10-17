@@ -28,6 +28,7 @@ class Households(db.Model):
 class Residents(db.Model):
     __tablename__ = 'Residents'
     resident_id = Column(INTEGER,  primary_key = True)
+    user_id = Column(INTEGER, ForeignKey(Users.user_id))
     household_id = Column(INTEGER, ForeignKey('Households.household_id'))
     resident_name = Column(String(40), nullable=False)
     date_of_birth = Column(DateTime, default = None)

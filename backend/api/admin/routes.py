@@ -18,16 +18,21 @@ load_dotenv()
 def index():
     return "ADMIN INDEX VIEW" 
 
-@admin_bp.get('/<household_id>/resident')
+@admin_bp.get('/<household_id>/residents')
 def get_resident(household_id):
     residents = Residents.query.filter(Residents.household_id == household_id)
+    if residents is None:
+        return jsonify({"message": "this household have no ownership"}) , 200
     household = Households.query.filter(Households.household_id == household_id).first()
-
+    if household is None:
+        return jsonify({"message": "this household have no ownership"}) , 200
     result = {
         "info": [],
     }
-    print(household.managed_by)
-    owner = Residents.query.filter(household.managed_by == Residents.resident_id).first()
+    user = Users.query.filter(household.managed_by == Users.user_id).first()
+    if user is None:
+        return jsonify({"message": "this household have no ownership"}) , 200
+    owner = Residents.query.filter(Residents.user_id == user.user_id).first() 
     result['owner'] = {
             "resident_id": owner.resident_id,
             "resident_name": owner.resident_name,
@@ -37,7 +42,7 @@ def get_resident(household_id):
             "status": owner.status
     }
     for resident in residents:
-        if resident.resident_id == household.managed_by:
+        if resident.user_id == owner.user_id:
             continue
         new_info = {
             "resident_id": resident.resident_id,

@@ -6,11 +6,8 @@ from helpers import getIP
 from datetime import datetime, timedelta
 from functools import wraps
 from api.admin import admin_bp
-
 from api.extensions import db
-
 import jwt
-
 
 load_dotenv()
 
@@ -84,35 +81,38 @@ def fee(household_id):
 def not_pay():
     
     date = datetime.now().date()
-    household_ids = db.session.query(Fees.household_id).filter_by(Fees.status == 'Chưa thanh toán').all()
+    notPayHouseholds = db.session.query(Fees.fee_id, Fees.household_id).filter(Fees.status == 'Chưa thanh toán', Fees.due_date >= date).all()
     res = []
-    print(household_ids)
-    # household_ids = sorted(household_ids)
-    for household_id in household_ids:
-        # get household_id
-        
-        household_id = household_id[0]
-        service_rate = db.session.query(Fees.service_rate).filter_by(household_id=household_id).scalar or 0
-        manage_rate = db.session.query(Fees.manage_rate).filter_by(household_id=household_id).first() or 0
-        area = db.session.query(Households.area).filter_by(household_id=household_id).scalar() or 0
-        amount = (service_rate + manage_rate)*float(area)
+    
+    for notPayHousehold in notPayHouseholds:
+        fee_id, household_id = notPayHousehold[0], notPayHousehold[1]
+        service_rate = db.session.query(Fees.service_rate).filter_by(fee_id = fee_id).scalar()
+        manage_rate = db.session.query(Fees.manage_rate).filter_by(fee_id = fee_id).scalar()
+        due_date = db.session.query(Fees.due_date).filter_by(fee_id = fee_id).scalar()
+        area = db.session.query(Households.area).filter_by(household_id = household_id).scalar()
+        amount = (float(service_rate) + float(manage_rate))*float(area)
+        service_fee = float(service_rate)*float(area)
+        manage_fee = float(manage_rate)*float(area)
 
-        info = {
-                'room_number': f'{household_id}',
-                'fee' : f'{amount}'
-            }
-
-        res.append(info)
+        infor = {
+            'room': f'{household_id}',
+            'amount': f'{amount}',
+            'due_date': f'{due_date}',
+            'service_fee': f'{service_fee}',
+            'manage_fee': f'{manage_fee}'
+        }
+    
+        res.append(infor)
 
     result = jsonify(res)
-    
+
     return result, 200
 
 @admin_bp.route('/contribution-fee', methods=['GET', 'POST'])
 def contribution_fee():
     
-    events = db.session.query(Contributions.contribution_event).scalar()
-    print(events)
+        
+
 
     return 'OKE'
     
@@ -244,8 +244,8 @@ def update_info(id):
         }
         return 200
     
-@admin_bp.route('/test', methods = ['GET', 'POST'])
-def test():
+@admin_bp.route('/add-fee', methods = ['GET', 'POST'])
+def add_fee():
     if request.method == 'POST':
         create_date = datetime.now().date()
         service_rate = request.form['service_rate']
@@ -253,14 +253,16 @@ def test():
 
         households = db.session.query(Households.household_id, Households.area).all()
 
-        # print(households)
+        if not service_rate or not manage_rate:
+            return jsonify({'message': 'add fee fail'}), 404 
 
         for household in households:
             area = household[1]
             id = household[0]
-            # date = datetime.strptime(create_date, '%Y-%m-%d').date()
+            
             fee = Fees(
                 amount = (float(service_rate) + float(manage_rate))*float(area),
+                create_date = create_date,
                 due_date =  create_date + timedelta(days=5),
                 manage_rate = manage_rate,
                 service_rate = service_rate,
@@ -270,4 +272,4 @@ def test():
             db.session.add(fee)
             db.session.commit()
 
-        return "test"
+        return jsonify({'message': 'add fee successful'}), 200

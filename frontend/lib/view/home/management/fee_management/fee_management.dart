@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../home_page/home_page.dart';
+import '../../main_home.dart';
 import 'common/fee_item.dart';
 import 'common/filter.dart';
 import 'fees/charity_activities.dart';
@@ -81,10 +82,10 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
                     color: Colors.white,
                   ),
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => const HomePage()),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MainHome(currentIndex: 2,)),
+                    );
                   },
                 );
               }

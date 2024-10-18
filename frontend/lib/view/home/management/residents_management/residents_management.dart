@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Home/main_home.dart';
 import '../../home_page/home_page.dart';
 import 'add_residents/add_residents.dart';
 import 'common/resident_card.dart';
@@ -76,7 +77,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const HomePage()),
+                      MaterialPageRoute(builder: (context) => const MainHome(currentIndex:2) ),
                     );
                   },
                 );

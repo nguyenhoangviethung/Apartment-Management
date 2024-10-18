@@ -5,18 +5,24 @@ import 'management/management.dart';
 
 
 class MainHome extends StatefulWidget {
-  const MainHome({super.key});
-
+  final int currentIndex;
+  const MainHome({super.key, this.currentIndex=0});
   @override
   _MainHomeState createState() => _MainHomeState();
 }
 
 class _MainHomeState extends State<MainHome> {
-  int _currentIndex = 0;
+  late int _currentIndex ;
+  @override
+  void initState() {
+    super.initState();
+    // TODO: implement initState
+    _currentIndex= widget.currentIndex;
+  }
 
   final List<Widget> _screens = [
     const HomePage(),
-    const Center(child: Text('Rules Screen')),
+    const Center(child: Text('User Screen')),
     const Management(),
     const Center(child: Text('Account Screen')),
   ];
@@ -24,7 +30,7 @@ class _MainHomeState extends State<MainHome> {
   String _getAppBarTitle() {
     switch (_currentIndex) {
       case 1:
-        return 'Rules';
+        return 'User';
       case 2:
         return 'Management';
       case 3:
@@ -84,7 +90,7 @@ class _MainHomeState extends State<MainHome> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.rule),
-            label: 'Rules',
+            label: 'User',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people),

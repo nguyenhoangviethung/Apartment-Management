@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/View/Home/main_home.dart';
 import 'package:frontend/view/home/management/residents_management/residents_management.dart';
-
 import 'fee_management/fee_management.dart';
 
 class Management extends StatelessWidget {
@@ -19,7 +17,7 @@ class Management extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ResidentManagement()),
+                  MaterialPageRoute(builder: (context) => const ResidentsManagement()),
                 );
               },
               style: ElevatedButton.styleFrom(

@@ -1,9 +1,8 @@
 from sqlalchemy import ForeignKey, Column, Enum, INTEGER, JSON, String, Date, DECIMAL, FLOAT
 
 from api.extensions import db
-from flask_login import UserMixin
 
-class Users(UserMixin, db.Model):
+class Users(db.Model):
     __tablename__ = 'Users'
     user_id = Column(INTEGER, primary_key=True)
     username = Column(String(100), unique=True, nullable=False)

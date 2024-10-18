@@ -110,6 +110,12 @@ def login_post():
             remember = True
             print('remember is True')
         user = Users.query.filter_by(username = username).first()
+        
+        # check if the user actually exists
+        if not user or not check_password_hash(user.password_hash, password):
+            flash('Please check your login details and try again.')
+            return jsonify({"message" : "login failed"}), 403
+        
         token = jwt.encode(
         payload = {
             'user_id':  user.user_id ,
@@ -118,21 +124,7 @@ def login_post():
         },
         key = current_app.config['SECRET_KEY'],
         algorithm='HS256'
-    )
-        # check if the user actually exists
-        if not user or not check_password_hash(user.password_hash, password):
-            flash('Please check your login details and try again.')
-            return jsonify({"message" : "login failed"}), 403
-        # mình xử lý bằng token rồi nên bỏ cái session này đi được
-        session.clear()    
-        session.setdefault('user_id', user.user_id)
-        session.setdefault('user_role', user.user_role)
-        
-        # tôi nghĩ vứt cái hàm này đi, vì ở trên đã xử lý token bên trong chứa thông tin của user
-        # giờ khi mà một request gửi đến, gọi đến hàm validate_token() trong file helpers.py. Hàm này trả về True, False nếu có thông tin trong token
-        # nếu validate_token() trả về True thì chuyển thẳng đến thằng homepage
-        login_user(user, remember=remember)
-        
+        )
         return jsonify({"message": "login successful", 'token': token}), 200
     return jsonify({"message": "Login page loaded"}), 200
     

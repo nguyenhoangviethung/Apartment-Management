@@ -3,7 +3,6 @@ from config import Config
 from api.extensions import db, migrate
 from api.models.models import *
 from api.models.models import db
-from flask_login import LoginManager
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 
@@ -20,14 +19,7 @@ def create_app(config_class=Config):
     from api.auth import auth_bp
     app.register_blueprint(auth_bp)
 
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
-    login_manager.init_app(app)
-
     CORS(app)
-    @login_manager.user_loader
-    def load_user(user_id):
-        return Users.query.get(user_id)
     
     swagger_bp = get_swaggerui_blueprint(app.config.get('SWAGGER_URL'), app.config.get('API_URL'), config={'app_name': 'auth api'})
     app.register_blueprint(swagger_bp, url_prefix= app.config.get('SWAGGER_URL'))                                       

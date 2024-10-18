@@ -5,7 +5,6 @@ import 'package:frontend/view/home/admin_management/fee_management/common/filter
 import 'package:frontend/view/home/admin_management/fee_management/fees/charity_activities.dart';
 import 'package:frontend/view/home/admin_management/fee_management/fees/required_fee.dart';
 
-import 'common/fee_card.dart';
 class FeesManagement extends StatefulWidget {
   const FeesManagement({super.key});
 
@@ -14,6 +13,12 @@ class FeesManagement extends StatefulWidget {
 }
 
 class _FeesManagementState extends State<FeesManagement> with TickerProviderStateMixin {
+  final DateFilterPopup _dateFilterPopup = new DateFilterPopup(
+                                              onDateRangeSelected: (start, end) {
+                                              print('Start date: $start');
+                                              print('End date: $end');
+                                            },);
+
   final FeeItem item = const FeeItem(
     name: 'Ung ho anh Bay mua World cup',
     fee: '1B USD',
@@ -106,12 +111,7 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
                 showDialog(
                   context: context,
                   builder: (context) => Center(
-                    child: DateFilterPopup(
-                      onDateRangeSelected: (start, end) {
-                        print('Start date: $start');
-                        print('End date: $end');
-                      },
-                    ),
+                    child: _dateFilterPopup
                   ),
                 );
               },

@@ -26,7 +26,7 @@ class _CharityActivitiesState extends State<CharityActivities> {
     super.initState();
 
     // Thêm 10 lần giá trị của item vào items
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
       items.add(FeeItem(
         name: '${item.name} $i', // Thêm số thứ tự vào tên để phân biệt
         fee: item.fee,

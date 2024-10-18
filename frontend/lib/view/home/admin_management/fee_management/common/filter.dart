@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'fee_item.dart';
+
 class DateFilterPopup extends StatefulWidget {
   final Function(DateTime, DateTime)? onDateRangeSelected;
 
@@ -11,7 +13,7 @@ class DateFilterPopup extends StatefulWidget {
 }
 
 class _DateFilterPopupState extends State<DateFilterPopup> {
-  DateTime startDate = DateTime(2018, 4, 1);
+  DateTime startDate = DateTime(2018, 5, 1);
   DateTime endDate = DateTime(2019, 10, 14);
 
   @override
@@ -154,7 +156,7 @@ class _DateFilterPopupState extends State<DateFilterPopup> {
                 const SizedBox(height: 6),
                 Text(
                   DateFormat('dd MMM yyyy').format(selectedDate),
-                  style: TextStyle(fontSize: 15, color: Colors.blue.shade700),
+                  style: TextStyle(fontSize: 15, color: Colors.blue.shade700, fontFamily: "Times New Roman"),
                 ),
               ],
             ),

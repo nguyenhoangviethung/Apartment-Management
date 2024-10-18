@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/View/Home/management/management.dart';
-import 'package:frontend/view/home/admin_management/residents_management/common/resident_card.dart';
+import '../../home_page/home_page.dart';
+import 'add_residents/add_residents.dart';
+import 'common/resident_card.dart';
+import 'common/resident_item.dart';
 
 class ResidentsManagement extends StatefulWidget {
   const ResidentsManagement({super.key});
@@ -10,46 +12,80 @@ class ResidentsManagement extends StatefulWidget {
 }
 
 class _ResidentsManagementState extends State<ResidentsManagement> {
+  final ResidentItem item = const ResidentItem(
+    name: 'Do Xuan Chien',
+    room: 'vip-909',
+    phoneNumber: '0999999999',
+    dob: '10/04/2004',
+    age: '20',
+    status: 'Single',
+    idNumber: '102',
+  );
+
+  final List<ResidentItem> items = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Thêm 10 lần giá trị của item vào items
+    for (int i = 0; i < 10; i++) {
+      items.add(ResidentItem(
+        name: '${item.name} $i', // Thêm số thứ tự vào tên để phân biệt
+        room: item.room,
+        phoneNumber: item.phoneNumber,
+        dob: item.dob,
+        age: item.age,
+        status: item.status,
+        idNumber: '${int.parse(item.idNumber) + i}', // Tạo ID khác nhau
+      ));
+    }
+  }
+
+  void handleDeleteActivity(String id) {
+    setState(() {
+      items.removeWhere((item) => item.idNumber == id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.blue,
-            title: const Text(
-              'Residents Management',
-              style: TextStyle(
-                fontSize: 25,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            leading: Builder(
-                builder: (context) {
-                  return IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const Management()),
-                      );
-                    },
-                  );
-                }
+    return  GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title: const Text(
+            'Residents Management',
+            style: TextStyle(
+              fontSize: 25,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
             ),
           ),
+          leading: Builder(
+              builder: (context) {
+                return IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    size: 30,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomePage()),
+                    );
+                  },
+                );
+              }
+          ),
+        ),
 
-          body: SingleChildScrollView(
-            child: Padding(
+        body: SingleChildScrollView(
+          child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -96,7 +132,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                         ),
                       ),
                       const SizedBox(
-                        width: 10,
+                          width: 10,
                       ),
                       Container(
                         decoration: const BoxDecoration(
@@ -107,6 +143,10 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                           icon: const Icon(Icons.add, color: Colors.white, size: 35),
                           onPressed: () {
                             print('Button Add pressed!');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const AddResidents()),
+                            );
                           },
                         ),
                       ),
@@ -122,9 +162,13 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                         childAspectRatio: 3.5, // Tỷ lệ chiều rộng/chiều cao của mỗi card
                         mainAxisSpacing: 20.0, // Khoảng cách giữa các hàng
                       ),
-                      itemCount: 10, // Số lượng card
+                      itemCount: items.length, // Số lượng card
                       itemBuilder: (context, index) {
-                        return const ResidentCard(name: 'Do Xuan Chien', room: 'vip-909', phone: '0999999999',); // Thay thế bằng ResidentCard của bạn
+                        // return ResidentCard(item: item);
+                        return ResidentCard(
+                          item: items[index],
+                          onDelete: handleDeleteActivity, // Truyền callback
+                        );
                       },
                       physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
                       shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
@@ -132,7 +176,6 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                   ),
                 ],
               ),
-            ),
           ),
         ),
       ),

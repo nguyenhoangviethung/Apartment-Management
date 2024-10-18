@@ -36,7 +36,7 @@ class Management extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const FeeManagement()),
+                  MaterialPageRoute(builder: (context) => const FeesManagement()),
                 );
               },
               style: ElevatedButton.styleFrom(

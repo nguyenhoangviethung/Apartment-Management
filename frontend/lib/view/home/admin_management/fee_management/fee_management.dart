@@ -140,7 +140,63 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
             CharityActivities(),
           ],
         ),
+
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FloatingActionButton(
+                onPressed: () {
+                  // Hành động khi nhấn nút
+                  _showPaymentDialog(context);
+                },
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(90),
+                ),
+                child: const Icon(
+                  Icons.payments_outlined,
+                  color: Colors.white,
+                  size: 40,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
+}
+
+
+void _showPaymentDialog(BuildContext context) {
+  final TextEditingController controller = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Center(child: Text('Thanh Toán', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),)),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            labelText: 'Nhập số tiền', // Sử dụng labelText
+            border: OutlineInputBorder(), // Thêm border để tạo thành ô chữ nhật
+          ),
+          keyboardType: TextInputType.number,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Xử lý khi nhấn nút OK
+              final inputValue = controller.text;
+              print('Số tiền nhập: $inputValue');
+              Navigator.of(context).pop(); // Đóng popup
+            },
+            child: const Text('OK', style: TextStyle(fontSize: 20),),
+          ),
+        ],
+      );
+    },
+  );
 }

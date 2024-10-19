@@ -32,7 +32,7 @@ def payment():
         # 250000 thanh toan hoa don, need more flexible
     payment.requestData['vnp_OrderType'] = 'billpayment'
     #todo
-    payment.requestData['vnp_ReturnUrl'] = 'http://127.0.0.1:5000/pay/payment-return'
+    payment.requestData['vnp_ReturnUrl'] = 'https://apartment-management-kjj9.onrender.com/pay/payment-return'
     payment.requestData['vnp_ExpireDate'] = vnp_ExpireDate
     payment.requestData['vnp_TxnRef'] = randint(10000, 99999)
             

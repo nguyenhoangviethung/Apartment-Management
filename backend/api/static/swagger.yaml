@@ -391,8 +391,8 @@ paths:
 
   /admin/fee/{household_id}:
     get:
-      summary: Get fee details for a household
-      description: Retrieves the service charge, manage charge, and total fee for a specific household based on its area and rates.
+      summary: Calculate fees for a household
+      description: Retrieve service and management charges for a specific household.
       tags:
         - Admin
       parameters:
@@ -404,33 +404,149 @@ paths:
           description: The ID of the household
       responses:
         '200':
-          description: Successful response with fee details
+          description: Fees calculated successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  service_charge:
-                    type: string
-                    description: The calculated service charge
-                    example: "1000.00"
-                  manage_charge:
-                    type: string
-                    description: The calculated management charge
-                    example: "500.00"
-                  fee:
-                    type: string
-                    description: The total fee (service charge + management charge)
-                    example: "1500.00"
+                  info:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        service_charge:
+                          type: string
+                        manage_charge:
+                          type: string
+                        fee:
+                          type: string
+        '400':
+          description: Missing or invalid household information
+
+  /admin/add-fee:
+    post:
+      summary: Add new fee for households
+      description: Add service and management fees for all households.
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - start_date
+                - due_date
+                - service_rate
+                - manage_rate
+                - description
+              properties:
+                start_date:
+                  type: string
+                  format: date
+                due_date:
+                  type: string
+                  format: date
+                service_rate:
+                  type: number
+                manage_rate:
+                  type: number
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Fees added successfully
+        '400':
+          description: Missing or invalid data
+
+  /admin/fees:
+    get:
+      summary: Retrieve fees
+      description: Get the description of the fees due as of today.
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Fees retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  infor:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: Error in retrieving fees
+
+    post:
+      summary: Retrieve fees for a specific date
+      description: Get the description of the fees due as of a specified date.
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - date
+              properties:
+                date:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Fees retrieved successfully
+        '400':
+          description: Invalid or missing date
+
+  /admin/update-fee:
+    post:
+      summary: Update existing fee details
+      description: Update the management and service rates for fees based on their description.
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - description
+                - manage_rate
+                - service_rate
+              properties:
+                description:
+                  type: string
+                manage_rate:
+                  type: number
+                service_rate:
+                  type: number
+      responses:
+        '200':
+          description: Fees updated successfully
+        '400':
+          description: Invalid or missing data
         '404':
-          description: Unable to retrieve data from the database
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "cannot query from db"
-      security:
-        - AdminAuth: []  
+          description: Fees not found with the given description
+
+  /admin/delete-fee:
+    post:
+      summary: Delete fees based on description
+      description: Delete fees by their description.
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - description

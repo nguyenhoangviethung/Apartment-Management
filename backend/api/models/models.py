@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Column, Enum, INTEGER, JSON, String, Date, DECIMAL, FLOAT
+from sqlalchemy import ForeignKey, Column, Enum, INTEGER, JSON, String, Date, DECIMAL, FLOAT, NVARCHAR
 
 from api.extensions import db
 
@@ -39,6 +39,7 @@ class Residents(db.Model):
 class Fees(db.Model):
     __tablename__ = 'Fees'
     fee_id = Column(INTEGER,  primary_key=True)
+    description = Column(NVARCHAR(150), nullable=False)
     household_id = Column(INTEGER, ForeignKey('Households.household_id'))
     amount = Column(DECIMAL(10, 2), nullable=False)
     create_date = Column(Date, default = None)

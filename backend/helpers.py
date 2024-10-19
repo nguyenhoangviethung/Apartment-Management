@@ -1,8 +1,8 @@
-from flask import request, jsonify
-import base64
+from flask import request
 import jwt
-import os
 from config import Config
+from decimal import Decimal
+from datetime import datetime
 
 def getIP():
     client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
@@ -32,4 +32,14 @@ def get_payload():
 
     return payload
 
+def decimal_to_float(value):
+    """Chuyển đổi Decimal sang float để serialization JSON."""
+    return float(value) if isinstance(value, Decimal) else value
+
+def validate_date(date_string):
+    """Kiểm tra và chuyển đổi chuỗi ngày."""
+    try:
+        return datetime.strptime(date_string, '%Y-%m-%d').date()
+    except ValueError:
+        raise ValueError("Invalid date format. Use YYYY-MM-DD")
         

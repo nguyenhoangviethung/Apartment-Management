@@ -21,16 +21,16 @@ def index():
 def get_resident(household_id):
     residents = Residents.query.filter(Residents.household_id == household_id)
     if residents is None:
-        return jsonify({"message": "this household have no ownership"}) , 200
+        return jsonify({"message": "this household have no ownership"}) , 404
     household = Households.query.filter(Households.household_id == household_id).first()
     if household is None:
-        return jsonify({"message": "this household have no ownership"}) , 200
+        return jsonify({"message": "this household have no ownership"}) , 404
     result = {
         "info": [],
     }
     user = Users.query.filter(household.managed_by == Users.user_id).first()
     if user is None:
-        return jsonify({"message": "this household have no ownership"}) , 200
+        return jsonify({"message": "this household have no ownership"}) , 404
     owner = Residents.query.filter(Residents.user_id == user.user_id).first() 
     result['owner'] = {
             "resident_id": owner.resident_id,

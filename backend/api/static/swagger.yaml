@@ -193,7 +193,7 @@ paths:
                           example: Thường trú
         500:
           description: Server error
-  admin/house<apartment_number>:
+  admin/house{apartment_number}:
     get:
       summary: House info
       description: Retrieve an apartment information
@@ -228,7 +228,7 @@ paths:
           description: House not found
         500:
           description: Server error
-  admin/update<int:house_id>:
+  admin/update{int:house_id}:
     post:
       summary: Update house
       parameters:
@@ -260,6 +260,77 @@ paths:
             description: House not found
           500:
             description: Server error
-
-
+  admin/{household_id}/residents:
+    get:
+      tags:
+        - Residents
+      summary: Get residents of a household
+      description: Retrieves the owner and residents of a household by the household ID.
+      parameters:
+        - name: household_id
+          in: path
+          required: true
+          description: The ID of the household.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        200:
+          description: List of residents in the household
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  owner:
+                    type: object
+                    properties:
+                      resident_id:
+                        type: integer
+                        example: 1
+                      resident_name:
+                        type: string
+                        example: Nguyễn Quyết Thắng
+                      date_of_birth:
+                        type: string
+                        format: date
+                        example: 1985-08-15
+                      id_number:
+                        type: string
+                        example: '002948492849'
+                      phone_number:
+                        type: string
+                        example: '018276478727'
+                      status:
+                        type: string
+                        example: Thường trú
+                  info:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        resident_id:
+                          type: integer
+                          example: 2
+                        resident_name:
+                          type: string
+                          example: Trần Thanh Phong
+                        date_of_birth:
+                          type: string
+                          format: date
+                          example: 1990-07-01
+                        id_number:
+                          type: string
+                          example: '001204019225'
+                        phone_number:
+                          type: string
+                          example: '0989233677'
+                        status:
+                          type: string
+                          example: Thường trú
+        404:
+          description: Household or residents not found
+        500:
+          description: Internal server error
+          
 

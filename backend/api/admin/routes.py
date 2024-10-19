@@ -176,6 +176,8 @@ def show_all_residents():
 @admin_bp.get('/house<apartment_number>')
 def show_house_info(apartment_number):
     apartment = Households.query.filter_by(apartment_number = apartment_number).first()
+    if not apartment:
+        return jsonify({"message": "House not found"}), 404
     pop = apartment.num_residents
     owner = Users.query.filter_by(user_id = apartment.managed_by).first()
     if pop == 0:

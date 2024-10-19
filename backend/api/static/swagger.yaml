@@ -94,9 +94,9 @@ paths:
                   type: string
                   example: "john@example.com"
       responses:
-        '200':
+        200:
           description: Password reset email sent
-        '404':
+        404:
           description: No account registered with the provided email
   
   /auth/validation-code:
@@ -113,9 +113,9 @@ paths:
                 input_code:
                   type: string
       responses:
-        '200':  
+        200:  
           description: validate successfully
-        '400':
+        400:
           description: invalid code 
 
   /auth/reset-password:
@@ -132,7 +132,7 @@ paths:
                 new_password:
                   type: string
       responses:
-        '200':  
+        200:  
           description: Password has been reset!!!
         
 
@@ -143,3 +143,123 @@ paths:
       responses:
         200:
           description: "Logout successful"
+
+  admin/residents:
+    get:
+      summary: Get all residents
+      description: Retrieves a list of all residents with their information.
+      parameters:
+        - name: apartment_number
+          in: path
+          required: true
+          description: The apartment number of the house.
+          schema:
+            type: integer
+            example: 101
+      responses:
+        200:
+          description: A list of residents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resident_info:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        full_name:
+                          type: string
+                          example: Vũ Văn Hoàng
+                        date_of_birth:
+                          type: string
+                          format: date
+                          example: 1990-01-01
+                        id_number:
+                          type: string
+                          example: ABC123456
+                        age:
+                          type: integer
+                          example: 30
+                        room:
+                          type: integer
+                          example: 101
+                        phone_number:
+                          type: string
+                          example: 09436255193
+                        status:
+                          type: string
+                          example: Thường trú
+        500:
+          description: Server error
+  admin/house<apartment_number>:
+    get:
+      summary: House info
+      description: Retrieve an apartment information
+      responses:
+        200:
+          description: Info of the apartment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: object
+                    properties:
+                      area:
+                        type: number
+                        format: float
+                        example: 40.00
+                      status:
+                        type: string
+                        example: occupied
+                      owner:
+                        type: string
+                        example: Hoàng Ánh
+                      num_residents:
+                        type: interger
+                        example: 5
+                      phone_number:
+                        type: string
+                        example: 01684793145  
+        404:
+          description: House not found
+        500:
+          description: Server error
+  admin/update<int:house_id>:
+    post:
+      summary: Update house
+      parameters:
+        - name: house_id
+          in: path
+          required: true
+          description: The ID of the household to update.
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        description: Update apartment information
+        required = true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone_number:
+                  type: string        
+                  example: 0916243155
+                num_residents:
+                  type: interger
+                  example: 5
+        responses:
+          200:
+            description: Updated successfully
+          404:
+            description: House not found
+          500:
+            description: Server error
+
+
+

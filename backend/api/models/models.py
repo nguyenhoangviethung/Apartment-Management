@@ -58,3 +58,8 @@ class Contributions(db.Model):
     contribution_amount = Column(DECIMAL(10, 2),  default = None)
     contribution_date = Column(Date,  default = None)
     contribution_event = Column(JSON,  default = None)
+
+class TokenBlacklist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(512), unique=True, nullable=False)
+    revoked = db.Column(db.Boolean, default=True)

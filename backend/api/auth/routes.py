@@ -105,10 +105,6 @@ def login_post():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        remember = False
-        if request.form.get('remember') == 'True':
-            remember = True
-            print('remember is True')
         user = Users.query.filter_by(username = username).first()
         
         # check if the user actually exists
@@ -120,7 +116,7 @@ def login_post():
         payload = {
             'user_id':  user.user_id ,
             'role': user.user_role,
-            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1) #nhớ chỉnh lại cái timedelta
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days = 30)
         },
         key = current_app.config['SECRET_KEY'],
         algorithm='HS256'
@@ -168,7 +164,7 @@ def validation():
         else:
             flash('Code validated successfully! Now you can reset your password.')
             session.pop('validation_code', None)
-            return jsonify({"message": "validate successfully"}), 200  # Example: redirect to reset password page
+            return jsonify({"message": "validate successfully"}), 200  
 
     
 

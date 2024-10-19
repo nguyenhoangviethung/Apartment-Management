@@ -1,16 +1,17 @@
 from api.admin import admin_bp
-from flask import jsonify, request, current_app, redirect, url_for
+from flask import jsonify, request
 from api.models.models import *
 from dotenv import load_dotenv
-from helpers import getIP, validate_token, get_payload
+from helpers import validate_date, decimal_to_float, get_payload
 from datetime import datetime, timedelta
-from functools import wraps
-from api.admin import admin_bp
 from api.extensions import db
-import jwt
 from api.models import fee_service
-from api.middlewares import admin_required, login_require
+from api.middlewares import admin_required, handle_exceptions
+from decimal import Decimal, InvalidOperation
+import logging
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -21,6 +22,7 @@ def index():
 
 @admin_bp.get('/<household_id>/residents')
 @admin_required
+@handle_exceptions
 def get_resident(household_id):
     residents = Residents.query.filter(Residents.household_id == household_id)
     if residents is None:
@@ -58,76 +60,9 @@ def get_resident(household_id):
 
     return jsonify(result), 200
 
-@admin_bp.route('/fee/<int:household_id>')
-@admin_required
-def fee(household_id):
-    
-    service_rate = db.session.query(Fees.service_rate).filter_by(household_id=household_id).scalar() or None
-    manage_rate = db.session.query(Fees.manage_rate).filter_by(household_id=household_id).scalar() or None
-    area = db.session.query(Households.area).filter_by(household_id=household_id).scalar() or None
-
-    if not service_rate or not manage_rate or not area:
-        return jsonify({"message" : "cannot query from db"}), 404
-
-    service_charge = service_rate*float(area)
-    manage_charge = manage_rate*float(area)
-    amount = (service_rate + manage_rate)*float(area)
-
-    result = jsonify(
-        {
-            'service_charge': f'{service_charge}', 
-            'manage_charge' : f'{manage_charge}', 
-            'fee' : f'{amount}'
-        }
-    )
-
-    return result, 200
-
-@admin_bp.route('/not-pay')
-@admin_required
-def not_pay():
-    
-    date = datetime.now().date()
-    notPayHouseholds = db.session.query(Fees.fee_id, Fees.household_id).filter(Fees.status == 'Chưa thanh toán', Fees.due_date >= date).all()
-    res = {
-        "infor": []
-    }
-    
-    for notPayHousehold in notPayHouseholds:
-        fee_id, household_id = notPayHousehold[0], notPayHousehold[1]
-        service_rate = db.session.query(Fees.service_rate).filter_by(fee_id = fee_id).scalar()
-        manage_rate = db.session.query(Fees.manage_rate).filter_by(fee_id = fee_id).scalar()
-        due_date = db.session.query(Fees.due_date).filter_by(fee_id = fee_id).scalar()
-        area = db.session.query(Households.area).filter_by(household_id = household_id).scalar()
-        amount = (float(service_rate) + float(manage_rate))*float(area)
-        service_fee = float(service_rate)*float(area)
-        manage_fee = float(manage_rate)*float(area)
-
-        infor = {
-            'room': f'{household_id}',
-            'amount': f'{amount}',
-            'due_date': f'{due_date}',
-            'service_fee': f'{service_fee}',
-            'manage_fee': f'{manage_fee}'
-        }
-    
-        res['infor'].append(infor)
-
-    result = jsonify(res)
-
-    return result, 200
-
-@admin_bp.route('/contribution-fee', methods=['GET', 'POST'])
-def contribution_fee():
-    
-        
-
-
-    return 'OKE'
-    
-    
 @admin_bp.post('/validate<user_id>')
 @admin_required
+@handle_exceptions
 # @token_required
 def validate_user(data, user_id):
     role = data.get('is_admin')
@@ -152,6 +87,7 @@ def validate_user(data, user_id):
     
 @admin_bp.get('/residents')
 @admin_required
+@handle_exceptions
 # @token_required
 def show_all_residents():
     residents = Residents.query.all()
@@ -173,6 +109,8 @@ def show_all_residents():
 
 @admin_bp.get('/house<apartment_number>')
 @admin_required
+@handle_exceptions
+# chưa xử lý nếu không có apartment_number
 def show_house_info(apartment_number):
     apartment = Households.query.filter_by(apartment_number = apartment_number).first()
     pop = apartment.num_residents
@@ -192,6 +130,7 @@ def show_house_info(apartment_number):
 
 @admin_bp.post('/update<int:house_id>')
 @admin_required
+@handle_exceptions
 def update_info(house_id):
     apartment = Households.query.filter_by(household_id = house_id).first()
     if not apartment:
@@ -222,39 +161,217 @@ def update_info(house_id):
     #         'status' : request.form.get('status')
     #     }
     #     return 200
+
+@admin_bp.route('/fee/<int:household_id>')
+@admin_required
+@handle_exceptions
+def fee(household_id):
     
-@admin_bp.route('/add-fee', methods = ['GET', 'POST'])
+    service_rate = db.session.query(Fees.service_rate).filter_by(household_id=household_id).scalar() or None
+    manage_rate = db.session.query(Fees.manage_rate).filter_by(household_id=household_id).scalar() or None
+    area = db.session.query(Households.area).filter_by(household_id=household_id).scalar() or None
+
+    res = {'info': []}
+
+    if not service_rate or not manage_rate or not area:
+        return jsonify(res), 400
+
+    service_charge = service_rate*float(area)
+    manage_charge = manage_rate*float(area)
+    amount = (service_rate + manage_rate)*float(area)
+
+    info = {
+            'service_charge': f'{service_charge}', 
+            'manage_charge' : f'{manage_charge}', 
+            'fee' : f'{amount}'
+    }
+
+    res['info'].append(info)
+
+    result = jsonify(res)
+
+    return result, 200
+
+@admin_bp.route('/not-pay')
 @admin_required
+@handle_exceptions
+def not_pay():
+    date = datetime.now().date()
+    not_pay_households = fee_service.get_unpaid_fees(date)
+
+    if not not_pay_households:
+        return jsonify({"message": "No unpaid fees found"}), 404
+
+    res = {"infor": []}
+    for fee in not_pay_households:
+        service_rate = Decimal(fee.service_rate)
+        manage_rate = Decimal(fee.manage_rate)
+        area = Decimal(fee.area)
+
+        amount = (service_rate + manage_rate) * area
+        service_fee = service_rate * area
+        manage_fee = manage_rate * area
+
+        infor = {
+            'room': str(fee.household_id),
+            'amount': decimal_to_float(amount),
+            'due_date': fee.due_date.strftime('%Y-%m-%d'),
+            'service_fee': decimal_to_float(service_fee),
+            'manage_fee': decimal_to_float(manage_fee),
+            'fee_type': str(fee.description)
+        }
+
+        res['infor'].append(infor)
+
+    logger.info(f"Retrieved {len(res['infor'])} unpaid fees")
+    return jsonify(res), 200
+
+    
+@admin_bp.route('/add-fee', methods=['GET', 'POST'])
+@admin_required
+@handle_exceptions
 def add_fee():
-    if request.method == 'POST':
-        create_date = datetime.now().date()
-        service_rate = request.form['service_rate']
-        manage_rate = request.form['manage_rate']
-
-        households = db.session.query(Households.household_id, Households.area).all()
-
-        if not service_rate or not manage_rate:
-            return jsonify({'message': 'add fee fail'}), 404 
-
-        for household in households:
-            area = household[1]
-            id = household[0]
-            
-            fee = Fees(
-                amount = (float(service_rate) + float(manage_rate))*float(area),
-                create_date = create_date,
-                due_date =  create_date + timedelta(days=5),
-                manage_rate = manage_rate,
-                service_rate = service_rate,
-                household_id = id
-            )
+    data = request.form
+    required_fields = ['start_date', 'due_date', 'service_rate', 'manage_rate', 'description']
+    
+    # Validation dữ liệu đầu vào
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    try:
+        start_date = validate_date(data['start_date'])
+        due_date = validate_date(data['due_date'])
+        service_rate = Decimal(data['service_rate'])
+        manage_rate = Decimal(data['manage_rate'])
+    except (ValueError, InvalidOperation) as e:
+        return jsonify({'error': str(e)}), 400
+    
+    # Kiểm tra xem mô tả đã tồn tại chưa
+    existing_fee = Fees.query.filter_by(description=data['description']).first()
+    if existing_fee:
+        return jsonify({'error': 'A fee with this description already exists'}), 400
+    
+    # Kiểm tra xem đã có fee nào được tạo trong cùng tháng và năm chưa
+    current_month = start_date.replace(day=1)
+    next_month = (current_month + timedelta(days=32)).replace(day=1)
+    existing_fee_same_month = Fees.query.filter(
+        Fees.create_date >= current_month,
+        Fees.create_date < next_month
+    ).first()
+    if existing_fee_same_month:
+        return jsonify({'error': 'A fee has already been created for this month and year'}), 400
+    
+    households = db.session.query(Households.household_id, Households.area, Households.num_residents).all()
+    # get updater
+    payload = get_payload()
+    creator = payload.get('user_id')
+    
+    for household in households:
+        if household.num_residents == 0:
+            continue
         
-            fee_service.add_fee(fee)
+        area = Decimal(household.area)
+        amount = (service_rate + manage_rate) * area
+        
+        fee = Fees(
+            amount=amount,
+            create_date=start_date,
+            due_date=due_date,
+            manage_rate=manage_rate,
+            service_rate=service_rate,
+            household_id=household.household_id,
+            description=data['description'],
+            created_by=creator
+        )
+        
+        fee_service.add_fee(fee)
+    
+    logger.info(f"Added fees for {len(households)} households")
+    return jsonify({'message': 'Add fee successful'}), 200
 
-        return jsonify({'message': 'add fee successful'}), 200
-
-@admin_bp.route('/update-fee', methods = ['GET', 'POST'])
+@admin_bp.route('/fees', methods=['GET', 'POST'])
 @admin_required
+@handle_exceptions
+def get_fees():
+    if request.method == 'POST':
+        try:
+            query_date = validate_date(request.form['date'])
+        except KeyError:
+            return jsonify({'error': 'Date not provided in the request'}), 400
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 400
+    else:
+        query_date = datetime.now().date()
+
+    fee = db.session.query(Fees.description).filter(query_date <= Fees.due_date).first()
+
+    res = {"infor": []}
+    if fee:
+        res['infor'].append(fee[0])
+
+    return jsonify(res), 200   
+
+@admin_bp.route('/update-fee', methods=['POST'])
+@admin_required
+@handle_exceptions
 def update_fee():
-    currentDate = datetime.now().date()
+    data = request.form
+    required_fields = ['description', 'manage_rate', 'service_rate']
+    
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    try:
+        manage_rate = Decimal(data['manage_rate'])
+        service_rate = Decimal(data['service_rate'])
+    except InvalidOperation:
+        return jsonify({'error': 'Invalid rate values'}), 400
+
+    fees = Fees.query.filter(Fees.description == data['description']).all()
+    
+    if not fees:
+        return jsonify({'error': 'No fees found with the given description'}), 404
+    # get updater
+    payload = get_payload()
+    updater = payload.get('user_id')
+
+    for fee in fees:
+        household = Households.query.filter_by(household_id=fee.household_id).first()
+        
+        if not household:
+            logger.warning(f"Household not found for fee ID {fee.id}")
+            continue
+
+        area = Decimal(household.area)
+        amount = (service_rate + manage_rate) * area
+
+        fee.manage_rate = manage_rate
+        fee.service_rate = service_rate
+        fee.amount = amount
+        fee.updated_by = updater
+
+    db.session.commit()
+    logger.info(f"Updated {len(fees)} fees")
+    return jsonify({'message': 'Update successful'}), 200
+
+@admin_bp.route('/delete-fee', methods=['POST'])
+@admin_required
+@handle_exceptions
+def delete_fee():
+    description_fee = request.form.get('description')
+    
+    if not description_fee:
+        return jsonify({'error': 'Description not provided'}), 400
+
+    fees = Fees.query.filter(Fees.description == description_fee).all()
+    
+    if not fees:
+        return jsonify({'error': 'No fees found with the given description'}), 404
+
+    for fee in fees:
+        db.session.delete(fee)
+    
+    db.session.commit()
+    logger.info(f"Deleted {len(fees)} fees")
+    return jsonify({'message': 'Delete successful'}), 200
     

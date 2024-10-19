@@ -4,6 +4,7 @@ import '../../home_page/home_page.dart';
 import '../../main_home.dart';
 import 'common/fee_item.dart';
 import 'common/filter.dart';
+import 'common/payment_dialog.dart';
 import 'fees/charity_activities.dart';
 import 'fees/required_fee.dart';
 
@@ -56,6 +57,9 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
     });
   }
 
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
+
   @override
   Widget build(BuildContext context) {
     return  GestureDetector(
@@ -63,9 +67,20 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
+        appBar:
+        AppBar(
           backgroundColor: Colors.blue,
-          title: const Text(
+          title: _isSearching
+          ? TextField(
+            controller: _searchController,
+            decoration: const InputDecoration(
+              hintText: 'Tìm kiếm...',
+              border: InputBorder.none,
+              hintStyle: TextStyle(color: Colors.white54, fontSize: 20),
+            ),
+            style: const TextStyle(color: Colors.white, fontSize: 20),
+          )
+          : const Text(
             'Fees Management',
             style: TextStyle(
               fontSize: 25,
@@ -93,13 +108,18 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
 
           actions: [
             IconButton(
-              icon: const Icon(
-                Icons.search,
+              icon: Icon(
+                _isSearching ? Icons.close : Icons.search,
                 size: 30,
                 color: Colors.white,
               ),
               onPressed: () {
-                print('Search button pressed');
+                setState(() {
+                  _isSearching = !_isSearching; // Chuyển đổi trạng thái tìm kiếm
+                  if (!_isSearching) {
+                    _searchController.clear(); // Xóa nội dung khi thoát tìm kiếm
+                  }
+                });
               },
             ),
             IconButton(
@@ -109,7 +129,6 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
                 color: Colors.white,
               ),
               onPressed: () {
-                print('Filter button pressed');
                 showDialog(
                   context: context,
                   builder: (context) => Center(
@@ -150,7 +169,7 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
               FloatingActionButton(
                 onPressed: () {
                   // Hành động khi nhấn nút
-                  // _showPaymentDialog(context);
+                  showPaymentDialog(context);
                 },
                 backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(

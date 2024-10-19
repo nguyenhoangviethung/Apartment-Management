@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../common/resident_card.dart';
 import '../common/resident_item.dart';
-import '../common/show_dialog.dart';
+import '../common/resident_dialog.dart';
 import '../residents_management.dart';
 import 'add_footer.dart';
 

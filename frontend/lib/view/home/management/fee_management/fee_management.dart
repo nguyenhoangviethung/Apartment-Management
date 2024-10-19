@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Home/management/fee_management/common/fee_item.dart';
 
-import '../../home_page/home_page.dart';
 import '../../main_home.dart';
-import 'common/fee_item.dart';
-import 'common/filter.dart';
-import 'common/payment_dialog.dart';
+import 'common/date_filter.dart';
+import 'common/fee_add_footer.dart';
 import 'fees/charity_activities.dart';
 import 'fees/required_fee.dart';
 
@@ -16,44 +15,25 @@ class FeesManagement extends StatefulWidget {
 }
 
 class _FeesManagementState extends State<FeesManagement> with TickerProviderStateMixin {
-  final DateFilterPopup _dateFilterPopup = new DateFilterPopup(
-                                              onDateRangeSelected: (start, end) {
-                                              print('Start date: $start');
-                                              print('End date: $end');
-                                            },);
+  final DateFilterPopup _dateFilterPopup = DateFilterPopup(
+                                              onDateRangeSelected: (start, end) { },
+                                          );
 
-  final FeeItem item = const FeeItem(
-    name: 'Ung ho anh Bay mua World cup',
-    fee: '1B USD',
-    id: '1',
-    startDate: '10/04/2004',
-    endDate: '10/04/2025',
-  );
-
-  final List<FeeItem> items = [];
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-
     _tabController = TabController(length: 2, vsync: this);
 
-    // Thêm 10 lần giá trị của item vào items
-    for (int i = 0; i < 5; i++) {
-      items.add(FeeItem(
-        name: '${item.name} $i', // Thêm số thứ tự vào tên để phân biệt
-        fee: item.fee,
-        id: '${int.parse(item.id) + i}', // Tạo ID khác nhau
-        startDate: item.startDate,
-        endDate: item.endDate,
-      ));
-    }
   }
 
-  void handleDeleteActivity(String id) {
+  final List<FeeItem> items = [];
+  void handleAddNewFee(String name, String fee, String id, String startDate, String endDate) {
+    final newItem = FeeItem(name: name, fee: fee, id: id,
+        startDate: startDate, endDate: endDate);
     setState(() {
-      items.removeWhere((item) => item.id == id);
+      items.add(newItem);
     });
   }
 
@@ -169,14 +149,19 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
               FloatingActionButton(
                 onPressed: () {
                   // Hành động khi nhấn nút
-                  showPaymentDialog(context);
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AddFee(addNewFee: handleAddNewFee,);
+                      }
+                  );
                 },
                 backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(90),
                 ),
                 child: const Icon(
-                  Icons.payments_outlined,
+                  Icons.add,
                   color: Colors.white,
                   size: 40,
                 ),

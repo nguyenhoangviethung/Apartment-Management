@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/View/Home/main_home.dart';
-import '../../home_page/home_page.dart';
 import 'add_residents/add_residents.dart';
 import 'common/resident_card.dart';
 import 'common/resident_item.dart';
@@ -24,13 +22,18 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
   );
 
   final List<ResidentItem> items = [];
+  final PageController _pageController = PageController();
+  final ScrollController _scrollController = ScrollController();
+
+  int _currentPage = 0;
+  final int itemsPerPage = 5; // Số lượng items trên mỗi trang
 
   @override
   void initState() {
     super.initState();
 
-    // Thêm 10 lần giá trị của item vào items
-    for (int i = 0; i < 10; i++) {
+    // Thêm 100 lần giá trị của item vào items
+    for (int i = 0; i < 100; i++) {
       items.add(ResidentItem(
         name: '${item.name} $i', // Thêm số thứ tự vào tên để phân biệt
         room: item.room,
@@ -41,6 +44,21 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
         idNumber: '${int.parse(item.idNumber) + i}', // Tạo ID khác nhau
       ));
     }
+
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page?.round() ?? 0;
+      });
+
+      // Tính toán vị trí của scroll view để đảm bảo dot màu xanh luôn nằm trong tầm nhìn
+      double offset = 0;
+      if (_currentPage >= 4) offset = (_currentPage * 20.0 - 60.0); // Điều chỉnh giá trị này dựa vào khoảng cách giữa các dot
+      _scrollController.animateTo(
+        offset,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+      );
+    });
   }
 
   void handleDeleteActivity(String id) {
@@ -50,8 +68,17 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return  GestureDetector(
+    final int pageCount = (items.length / itemsPerPage).ceil(); // Tính tổng số trang
+
+    return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
       },
@@ -66,118 +93,141 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          leading: Builder(
-              builder: (context) {
-                return IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    size: 30,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MainHome(currentIndex:2) ),
-                    );
-                  },
-                );
-              }
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ),
 
-        body: SingleChildScrollView(
-          child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+        body: Column(
+          children: [
+            const SizedBox(height: 15),
+            // Thanh tìm kiếm
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
                 children: [
-                  const SizedBox(height: 15),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          style: const TextStyle(fontSize: 20,fontWeight: FontWeight.w500,color: Colors.black),
-                          decoration: InputDecoration(
-                            hintText: 'Search',
-                            hintStyle: const TextStyle(color: Colors.black54,fontSize: 20),
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.search, color: Colors.blue, size: 35),
-                              onPressed: () {
-                                print('Button Search pressed!');
-                              },
-                            ),
-
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0), // Góc bo tròn
-                              borderSide: const BorderSide(
-                                color: Colors.blue,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide(
-                                color: Colors.blue[200]!, // Màu của đường viền khi được chọn
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              borderSide: const BorderSide(
-                                color: Colors.grey, // Màu của đường viền khi không được chọn
-                                width: 2.0,
-                              ),
-                            ),
-                          ),
-
-                        ),
-                      ),
-                      const SizedBox(
-                          width: 10,
-                      ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle, // Đặt hình dạng là hình tròn
-                          color: Colors.blue, // Màu nền của hình tròn
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.add, color: Colors.white, size: 35),
+                  Expanded(
+                    child: TextFormField(
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.search, color: Colors.blue, size: 35),
                           onPressed: () {
-                            print('Button Add pressed!');
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const AddResidents()),
-                            );
+                            print('Button Search pressed!');
                           },
                         ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(
+                            color: Colors.blue,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            color: Colors.blue[200]!,
+                            width: 2.0,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                            width: 2.0,
+                          ),
+                        ),
                       ),
-                    ],
+                    ),
                   ),
-
-                  const SizedBox(height: 20), // Khoảng cách giữa hàng tìm kiếm và lưới
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1, // Số cột trong lưới
-                        childAspectRatio: 3.5, // Tỷ lệ chiều rộng/chiều cao của mỗi card
-                        mainAxisSpacing: 20.0, // Khoảng cách giữa các hàng
-                      ),
-                      itemCount: items.length, // Số lượng card
-                      itemBuilder: (context, index) {
-                        // return ResidentCard(item: item);
-                        return ResidentCard(
-                          item: items[index],
-                          onDelete: handleDeleteActivity, // Truyền callback
+                  const SizedBox(width: 10),
+                  Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.blue,
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.add, color: Colors.white, size: 35),
+                      onPressed: () {
+                        print('Button Add pressed!');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AddResidents()),
                         );
                       },
-                      physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
-                      shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
                     ),
                   ),
                 ],
               ),
-          ),
+            ),
+
+            const SizedBox(height: 20), // Khoảng cách giữa hàng tìm kiếm và PageView
+
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: pageCount,
+                itemBuilder: (context, pageIndex) {
+                  final startIndex = pageIndex * itemsPerPage;
+                  final endIndex = (startIndex + itemsPerPage < items.length)
+                      ? startIndex + itemsPerPage
+                      : items.length;
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1, // Số cột trong lưới
+                        childAspectRatio: 3.4, // Tỷ lệ chiều rộng/chiều cao của mỗi card
+                        mainAxisSpacing: 22.0, // Khoảng cách giữa các hàng
+                      ),
+                      itemCount: endIndex - startIndex,
+                      itemBuilder: (context, index) {
+                        return ResidentCard(
+                          item: items[startIndex + index],
+                          onDelete: handleDeleteActivity,
+                        );
+                      },
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            // Dot indicator
+            SizedBox(
+              height: 30,
+              width: 100,
+              child: Center(
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(pageCount, (index) {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _currentPage == index ? Colors.blue : Colors.grey,
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
         ),
       ),
     );

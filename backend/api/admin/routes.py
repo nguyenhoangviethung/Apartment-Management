@@ -2,13 +2,14 @@ from api.admin import admin_bp
 from flask import jsonify, request, current_app, redirect, url_for
 from api.models.models import *
 from dotenv import load_dotenv
-from helpers import getIP
+from helpers import getIP, validate_token, get_payload
 from datetime import datetime, timedelta
 from functools import wraps
 from api.admin import admin_bp
 from api.extensions import db
 import jwt
 from api.models import fee_service
+
 
 load_dotenv()
 
@@ -20,16 +21,16 @@ def index():
 def get_resident(household_id):
     residents = Residents.query.filter(Residents.household_id == household_id)
     if residents is None:
-        return jsonify({"message": "this household have no ownership"}) , 404
+        return jsonify({"message": "this household have no ownership"}) , 200
     household = Households.query.filter(Households.household_id == household_id).first()
     if household is None:
-        return jsonify({"message": "this household have no ownership"}) , 404
+        return jsonify({"message": "this household have no ownership"}) , 200
     result = {
         "info": [],
     }
     user = Users.query.filter(household.managed_by == Users.user_id).first()
     if user is None:
-        return jsonify({"message": "this household have no ownership"}) , 404
+        return jsonify({"message": "this household have no ownership"}) , 200
     owner = Residents.query.filter(Residents.user_id == user.user_id).first() 
     result['owner'] = {
             "resident_id": owner.resident_id,
@@ -176,8 +177,6 @@ def show_all_residents():
 @admin_bp.get('/house<apartment_number>')
 def show_house_info(apartment_number):
     apartment = Households.query.filter_by(apartment_number = apartment_number).first()
-    if not apartment:
-        return jsonify({"message": "House not found"}), 404
     pop = apartment.num_residents
     owner = Users.query.filter_by(user_id = apartment.managed_by).first()
     if pop == 0:
@@ -253,3 +252,11 @@ def add_fee():
             fee_service.add_fee(fee)
 
         return jsonify({'message': 'add fee successful'}), 200
+    
+
+@admin_bp.route('/test')
+def test():
+    if not validate_token():
+        return redirect(url_for('admin.index'))
+    
+    return 'oke'

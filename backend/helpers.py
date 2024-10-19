@@ -23,16 +23,13 @@ def validate_token():
             return False
         
 def get_payload():
-    bearer = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3MjkzMzIxNjd9.sQgt9eT1YA1uerCojaYDz5x-R0I3pu8yw28o5oYgROg'
-    if not bearer:
-        return False
-    else:
-        token = bearer.split()[-1]
-        try:
-            validate = jwt.decode(token, key=Config.SECRET_KEY, algorithms='HS256')
-            return validate
-        except:
-            return False
+    if not validate_token():
+        return None
+    
+    bearer = request.headers.get('Authorization')
+    token = bearer.split()[-1]
+    payload = jwt.decode(token, key=Config.SECRET_KEY, algorithms='HS256')
 
-get_payload()
+    return payload
+
         

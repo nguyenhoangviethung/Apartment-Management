@@ -29,11 +29,11 @@ paths:
                   type: string
                   example: "password123"
       responses:
-        200:
+        '200':
           description: "Confirmation email sent"
-        400:
+        '400':
           description: "Username or email already exists"
-        500:
+        '500':
           description: "Failed to send confirmation email"
 
   /auth/confirm_email/{token}:
@@ -48,9 +48,9 @@ paths:
           required: true
           description: "Email confirmation token"
       responses:
-        200:
+        '200':
           description: "User registration successful"
-        401:
+        '401':
           description: "Invalid or expired token"
 
   /auth/login:
@@ -74,12 +74,12 @@ paths:
                   type: boolean
                   example: false
       responses:
-        200:
+        '200':
           description: "Login successful"
-        403:
+        '403':
           description: "Login failed, check credentials"
 
-  /auth/forgot-password/:
+  /auth/forgot-password:
     post:
       summary: "Forgot password"
       description: "Sends a validation code to the user's email to reset the password."
@@ -94,9 +94,9 @@ paths:
                   type: string
                   example: "john@example.com"
       responses:
-        200:
+        '200':
           description: Password reset email sent
-        404:
+        '404':
           description: No account registered with the provided email
   
   /auth/validation-code:
@@ -104,7 +104,7 @@ paths:
       summary: Try to validate the code
       requestBody:
         description: The code which requires checking
-        required = true
+        required: true
         content:
           application/x-www-form-urlencoded:
             schema:
@@ -113,9 +113,9 @@ paths:
                 input_code:
                   type: string
       responses:
-        200:  
+        '200':
           description: validate successfully
-        400:
+        '400':
           description: invalid code 
 
   /auth/reset-password:
@@ -123,7 +123,7 @@ paths:
       summary: Update the password in database
       requestBody:
         description: The new password
-        required = true
+        required: true
         content:
           application/x-www-form-urlencoded:
             schema:
@@ -132,32 +132,33 @@ paths:
                 new_password:
                   type: string
       responses:
-        200:  
+        '200':
           description: Password has been reset!!!
-        
 
   /auth/logout:
     get:
       summary: "Logout"
       description: "Logs out the current user and clears the session."
       responses:
-        200:
+        '200':
           description: "Logout successful"
 
-  admin/residents:
+  /admin/residents:
     get:
       summary: Get all residents
       description: Retrieves a list of all residents with their information.
+      tags:
+        - Admin
       parameters:
         - name: apartment_number
-          in: path
+          in: query
           required: true
           description: The apartment number of the house.
           schema:
             type: integer
             example: 101
       responses:
-        200:
+        '200':
           description: A list of residents
           content:
             application/json:
@@ -187,18 +188,28 @@ paths:
                           example: 101
                         phone_number:
                           type: string
-                          example: 09436255193
+                          example: "09436255193"
                         status:
                           type: string
                           example: Thường trú
-        500:
+        '500':
           description: Server error
-  admin/house{apartment_number}:
+
+  /admin/house/{apartment_number}:
     get:
       summary: House info
+      tags:
+        - Admin
       description: Retrieve an apartment information
+      parameters:
+        - name: apartment_number
+          in: path
+          required: true
+          description: The apartment number
+          schema:
+            type: integer
       responses:
-        200:
+        '200':
           description: Info of the apartment
           content:
             application/json:
@@ -219,18 +230,21 @@ paths:
                         type: string
                         example: Hoàng Ánh
                       num_residents:
-                        type: interger
+                        type: integer
                         example: 5
                       phone_number:
                         type: string
-                        example: 01684793145  
-        404:
+                        example: "01684793145"
+        '404':
           description: House not found
-        500:
+        '500':
           description: Server error
-  admin/update{int:house_id}:
+
+  /admin/update/{house_id}:
     post:
       summary: Update house
+      tags:
+        - Admin
       parameters:
         - name: house_id
           in: path
@@ -241,7 +255,7 @@ paths:
             example: 1
       requestBody:
         description: Update apartment information
-        required = true
+        required: true
         content:
           application/x-www-form-urlencoded:
             schema:
@@ -249,18 +263,19 @@ paths:
               properties:
                 phone_number:
                   type: string        
-                  example: 0916243155
+                  example: "0916243155"
                 num_residents:
-                  type: interger
+                  type: integer
                   example: 5
-        responses:
-          200:
-            description: Updated successfully
-          404:
-            description: House not found
-          500:
-            description: Server error
-  admin/{household_id}/residents:
+      responses:
+        '200':
+          description: Updated successfully
+        '404':
+          description: House not found
+        '500':
+          description: Server error
+
+  /admin/{household_id}/residents:
     get:
       tags:
         - Residents
@@ -275,7 +290,7 @@ paths:
             type: integer
             example: 1
       responses:
-        200:
+        '200':
           description: List of residents in the household
           content:
             application/json:
@@ -328,9 +343,94 @@ paths:
                         status:
                           type: string
                           example: Thường trú
-        404:
+        '404':
           description: Household or residents not found
-        500:
+        '500':
           description: Internal server error
           
+  /admin/not-pay:
+    get:
+      summary: Return apartments not paid
+      description: Return apartments where fee hasn't been paid
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Return information of apartments that haven't paid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  infor:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        room:
+                          type: integer
+                          example: 101
+                        amount:
+                          type: number
+                          format: float
+                          example: 550000.00
+                        due_date:
+                          type: string
+                          format: date
+                          example: 2024-10-20
+                        service_fee:
+                          type: number
+                          format: float
+                          example: 55000.00
+                        manage_fee:
+                          type: number
+                          format: float
+                          example: 55000.00
+        '500':
+          description: Internal server error
 
+  /admin/fee/{household_id}:
+    get:
+      summary: Get fee details for a household
+      description: Retrieves the service charge, manage charge, and total fee for a specific household based on its area and rates.
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: household_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the household
+      responses:
+        '200':
+          description: Successful response with fee details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  service_charge:
+                    type: string
+                    description: The calculated service charge
+                    example: "1000.00"
+                  manage_charge:
+                    type: string
+                    description: The calculated management charge
+                    example: "500.00"
+                  fee:
+                    type: string
+                    description: The total fee (service charge + management charge)
+                    example: "1500.00"
+        '404':
+          description: Unable to retrieve data from the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "cannot query from db"
+      security:
+        - AdminAuth: []  

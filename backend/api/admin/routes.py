@@ -9,15 +9,18 @@ from api.admin import admin_bp
 from api.extensions import db
 import jwt
 from api.models import fee_service
+from api.middlewares import admin_required, login_require
 
 
 load_dotenv()
 
 @admin_bp.route('/')
+@admin_required
 def index():
     return "ADMIN INDEX VIEW" 
 
 @admin_bp.get('/<household_id>/residents')
+@admin_required
 def get_resident(household_id):
     residents = Residents.query.filter(Residents.household_id == household_id)
     if residents is None:
@@ -56,6 +59,7 @@ def get_resident(household_id):
     return jsonify(result), 200
 
 @admin_bp.route('/fee/<int:household_id>')
+@admin_required
 def fee(household_id):
     
     service_rate = db.session.query(Fees.service_rate).filter_by(household_id=household_id).scalar() or None
@@ -80,11 +84,14 @@ def fee(household_id):
     return result, 200
 
 @admin_bp.route('/not-pay')
+@admin_required
 def not_pay():
     
     date = datetime.now().date()
     notPayHouseholds = db.session.query(Fees.fee_id, Fees.household_id).filter(Fees.status == 'Chưa thanh toán', Fees.due_date >= date).all()
-    res = []
+    res = {
+        "infor": []
+    }
     
     for notPayHousehold in notPayHouseholds:
         fee_id, household_id = notPayHousehold[0], notPayHousehold[1]
@@ -104,7 +111,7 @@ def not_pay():
             'manage_fee': f'{manage_fee}'
         }
     
-        res.append(infor)
+        res['infor'].append(infor)
 
     result = jsonify(res)
 
@@ -118,20 +125,9 @@ def contribution_fee():
 
     return 'OKE'
     
-@admin_bp.route('/payment')
-def payment():
-    amount = 100000
-    vnp_Amount = amount*100
-    vnp_IpAddr = getIP()
-    vnp_OrderInfo = 'TEST CHUC NANG THANH TOAN'
-    CreateDate = datetime.now()
-    ExpireDate = CreateDate + timedelta(minutes = 10)
-    vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
-    vnp_ExpireDate = ExpireDate.strftime('%Y%m%d%H%M%S')
-
-    return redirect(url_for('pay.payment', vnp_Amount=vnp_Amount, vnp_IpAddr=vnp_IpAddr, vnp_OrderInfo=vnp_OrderInfo, vnp_CreateDate=vnp_CreateDate, vnp_ExpireDate=vnp_ExpireDate))
     
 @admin_bp.post('/validate<user_id>')
+@admin_required
 # @token_required
 def validate_user(data, user_id):
     role = data.get('is_admin')
@@ -155,6 +151,7 @@ def validate_user(data, user_id):
     # user.set
     
 @admin_bp.get('/residents')
+@admin_required
 # @token_required
 def show_all_residents():
     residents = Residents.query.all()
@@ -175,6 +172,7 @@ def show_all_residents():
     return jsonify({'resident_info': resident_list}),200
 
 @admin_bp.get('/house<apartment_number>')
+@admin_required
 def show_house_info(apartment_number):
     apartment = Households.query.filter_by(apartment_number = apartment_number).first()
     pop = apartment.num_residents
@@ -193,6 +191,7 @@ def show_house_info(apartment_number):
     return jsonify({'info': apartment_data}), 200
 
 @admin_bp.post('/update<int:house_id>')
+@admin_required
 def update_info(house_id):
     apartment = Households.query.filter_by(household_id = house_id).first()
     if not apartment:
@@ -225,6 +224,7 @@ def update_info(house_id):
     #     return 200
     
 @admin_bp.route('/add-fee', methods = ['GET', 'POST'])
+@admin_required
 def add_fee():
     if request.method == 'POST':
         create_date = datetime.now().date()
@@ -252,11 +252,9 @@ def add_fee():
             fee_service.add_fee(fee)
 
         return jsonify({'message': 'add fee successful'}), 200
-    
 
-@admin_bp.route('/test')
-def test():
-    if not validate_token():
-        return redirect(url_for('admin.index'))
+@admin_bp.route('/update-fee', methods = ['GET', 'POST'])
+@admin_required
+def update_fee():
+    currentDate = datetime.now().date()
     
-    return 'oke'

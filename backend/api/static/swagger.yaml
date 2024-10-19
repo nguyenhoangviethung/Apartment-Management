@@ -386,6 +386,9 @@ paths:
                           type: number
                           format: float
                           example: 55000.00
+                        fee_type:
+                          type: string
+                          example: Tiền tháng 10
         '500':
           description: Internal server error
 
@@ -459,7 +462,7 @@ paths:
         '200':
           description: Fees added successfully
         '400':
-          description: Missing or invalid data
+          description: Cannot add fee
 
   /admin/fees:
     get:

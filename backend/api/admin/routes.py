@@ -3,7 +3,7 @@ from flask import jsonify, request
 from api.models.models import *
 from dotenv import load_dotenv
 from helpers import validate_date, decimal_to_float, get_payload
-from datetime import datetime
+from datetime import datetime, timedelta
 from api.extensions import db
 from api.models import fee_service
 from api.middlewares import admin_required, handle_exceptions
@@ -22,6 +22,7 @@ def index():
 
 @admin_bp.get('/<household_id>/residents')
 @admin_required
+@handle_exceptions
 def get_resident(household_id):
     residents = Residents.query.filter(Residents.household_id == household_id)
     if residents is None:
@@ -61,6 +62,7 @@ def get_resident(household_id):
 
 @admin_bp.post('/validate<user_id>')
 @admin_required
+@handle_exceptions
 # @token_required
 def validate_user(data, user_id):
     role = data.get('is_admin')
@@ -85,6 +87,7 @@ def validate_user(data, user_id):
     
 @admin_bp.get('/residents')
 @admin_required
+@handle_exceptions
 # @token_required
 def show_all_residents():
     residents = Residents.query.all()
@@ -127,6 +130,7 @@ def show_house_info(apartment_number):
 
 @admin_bp.post('/update<int:house_id>')
 @admin_required
+@handle_exceptions
 def update_info(house_id):
     apartment = Households.query.filter_by(household_id = house_id).first()
     if not apartment:
@@ -213,7 +217,8 @@ def not_pay():
             'amount': decimal_to_float(amount),
             'due_date': fee.due_date.strftime('%Y-%m-%d'),
             'service_fee': decimal_to_float(service_fee),
-            'manage_fee': decimal_to_float(manage_fee)
+            'manage_fee': decimal_to_float(manage_fee),
+            'fee_type': str(fee.description)
         }
 
         res['infor'].append(infor)
@@ -232,7 +237,7 @@ def add_fee():
     # Validation dữ liệu đầu vào
     if not all(field in data for field in required_fields):
         return jsonify({'error': 'Missing required fields'}), 400
-
+    
     try:
         start_date = validate_date(data['start_date'])
         due_date = validate_date(data['due_date'])
@@ -240,11 +245,27 @@ def add_fee():
         manage_rate = Decimal(data['manage_rate'])
     except (ValueError, InvalidOperation) as e:
         return jsonify({'error': str(e)}), 400
-
+    
+    # Kiểm tra xem mô tả đã tồn tại chưa
+    existing_fee = Fees.query.filter_by(description=data['description']).first()
+    if existing_fee:
+        return jsonify({'error': 'A fee with this description already exists'}), 400
+    
+    # Kiểm tra xem đã có fee nào được tạo trong cùng tháng và năm chưa
+    current_month = start_date.replace(day=1)
+    next_month = (current_month + timedelta(days=32)).replace(day=1)
+    existing_fee_same_month = Fees.query.filter(
+        Fees.create_date >= current_month,
+        Fees.create_date < next_month
+    ).first()
+    if existing_fee_same_month:
+        return jsonify({'error': 'A fee has already been created for this month and year'}), 400
+    
     households = db.session.query(Households.household_id, Households.area, Households.num_residents).all()
     # get updater
     payload = get_payload()
     creator = payload.get('user_id')
+    
     for household in households:
         if household.num_residents == 0:
             continue
@@ -260,11 +281,11 @@ def add_fee():
             service_rate=service_rate,
             household_id=household.household_id,
             description=data['description'],
-            created_by = creator
+            created_by=creator
         )
         
         fee_service.add_fee(fee)
-
+    
     logger.info(f"Added fees for {len(households)} households")
     return jsonify({'message': 'Add fee successful'}), 200
 

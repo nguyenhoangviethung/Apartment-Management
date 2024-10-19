@@ -12,7 +12,8 @@ def get_unpaid_fees(date):
             Fees.service_rate, 
             Fees.manage_rate, 
             Fees.due_date,
-            Households.area
+            Households.area,
+            Fees.description
         ).join(
             Households, 
             Fees.household_id == Households.household_id

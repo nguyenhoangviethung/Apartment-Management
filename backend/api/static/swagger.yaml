@@ -7,7 +7,6 @@ servers:
   - url: http://localhost:5000
   - url: https://apartment-management-kjj9.onrender.com/
   - url: https://apartment-management-oy7f.onrender.com/
-  - url: https://apartment-management-1-0-1.onrender.com/
 paths:
   /auth/register:
     post:
@@ -30,11 +29,11 @@ paths:
                   type: string
                   example: "password123"
       responses:
-        200:
+        '200':
           description: "Confirmation email sent"
-        400:
+        '400':
           description: "Username or email already exists"
-        500:
+        '500':
           description: "Failed to send confirmation email"
 
   /auth/confirm_email/{token}:
@@ -49,9 +48,9 @@ paths:
           required: true
           description: "Email confirmation token"
       responses:
-        200:
+        '200':
           description: "User registration successful"
-        401:
+        '401':
           description: "Invalid or expired token"
 
   /auth/login:
@@ -75,9 +74,9 @@ paths:
                   type: boolean
                   example: false
       responses:
-        200:
+        '200':
           description: "Login successful"
-        403:
+        '403':
           description: "Login failed, check credentials"
 
   /auth/forgot-password:
@@ -95,40 +94,35 @@ paths:
                   type: string
                   example: "john@example.com"
       responses:
-        200:
-          description: "Validation code sent"
-        404:
-          description: "No account registered with this email"
-
+        '200':
+          description: Password reset email sent
+        '404':
+          description: No account registered with the provided email
+  
   /auth/validation-code:
     post:
-      summary: "Validate the code"
-      description: "Validates the code sent to the user's email for password reset."
-      security:
-        BearerAuth: []
+      summary: Try to validate the code
       requestBody:
+        description: The code which requires checking
         required: true
         content:
           application/x-www-form-urlencoded:
             schema:
               type: object
               properties:
-                code:
+                input_code:
                   type: string
-                  example: "1234"
       responses:
-        200:
-          description: "Code validated successfully"
-        400:
-          description: "Invalid code"
+        '200':
+          description: validate successfully
+        '400':
+          description: invalid code 
 
   /auth/reset-password:
     post:
-      summary: "Reset password"
-      description: "Allows a user to reset their password after validating the code."
-      security:
-        BearerAuth: []
+      summary: Update the password in database
       requestBody:
+        description: The new password
         required: true
         content:
           application/x-www-form-urlencoded:
@@ -137,19 +131,306 @@ paths:
               properties:
                 new_password:
                   type: string
-                  example: "newpassword123"
       responses:
-        200:
-          description: "Password has been reset"
-        401:
-          description: "Invalid or expired token"  
-        404:
-          description: "No email stored in session"
+        '200':
+          description: Password has been reset!!!
 
   /auth/logout:
     get:
       summary: "Logout"
       description: "Logs out the current user and clears the session."
       responses:
-        200:
+        '200':
           description: "Logout successful"
+
+  /admin/residents:
+    get:
+      summary: Get all residents
+      description: Retrieves a list of all residents with their information.
+      tags:
+        - Admin
+      parameters:
+        - name: apartment_number
+          in: query
+          required: true
+          description: The apartment number of the house.
+          schema:
+            type: integer
+            example: 101
+      responses:
+        '200':
+          description: A list of residents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resident_info:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        full_name:
+                          type: string
+                          example: Vũ Văn Hoàng
+                        date_of_birth:
+                          type: string
+                          format: date
+                          example: 1990-01-01
+                        id_number:
+                          type: string
+                          example: ABC123456
+                        age:
+                          type: integer
+                          example: 30
+                        room:
+                          type: integer
+                          example: 101
+                        phone_number:
+                          type: string
+                          example: "09436255193"
+                        status:
+                          type: string
+                          example: Thường trú
+        '500':
+          description: Server error
+
+  /admin/house/{apartment_number}:
+    get:
+      summary: House info
+      tags:
+        - Admin
+      description: Retrieve an apartment information
+      parameters:
+        - name: apartment_number
+          in: path
+          required: true
+          description: The apartment number
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Info of the apartment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: object
+                    properties:
+                      area:
+                        type: number
+                        format: float
+                        example: 40.00
+                      status:
+                        type: string
+                        example: occupied
+                      owner:
+                        type: string
+                        example: Hoàng Ánh
+                      num_residents:
+                        type: integer
+                        example: 5
+                      phone_number:
+                        type: string
+                        example: "01684793145"
+        '404':
+          description: House not found
+        '500':
+          description: Server error
+
+  /admin/update/{house_id}:
+    post:
+      summary: Update house
+      tags:
+        - Admin
+      parameters:
+        - name: house_id
+          in: path
+          required: true
+          description: The ID of the household to update.
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        description: Update apartment information
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone_number:
+                  type: string        
+                  example: "0916243155"
+                num_residents:
+                  type: integer
+                  example: 5
+      responses:
+        '200':
+          description: Updated successfully
+        '404':
+          description: House not found
+        '500':
+          description: Server error
+
+  /admin/{household_id}/residents:
+    get:
+      tags:
+        - Residents
+      summary: Get residents of a household
+      description: Retrieves the owner and residents of a household by the household ID.
+      parameters:
+        - name: household_id
+          in: path
+          required: true
+          description: The ID of the household.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: List of residents in the household
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  owner:
+                    type: object
+                    properties:
+                      resident_id:
+                        type: integer
+                        example: 1
+                      resident_name:
+                        type: string
+                        example: Nguyễn Quyết Thắng
+                      date_of_birth:
+                        type: string
+                        format: date
+                        example: 1985-08-15
+                      id_number:
+                        type: string
+                        example: '002948492849'
+                      phone_number:
+                        type: string
+                        example: '018276478727'
+                      status:
+                        type: string
+                        example: Thường trú
+                  info:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        resident_id:
+                          type: integer
+                          example: 2
+                        resident_name:
+                          type: string
+                          example: Trần Thanh Phong
+                        date_of_birth:
+                          type: string
+                          format: date
+                          example: 1990-07-01
+                        id_number:
+                          type: string
+                          example: '001204019225'
+                        phone_number:
+                          type: string
+                          example: '0989233677'
+                        status:
+                          type: string
+                          example: Thường trú
+        '404':
+          description: Household or residents not found
+        '500':
+          description: Internal server error
+          
+  /admin/not-pay:
+    get:
+      summary: Return apartments not paid
+      description: Return apartments where fee hasn't been paid
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Return information of apartments that haven't paid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  infor:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        room:
+                          type: integer
+                          example: 101
+                        amount:
+                          type: number
+                          format: float
+                          example: 550000.00
+                        due_date:
+                          type: string
+                          format: date
+                          example: 2024-10-20
+                        service_fee:
+                          type: number
+                          format: float
+                          example: 55000.00
+                        manage_fee:
+                          type: number
+                          format: float
+                          example: 55000.00
+        '500':
+          description: Internal server error
+
+  /admin/fee/{household_id}:
+    get:
+      summary: Get fee details for a household
+      description: Retrieves the service charge, manage charge, and total fee for a specific household based on its area and rates.
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: household_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the household
+      responses:
+        '200':
+          description: Successful response with fee details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  service_charge:
+                    type: string
+                    description: The calculated service charge
+                    example: "1000.00"
+                  manage_charge:
+                    type: string
+                    description: The calculated management charge
+                    example: "500.00"
+                  fee:
+                    type: string
+                    description: The total fee (service charge + management charge)
+                    example: "1500.00"
+        '404':
+          description: Unable to retrieve data from the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "cannot query from db"
+      security:
+        - AdminAuth: []  

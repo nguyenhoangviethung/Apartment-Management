@@ -1,8 +1,7 @@
 from api.auth import auth_bp
 from api.extensions import db
 from api.models.models import *
-from flask import g, url_for, session, abort, request, jsonify, current_app, flash, redirect
-from functools import wraps
+from flask import g, url_for, session, request, jsonify, current_app, flash
 from flask_mail import Mail, Message
 import jwt, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,28 +10,10 @@ import re, dns.resolver
 import os
 from dotenv import load_dotenv
 import random
+from api.models import user_service
 
 
 load_dotenv()
-
-def login_require(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if g.get('user') is None:
-            # unauthorized
-            return jsonify({"message" : "Check login fail"}), 403
-        return f(*args, **kwargs)
-    
-    return wrap
-
-def admin_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if not g.get('user') or g.get('user').user_role != 'admin':
-            # forbidden
-            return jsonify({"message": "you are not admin"}), 403  
-        return f(*args, **kwargs)
-    return wrap
 
 @auth_bp.before_app_request
 def check_attribute():
@@ -125,25 +106,23 @@ def login_post():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        remember = False
-        if request.form.get('remember') == 'True':
-            remember = True
-            print('remember is True')
         user = Users.query.filter_by(username = username).first()
-
+        
         # check if the user actually exists
         if not user or not check_password_hash(user.password_hash, password):
             flash('Please check your login details and try again.')
             return jsonify({"message" : "login failed"}), 403
         
-        session.clear()    
-        session.setdefault('user_id', user.user_id)
-        session.setdefault('user_role', user.user_role)
-        
-        
-        login_user(user, remember=remember)
-        
-        return jsonify({"message": "login successful"}), 200
+        token = jwt.encode(
+        payload = {
+            'user_id':  user.user_id ,
+            'role': user.user_role,
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days = 30)
+        },
+        key = current_app.config['SECRET_KEY'],
+        algorithm='HS256'
+        )
+        return jsonify({"message": "login successful", 'token': token}), 200
     return jsonify({"message": "Login page loaded"}), 200
     
 @auth_bp.route('/forgot-password', methods=['GET', 'POST'])
@@ -217,7 +196,7 @@ def validation_code():
         stored_email = data.get('email')
         
         user = Users.query.filter_by(user_email=stored_email).first()
-        user.set_password(new_password)
+        user_service.set_password(user, new_password)
         
         db.session.commit()
         return jsonify({"message" :"Password has been reset!!!"}), 200

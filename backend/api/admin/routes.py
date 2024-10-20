@@ -60,30 +60,37 @@ def get_resident(household_id):
 
     return jsonify(result), 200
 
-@admin_bp.post('/validate<user_id>')
+@admin_bp.post('/validate')
 @admin_required
 @handle_exceptions
-# @token_required
-def validate_user(data, user_id):
-    role = data.get('is_admin')
-    if role == 'false':
-        return jsonify({'message': 'user unauthorized'}), 403
+def validate_user():
     
     full_name = request.form.get('full_name')
     dob = datetime.strptime(request.form.get('date_of_birth'),'%Y-%m-%d').date()
     id_number = request.form.get('id_number')
     status = request.form.get('status')
     room = request.form.get('room')
-    # phone_number = request.form.get('phone_number')
+    phone_number = request.form.get('phone_number')
+    
+    existing_resident = Residents.query.filter_by(resident_name=full_name, id_number=id_number).first()
+    if existing_resident:
+        return jsonify({'message': 'Resident with this name and ID number already exists'}), 400
+    
+    household = Households.query.filter_by(household_id=room).first()
+    if not household:
+        return jsonify({'message': 'Room does not exist'}), 404
     
     new_resident = Residents(
         resident_name = full_name,
         date_of_birth = dob,
         id_number = id_number,
-        
+        status = status,
+        household_id = room,
+        phone_number = phone_number
     )
-    # user = Users.query.filter_by(user_id = user_id).one_or_none()
-    # user.set
+    db.session.add(new_resident)
+    db.session.commit()
+    return jsonify({'message': 'Resident added successfully'}), 200
     
 @admin_bp.get('/residents')
 @admin_required
@@ -109,7 +116,6 @@ def show_all_residents():
 @admin_bp.get('/house<apartment_number>')
 @admin_required
 @handle_exceptions
-# chưa xử lý nếu không có apartment_number
 def show_house_info(apartment_number):
    
     apartment = Households.query.filter_by(apartment_number = apartment_number).first()

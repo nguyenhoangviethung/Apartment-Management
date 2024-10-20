@@ -553,3 +553,51 @@ paths:
               type: object
               required:
                 - description
+  admin/validate:
+    post:
+      tags:
+        - Admin
+      summary: Validate and add a new resident
+      description: Validates and adds a new resident if they don't already exist.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                  description: Full name of the resident.
+                  example: Trần Đoàn
+                date_of_birth:
+                  type: string
+                  format: date
+                  description: Date of birth of the resident.
+                  example: 1995-05-15
+                id_number:
+                  type: string
+                  description: Identification number of the resident.
+                  example: '0272848372829'
+                status:
+                  type: string
+                  description: Current status of the resident (e.g., active, inactive).
+                  example: Tạm trú
+                room:
+                  type: integer
+                  description: Room number assigned to the resident.
+                  example: 102
+                phone_number:
+                  type: string
+                  description: Phone number of the resident.
+                  example: 123-456-7890
+      responses:
+        200:
+          description: Resident added successfully
+        400:
+          description: Resident with this name and ID number already exists
+        404:
+          description: Room doesn't exists  
+        500:
+          description: An error occurred while adding the resident 
+          

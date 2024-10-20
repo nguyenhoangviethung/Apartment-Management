@@ -236,7 +236,7 @@ paths:
                         type: string
                         example: "01684793145"
         '404':
-          description: House not found
+          description: House not found or apartment number doesn't exists
         '500':
           description: Server error
 

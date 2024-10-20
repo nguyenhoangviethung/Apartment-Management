@@ -88,7 +88,6 @@ def validate_user(data, user_id):
 @admin_bp.get('/residents')
 @admin_required
 @handle_exceptions
-# @token_required
 def show_all_residents():
     residents = Residents.query.all()
     resident_list = []
@@ -112,7 +111,10 @@ def show_all_residents():
 @handle_exceptions
 # chưa xử lý nếu không có apartment_number
 def show_house_info(apartment_number):
+   
     apartment = Households.query.filter_by(apartment_number = apartment_number).first()
+    if not apartment:
+        return jsonify({'message': 'apartment number does not exists!!!'}), 404
     pop = apartment.num_residents
     owner = Users.query.filter_by(user_id = apartment.managed_by).first()
     if pop == 0:

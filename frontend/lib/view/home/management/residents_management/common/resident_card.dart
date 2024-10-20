@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/view/home/management/residents_management/common/resident_info.dart';
-import 'package:frontend/view/home/management/residents_management/common/resident_item.dart';
+
+import '../../../../../models/resident_info.dart';
 class ResidentCard extends StatefulWidget {
-  final ResidentItem item;
+  final ResidentInfo item;
   final Function(String) onDelete; // Thêm tham số callback
 
   const ResidentCard({super.key, required this.item, required this.onDelete});
@@ -18,9 +18,41 @@ class _ResidentCardState extends State<ResidentCard> {
       onTap: () {
         showDialog(
             context: context,
-            builder: (BuildContext context) {
-              return ResidentInfo(name: widget.item.name, dob: widget.item.dob, idNumber: widget.item.idNumber,
-                  age: widget.item.age, status: widget.item.status, room: widget.item.room, phoneNumber: widget.item.phoneNumber);
+            builder: (BuildContext context){
+              return AlertDialog(
+                title: const Center(
+                  child: Text(
+                    'Information',
+                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500, color: Colors.blue),
+                  ),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoRow('Name:', widget.item.full_name!),
+                      _buildInfoRow('Date of Birth:', widget.item.date_of_birth!),
+                      _buildInfoRow('ID Number:', widget.item.id_number!),
+                      _buildInfoRow('Age:', widget.item.age.toString()),
+                      _buildInfoRow('Status:', widget.item.status!),
+                      _buildInfoRow('Room:', widget.item.room.toString()),
+                      _buildInfoRow('Phone:', widget.item.phone_number!),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    child: const Center(
+                      child: Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
             }
         );
       },
@@ -43,7 +75,7 @@ class _ResidentCardState extends State<ResidentCard> {
                       Icon(Icons.person_pin_outlined, color: Colors.blue[500]!, size: 45,),
                       const SizedBox(width: 8),
                       Text(
-                        widget.item.name,
+                        widget.item.full_name!,
                         style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                       ),
                     ],
@@ -52,7 +84,7 @@ class _ResidentCardState extends State<ResidentCard> {
                   GestureDetector(
                     onTap: () {
                       print("Icon Delete pressed");
-                      widget.onDelete(widget.item.idNumber);
+                      widget.onDelete(widget.item.id_number!);
                     },
                     child: const Icon (
                       Icons.delete,
@@ -72,7 +104,7 @@ class _ResidentCardState extends State<ResidentCard> {
                           Icon(Icons.home_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.room,
+                            widget.item.room.toString(),
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],
@@ -85,7 +117,7 @@ class _ResidentCardState extends State<ResidentCard> {
                           Icon(Icons.call_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.phoneNumber,
+                            widget.item.phone_number!,
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],
@@ -97,6 +129,29 @@ class _ResidentCardState extends State<ResidentCard> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.black54),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+            ),
+          ),
+        ],
       ),
     );
   }

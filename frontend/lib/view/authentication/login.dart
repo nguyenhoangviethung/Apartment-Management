@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/forgot_password.dart';
 import 'package:frontend/View/Authentication/register.dart';
 import 'package:frontend/View/Home/main_home.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:shared_preferences/shared_preferences.dart';
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -48,13 +50,17 @@ class _LoginState extends State<Login> {
       });
 
       if (response.statusCode == 200) {
+        var responseData=jsonDecode(response.body);
+        final tokenlogin= responseData['token'];
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('tokenlogin', tokenlogin);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const MainHome()),
         );
         showinform(context, 'Login Successful', '');
       } else if(response.statusCode==403){
-        showinform(context, 'Login Failed', 'Icorrect Details');
+        showinform(context, 'Login Failed', 'Incorrect Details');
 
       }
     } catch (error) {

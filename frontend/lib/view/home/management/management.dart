@@ -1,53 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/view/home/management/component_management/management_card.dart';
 import 'package:frontend/view/home/management/residents_management/residents_management.dart';
-import 'fee_management/fee_management.dart';
 
 class Management extends StatelessWidget {
   const Management({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ResidentsManagement()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-              child: const Text('Resident', textAlign: TextAlign.center),
-
-            ),
-          ),
+    return const SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            ManagementCard(imagelink: 'assets/images/resident.jpg', title: 'Residents Management',),
+            SizedBox(height: 20,),
+            ManagementCard(imagelink: 'assets/images/fee.jpg', title: 'Fees Management',),
+            SizedBox(height: 20,),
+            ManagementCard(imagelink: 'assets/images/room.jpg', title: 'Rooms Management',),
+          ],
         ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FeesManagement()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-              child: const Text('Fee'),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
+
   }
 }

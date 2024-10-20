@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Home/main_home.dart';
+import 'package:frontend/models/resident_info.dart';
+import 'package:frontend/services/fetch_residents.dart';
 import 'add_residents/add_residents.dart';
 import 'common/resident_card.dart';
-import 'common/resident_item.dart';
 
 class ResidentsManagement extends StatefulWidget {
   const ResidentsManagement({super.key});
@@ -11,17 +13,22 @@ class ResidentsManagement extends StatefulWidget {
 }
 
 class _ResidentsManagementState extends State<ResidentsManagement> {
-  final ResidentItem item = const ResidentItem(
-    name: 'Do Xuan Chien',
-    room: 'vip-909',
-    phoneNumber: '0999999999',
-    dob: '10/04/2004',
-    age: '20',
-    status: 'Single',
-    idNumber: '102',
-  );
 
-  final List<ResidentItem> items = [];
+  // final ResidentItem item = const ResidentItem(
+  //   name: 'Do Xuan Chien',
+  //   room: 'vip-909',
+  //   phoneNumber: '0999999999',
+  //   dob: '10/04/2004',
+  //   age: '20',
+  //   status: 'Single',
+  //   idNumber: '102',
+  // );
+
+  List<ResidentInfo> _residents =[];
+  List<ResidentInfo> _allresidents=[];
+
+
+  // final List<ResidentItem> items = [];
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
 
@@ -33,18 +40,24 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
     super.initState();
 
     // Thêm 100 lần giá trị của item vào items
-    for (int i = 0; i < 100; i++) {
-      items.add(ResidentItem(
-        name: '${item.name} $i', // Thêm số thứ tự vào tên để phân biệt
-        room: item.room,
-        phoneNumber: item.phoneNumber,
-        dob: item.dob,
-        age: item.age,
-        status: item.status,
-        idNumber: '${int.parse(item.idNumber) + i}', // Tạo ID khác nhau
-      ));
-    }
+    // for (int i = 0; i < 100; i++) {
+    //   items.add(ResidentItem(
+    //     name: '${item.name} $i', // Thêm số thứ tự vào tên để phân biệt
+    //     room: item.room,
+    //     phoneNumber: item.phoneNumber,
+    //     dob: item.dob,
+    //     age: item.age,
+    //     status: item.status,
+    //     idNumber: '${int.parse(item.idNumber) + i}', // Tạo ID khác nhau
+    //   ));
+    // }
 
+    fetchResidents().then((value){
+      setState(() {
+        _residents=value;
+        _allresidents=value;
+      });
+    });
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page?.round() ?? 0;
@@ -63,7 +76,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
 
   void handleDeleteActivity(String id) {
     setState(() {
-      items.removeWhere((item) => item.idNumber == id);
+      _residents.removeWhere((item) => item.id_number == id);
     });
   }
 
@@ -76,7 +89,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
 
   @override
   Widget build(BuildContext context) {
-    final int pageCount = (items.length / itemsPerPage).ceil(); // Tính tổng số trang
+    final int pageCount = (_residents.length / itemsPerPage).ceil(); // Tính tổng số trang
 
     return GestureDetector(
       onTap: () {
@@ -96,7 +109,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const MainHome(currentIndex: 2,)));
             },
           ),
         ),
@@ -115,12 +128,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                       decoration: InputDecoration(
                         hintText: 'Search',
                         hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.search, color: Colors.blue, size: 35),
-                          onPressed: () {
-                            print('Button Search pressed!');
-                          },
-                        ),
+                        suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: const BorderSide(
@@ -143,6 +151,15 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                           ),
                         ),
                       ),
+                      onChanged: (text){
+                        setState(() {
+                          text=text.toLowerCase();
+                          _residents=_allresidents.where((residentinfo){
+                            var word= residentinfo.full_name?.toLowerCase()??'';
+                            return word.contains(text);
+                          }).toList();
+                        });
+                      },
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -154,7 +171,6 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                     child: IconButton(
                       icon: const Icon(Icons.add, color: Colors.white, size: 35),
                       onPressed: () {
-                        print('Button Add pressed!');
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const AddResidents()),
@@ -174,9 +190,9 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                 itemCount: pageCount,
                 itemBuilder: (context, pageIndex) {
                   final startIndex = pageIndex * itemsPerPage;
-                  final endIndex = (startIndex + itemsPerPage < items.length)
+                  final endIndex = (startIndex + itemsPerPage < _residents.length)
                       ? startIndex + itemsPerPage
-                      : items.length;
+                      : _residents.length;
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -189,7 +205,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                       itemCount: endIndex - startIndex,
                       itemBuilder: (context, index) {
                         return ResidentCard(
-                          item: items[startIndex + index],
+                          item: _residents[startIndex + index],
                           onDelete: handleDeleteActivity,
                         );
                       },

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/resident_info.dart';
 
 import '../common/resident_card.dart';
-import '../common/resident_item.dart';
-import '../common/resident_dialog.dart';
 import '../residents_management.dart';
 import 'add_footer.dart';
 
@@ -14,11 +13,18 @@ class AddResidents extends StatefulWidget {
 }
 
 class _AddResidentsState extends State<AddResidents> {
-  final List<ResidentItem> items = [];
+  final List<ResidentInfo> items = [];
 
-  void handleAddNewResident(String name, String dob, String idNumber, String age, String status, String room, String phoneNumber) {
-    final newItem = ResidentItem(name: name, dob: dob, idNumber: idNumber,
-        age: age, status: status, room: room, phoneNumber: phoneNumber);
+  // String ?full_name;
+  // String ?date_of_birth;
+  // String ?id_number;
+  // int ?age;
+  // int ?room;
+  // String ?phone_number;
+  // String ?status;
+  void handleAddNewResident(String name, String dob, String idNumber, int age,int room,String phoneNumber, String status) {
+    final newItem = ResidentInfo(full_name: name, date_of_birth: dob, id_number: idNumber,
+        age: age, room: room, phone_number: phoneNumber,status: status);
     setState(() {
       items.add(newItem);
     });
@@ -26,7 +32,7 @@ class _AddResidentsState extends State<AddResidents> {
 
   void handleDeleteActivity(String id) {
     setState(() {
-      items.removeWhere((item) => item.idNumber == id);
+      items.removeWhere((item) => item.id_number == id);
     });
   }
 
@@ -72,8 +78,8 @@ class _AddResidentsState extends State<AddResidents> {
                 color: Colors.white,
               ),
               onPressed: () {
-                print('Save button pressed');
-                showInform(context, 'Saved', 'Đã lưu thông tin thành công');
+                // print('Save button pressed');
+                // showInform(context, 'Saved', 'Đã lưu thông tin thành công');
               },
             ),
           ],

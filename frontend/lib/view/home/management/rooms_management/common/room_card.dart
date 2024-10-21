@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/room_info.dart';
 
 import '../../../../../models/resident_info.dart';
-class ResidentCard extends StatefulWidget {
-  final ResidentInfo item;
-  final Function(String) onDelete; // Thêm tham số callback
+import 'edit_footer.dart';
+class RoomCard extends StatefulWidget {
+  final RoomInfo item;
+  final Function(int, int, String) onEdit;
 
-  const ResidentCard({super.key, required this.item, required this.onDelete});
+  const RoomCard({super.key, required this.item, required this.onEdit});
 
   @override
-  State<ResidentCard> createState() => _ResidentCardState();
+  State<RoomCard> createState() => _RoomCardState();
 }
 
-class _ResidentCardState extends State<ResidentCard> {
+class _RoomCardState extends State<RoomCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -32,13 +34,11 @@ class _ResidentCardState extends State<ResidentCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Name:', widget.item.full_name!),
-                      _buildInfoRow('Date of Birth:', widget.item.date_of_birth!),
-                      _buildInfoRow('ID Number:', widget.item.id_number!),
-                      _buildInfoRow('Age:', widget.item.age.toString()),
+                      _buildInfoRow('Area:', widget.item.area.toString()),
                       _buildInfoRow('Status:', widget.item.status!),
-                      _buildInfoRow('Room:', widget.item.room.toString()),
-                      _buildInfoRow('Phone:', widget.item.phone_number!),
+                      _buildInfoRow('Owner:', widget.item.owner!),
+                      _buildInfoRow('Number of residents:', widget.item.num_residents.toString()),
+                      _buildInfoRow('Phone number:', widget.item.phone_number!),
                     ],
                   ),
                 ),
@@ -72,10 +72,10 @@ class _ResidentCardState extends State<ResidentCard> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.person_pin_outlined, color: Colors.blue[500]!, size: 45,),
+                      Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45,),
                       const SizedBox(width: 8),
                       Text(
-                        widget.item.full_name!,
+                        widget.item.id.toString(),
                         style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                       ),
                     ],
@@ -83,11 +83,22 @@ class _ResidentCardState extends State<ResidentCard> {
 
                   GestureDetector(
                     onTap: () {
-                      print("Icon Delete pressed");
-                      widget.onDelete(widget.item.id_number!);
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return EditFooter(
+                              id: widget.item.id!,
+                              editRoomInfo: (id, newNumResidents, newPhoneNumber) {
+                                widget.onEdit(id, newNumResidents, newPhoneNumber);
+                                Navigator.of(context).pop(); // Đóng dialog sau khi chỉnh sửa
+                              },
+                            );
+                          }
+                      );
                     },
+                    // onTap: () => _showEditDialog(context),
                     child: const Icon (
-                      Icons.delete,
+                      Icons.edit_calendar_outlined,
                       size: 30,
                       color: Color.fromRGBO(0, 0, 0, 0.6),
                     ),
@@ -101,10 +112,10 @@ class _ResidentCardState extends State<ResidentCard> {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.home_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
+                          Icon(Icons.info_outline, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.room.toString(),
+                            widget.item.status.toString(),
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],
@@ -114,10 +125,10 @@ class _ResidentCardState extends State<ResidentCard> {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.call_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
+                          Icon(Icons.area_chart_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.phone_number!,
+                            widget.item.area.toString(),
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/view/home/management/residents_management/residents_management.dart';
 
 import '../fees_management/fees_management.dart';
+import '../rooms_management/rooms_management.dart';
 
 class ManagementCard extends StatelessWidget {
   final String imagelink;
@@ -55,9 +56,9 @@ class ManagementCard extends StatelessWidget {
         if(title=='Fees Management'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const FeesManagement()));
         }
-        // if(title=='Rooms Management'){
-        //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const RoomsManagement()));
-        // }
+        if(title=='Rooms Management'){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const RoomsManagement()));
+        }
       },
     );
   }

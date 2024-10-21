@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="main_home.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="filePath" value="$PROJECT_DIR$/frontend/lib/view/home/main_home.dart" />
+    <method v="2" />
+  </configuration>
+</component>

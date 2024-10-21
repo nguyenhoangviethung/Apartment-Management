@@ -3,6 +3,7 @@ import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/login.dart';
 import 'package:http/http.dart'as http;
 import 'email_verification.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ResetPassword extends StatefulWidget {
   const ResetPassword({super.key});
@@ -18,47 +19,70 @@ class _ResetPasswordState extends State<ResetPassword> {
   final _pass =TextEditingController();
   final _confirmpass=TextEditingController();
 
-  Future<void> resetpassword(String new_password, String confirmpass)async{
+  Future<void> resetpassword(String new_password, String confirmpass) async {
     setState(() {
-      _isload=true;
+      _isload = true;
     });
-    if(new_password!=confirmpass){
+
+    if (new_password != confirmpass) {
       setState(() {
-        _isload=false;
+        _isload = false;
       });
       showinform(context, 'Error', 'Passwords do not match!');
       return;
     }
-    if(new_password.isEmpty || confirmpass.isEmpty){
+
+    if (new_password.isEmpty || confirmpass.isEmpty) {
       setState(() {
-        _isload=false;
+        _isload = false;
       });
       showinform(context, 'Error', 'Please fill in all the fields!');
       return;
     }
-    String url='https://apartment-management-kjj9.onrender.com/auth/reset-password';
-    try{
-      final response =await http.post(
+
+    String url = 'https://apartment-management-kjj9.onrender.com/auth/reset-password';
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer $token',
         },
         body: {
           'new_password': new_password,
-        }
+        },
       );
+
+      setState(() {
+        _isload = false;
+      });
       print(response.statusCode);
-      if(response.statusCode==200){
+      print('$token');
+      if (response.statusCode == 200) {
+
         showinform(context, 'Successful', 'Password has been reset');
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const Login()));
-      }else if(response.statusCode==404){
-        showinform(context, 'Error', 'Try again');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));
+      } else if (response.statusCode == 404) {
+        showinform(context, 'Error', 'No email stored in session.');
+      } else if(response.statusCode==401) {
+        showinform(context, 'Error', 'Invalid or expired token');
+      }else{
+        showinform(context, 'Error', 'An error occurred: ${response.statusCode}');
       }
-    }catch(e){
+    } catch (e) {
+      setState(() {
+        _isload = false;
+      });
+
       print('Error : $e');
-      return;
+      showinform(context, 'Error', 'An unexpected error occurred. Please try again.');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

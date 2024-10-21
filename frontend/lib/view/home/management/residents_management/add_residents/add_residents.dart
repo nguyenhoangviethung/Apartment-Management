@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/models/resident_info.dart';
 
 import '../common/resident_card.dart';
 import '../residents_management.dart';
 import 'add_footer.dart';
+import 'package:http/http.dart' as http;
 
 class AddResidents extends StatefulWidget {
   const AddResidents({super.key});
@@ -15,13 +17,63 @@ class AddResidents extends StatefulWidget {
 class _AddResidentsState extends State<AddResidents> {
   final List<ResidentInfo> items = [];
 
-  // String ?full_name;
-  // String ?date_of_birth;
-  // String ?id_number;
-  // int ?age;
-  // int ?room;
-  // String ?phone_number;
-  // String ?status;
+  // full_name
+  // string
+  // Full name of the resident.
+  //
+  // date_of_birth
+  // string($date)
+  // Date of birth of the resident.
+  //
+  // id_number
+  // string
+  // Identification number of the resident.
+  //
+  // status
+  // string
+  // Current status of the resident (e.g., active, inactive).
+  //
+  // room
+  // integer
+  // Room number assigned to the resident.
+  //
+  // phone_number
+  // string
+  // Phone number of the resident.
+  Future<void> addresident(String full_name, String date_of_birth, String id_number,String status,int room, String phone_number)async{
+    String url='https://apartment-management-kjj9.onrender.com/admin/validate';
+    try {
+      final response= await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'full_name':full_name,
+          'date_of_birth':date_of_birth,
+          'id_number':id_number,
+          'status': status,
+          'room':room,
+          'phone_number':phone_number,
+        }
+
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        return;
+      } else if (response.statusCode == 400) {
+        throw Exception('Resident with this name and ID number already exists');
+      } else if (response.statusCode == 404) {
+        throw Exception('Room doesn\'t exist');
+      } else {
+        throw Exception('An error occurred: ${response.statusCode}');
+      }
+    }catch(e){
+      print('Error: $e');
+    }
+  }
+
+
   void handleAddNewResident(String name, String dob, String idNumber, int age,int room,String phoneNumber, String status) {
     final newItem = ResidentInfo(full_name: name, date_of_birth: dob, id_number: idNumber,
         age: age, room: room, phone_number: phoneNumber,status: status);
@@ -77,9 +129,39 @@ class _AddResidentsState extends State<AddResidents> {
                 size: 35,
                 color: Colors.white,
               ),
-              onPressed: () {
-                // print('Save button pressed');
-                // showInform(context, 'Saved', 'Đã lưu thông tin thành công');
+              onPressed: () async{
+                bool allSuccessful = true;  // Biến kiểm tra nếu tất cả thêm thành công
+
+                // for (var resident in items) {
+                //   try {
+                //     // Tạo ra một bản sao của resident nhưng chỉ giữ lại các trường cần thiết
+                //     var residentToSend = ResidentInfo(
+                //       full_name: resident.full_name,
+                //       date_of_birth: resident.date_of_birth,
+                //       id_number: resident.id_number,
+                //       room: resident.room,
+                //       phone_number: resident.phone_number,
+                //       status: resident.status,
+                //       // Không bao gồm trường 'age'
+                //     );
+                //
+                //     await addresident(residentToSend);
+                //   } catch (e) {
+                //     allSuccessful = false;  // Nếu có lỗi, đặt biến này về false
+                //     showinform(context, 'Failed', 'An error occurred while adding a resident: $e');
+                //     break;
+                //   }
+                // }
+
+
+                // Kiểm tra kết quả thêm tất cả residents
+                if (allSuccessful) {
+                  showinform(context, 'Success', 'All residents were added successfully');
+                } else {
+                  showinform(context, 'Failed', 'Some residents could not be added');
+                }
+
+
               },
             ),
           ],

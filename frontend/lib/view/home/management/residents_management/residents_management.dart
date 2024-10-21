@@ -39,19 +39,6 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
   void initState() {
     super.initState();
 
-    // Thêm 100 lần giá trị của item vào items
-    // for (int i = 0; i < 100; i++) {
-    //   items.add(ResidentItem(
-    //     name: '${item.name} $i', // Thêm số thứ tự vào tên để phân biệt
-    //     room: item.room,
-    //     phoneNumber: item.phoneNumber,
-    //     dob: item.dob,
-    //     age: item.age,
-    //     status: item.status,
-    //     idNumber: '${int.parse(item.idNumber) + i}', // Tạo ID khác nhau
-    //   ));
-    // }
-
     fetchResidents().then((value){
       setState(() {
         _residents=value;

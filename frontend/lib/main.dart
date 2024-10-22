@@ -9,6 +9,6 @@ void main() {
       //   debugShowCheckedModeBanner: false,
       //   home: Login(),
       // )
-    const MainHome(currentIndex: 2,)
+    const MainHome(currentIndex: 0,)
   );
 }

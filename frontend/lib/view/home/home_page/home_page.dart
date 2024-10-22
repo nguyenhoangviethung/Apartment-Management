@@ -1,37 +1,45 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  String getRandomOctoberDate() {
+
+    final random = Random();
+    final day = random.nextInt(20) + 1;
+    final formattedDay = day.toString().padLeft(2, '0');
+    return '$formattedDay/10/2024';
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Danh Sách Bài Báo Về Chung Cư'),
+        title: const Text(
+          'Apartment News',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        elevation: 0,
       ),
       body: ListView.builder(
-        padding: const EdgeInsets.all(10),
-        itemCount: 10, // số lượng bài báo, bạn có thể thay đổi theo dữ liệu thực
+        padding: const EdgeInsets.all(16),
+        itemCount: 50,
         itemBuilder: (context, index) {
+          final randomDate = getRandomOctoberDate();
           return ArticleCard(
-            articleTitle: 'Bài Báo ${index + 1}', // giả lập tiêu đề bài báo
-            articleDescription: 'Mô tả ngắn về bài báo ${index + 1}', // mô tả ngắn
-            articleDate: 'Ngày đăng: 2024-10-01', // giả lập ngày đăng
+            articleTitle: 'News ${index + 1}',
+            articleDescription: 'Short discription ${index + 1}',
+            articleDate: randomDate,
             onPressed: () {
-              // Mở dialog hiển thị thông tin chi tiết hoặc điều hướng sang trang khác
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Bài Báo ${index + 1}'),
-                  content: Text('Thông tin chi tiết về bài báo ${index + 1}'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Đóng'),
-                    ),
-                  ],
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ArticleDetailPage(
+                    articleTitle: 'News ${index + 1}',
+                    articleDescription: 'Chiu r k biet viet gi',
+                    articleDate: randomDate,
+                  ),
                 ),
               );
             },
@@ -59,29 +67,172 @@ class ArticleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 10),
+      elevation: 3,
+      margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: ListTile(
-        title: Text(articleTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(articleDescription),
-            const SizedBox(height: 5),
-            Text(articleDate, style: const TextStyle(color: Colors.grey)),
-          ],
-        ),
-        trailing: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.white, Color(0xFFE3F2FD)],
             ),
           ),
-          child: const Text('Xem Chi Tiết'),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        articleTitle,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1565C0),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1565C0).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        articleDate,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF1565C0),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  articleDescription,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[800],
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton.icon(
+                      onPressed: onPressed,
+                      icon: const Icon(
+                        Icons.arrow_forward,
+                        size: 16,
+                       // color: Colors.white70,
+                      ),
+                      label: const Text('Xem thêm'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.lightBlue,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ArticleDetailPage extends StatelessWidget {
+  final String articleTitle;
+  final String articleDescription;
+  final String articleDate;
+
+  const ArticleDetailPage({
+    super.key,
+    required this.articleTitle,
+    required this.articleDescription,
+    required this.articleDate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white), 
+        title: const Text(
+          'Chi tiết',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.lightBlueAccent,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                articleTitle,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1565C0),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1565C0).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  articleDate,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF1565C0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                articleDescription,
+                style: TextStyle(
+                  fontSize: 16,
+                  height: 1.5,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -231,6 +231,9 @@ paths:
                         phone_number:
                           type: string
                           example: "01684793145"
+                        apartment_number:
+                          type: string
+                          example: "101"  
         401:
           description: Unauthorized access
         500:

@@ -132,7 +132,8 @@ def show_all_house():
             'status': status,
             'owner': owner_name,
             'num_residents': pop,
-            'phone_number': apartment.phone_number
+            'phone_number': apartment.phone_number,
+            'apartment_number': apartment.apartment_number
         }
         house_list.append(apartment_data)
     return jsonify({'info': house_list}), 200

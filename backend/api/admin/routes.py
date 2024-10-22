@@ -113,6 +113,30 @@ def show_all_residents():
         resident_list.append(resident_data)
     return jsonify({'resident_info': resident_list}),200
 
+@admin_bp.get('/house')
+@admin_required
+@handle_exceptions
+def show_all_house():
+    apartments = Households.query.all()
+    house_list = []
+    for apartment in apartments:    
+        pop = apartment.num_residents
+        owner = Users.query.filter_by(user_id = apartment.managed_by).first()
+        owner_name = owner.username if owner else 'Unknown'
+        if pop == 0:
+            status = 'empty'
+        else: 
+            status = 'occupied'   
+        apartment_data = {
+            'area': apartment.area,
+            'status': status,
+            'owner': owner_name,
+            'num_residents': pop,
+            'phone_number': apartment.phone_number
+        }
+        house_list.append(apartment_data)
+    return jsonify({'info': house_list}), 200
+
 @admin_bp.get('/house<apartment_number>')
 @admin_required
 @handle_exceptions
@@ -123,6 +147,7 @@ def show_house_info(apartment_number):
         return jsonify({'message': 'apartment number does not exists!!!'}), 404
     pop = apartment.num_residents
     owner = Users.query.filter_by(user_id = apartment.managed_by).first()
+    owner_name = owner.username if owner else 'Unknown'
     if pop == 0:
         status = 'empty'
     else: 
@@ -130,7 +155,7 @@ def show_house_info(apartment_number):
     apartment_data = {
         'area': apartment.area,
         'status': status,
-        'owner': owner.username,
+        'owner': owner_name,
         'num_residents': pop,
         'phone_number': apartment.phone_number
     }

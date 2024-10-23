@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../models/resident_info.dart';
 class ResidentCard extends StatefulWidget {
   final ResidentInfo item;

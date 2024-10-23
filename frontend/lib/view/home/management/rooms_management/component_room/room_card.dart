@@ -1,19 +1,19 @@
+
 import 'package:flutter/material.dart';
 import 'package:frontend/models/room_info.dart';
-
-import '../../../../../models/resident_info.dart';
 import 'edit_footer.dart';
 class RoomCard extends StatefulWidget {
   final RoomInfo item;
   final Function(int, int, String) onEdit;
 
-  const RoomCard({super.key, required this.item, required this.onEdit});
+  const RoomCard({super.key, required this.item, required this.onEdit,});
 
   @override
   State<RoomCard> createState() => _RoomCardState();
 }
 
 class _RoomCardState extends State<RoomCard> {
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -34,6 +34,7 @@ class _RoomCardState extends State<RoomCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      _buildInfoRow('Room:', widget.item.apartment_number!),
                       _buildInfoRow('Area:', widget.item.area.toString()),
                       _buildInfoRow('Status:', widget.item.status!),
                       _buildInfoRow('Owner:', widget.item.owner!),
@@ -75,7 +76,7 @@ class _RoomCardState extends State<RoomCard> {
                       Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45,),
                       const SizedBox(width: 8),
                       Text(
-                        widget.item.id.toString(),
+                        widget.item.apartment_number!,
                         style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                       ),
                     ],
@@ -87,16 +88,14 @@ class _RoomCardState extends State<RoomCard> {
                           context: context,
                           builder: (BuildContext context) {
                             return EditFooter(
-                              id: widget.item.id!,
+                              id: int.parse(widget.item.apartment_number!),
                               editRoomInfo: (id, newNumResidents, newPhoneNumber) {
                                 widget.onEdit(id, newNumResidents, newPhoneNumber);
-                                Navigator.of(context).pop(); // Đóng dialog sau khi chỉnh sửa
                               },
                             );
                           }
                       );
                     },
-                    // onTap: () => _showEditDialog(context),
                     child: const Icon (
                       Icons.edit_calendar_outlined,
                       size: 30,
@@ -115,7 +114,7 @@ class _RoomCardState extends State<RoomCard> {
                           Icon(Icons.info_outline, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.status.toString(),
+                            widget.item.status!,
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],

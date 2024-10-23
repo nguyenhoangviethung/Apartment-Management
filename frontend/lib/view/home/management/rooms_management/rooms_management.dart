@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Home/main_home.dart';
 import 'package:frontend/models/room_info.dart';
-
-import 'common/room_card.dart';
+import '../../../../services/fetch_rooms.dart';
+import 'component_room/room_card.dart';
 
 class RoomsManagement extends StatefulWidget {
   const RoomsManagement({super.key});
@@ -13,41 +13,21 @@ class RoomsManagement extends StatefulWidget {
 
 class _RoomsManagementState extends State<RoomsManagement> {
   List<RoomInfo> _rooms =[];
-
-  final RoomInfo item = RoomInfo(
-    id: 101,
-    area: 99999,
-    status: "occupied",
-    owner: "Do Xuan Chien",
-    num_residents: 100,
-    phone_number: "0999999999"
-  );
-
-
-  // final List<ResidentItem> items = [];
+  List<RoomInfo> _allrooms =[];
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
-
   int _currentPage = 0;
-  final int itemsPerPage = 5; // Số lượng items trên mỗi trang
+  final int itemsPerPage = 5;
 
   @override
   void initState() {
     super.initState();
-
-
-    for (int i = 0; i < 10; i++) {
-      _rooms.add(RoomInfo(
-        id: item.id! + i,
-        area: item.area,
-        status: item.status,
-        owner: '${item.owner} $i', // Thêm số thứ tự vào tên để phân biệt
-        num_residents: item.num_residents,
-        phone_number: item.phone_number,
-      ));
-    }
-
-
+    fetchRooms().then((value){
+      setState(() {
+        _rooms=value;
+        _allrooms=value;
+      });
+    });
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page?.round() ?? 0;
@@ -67,7 +47,7 @@ class _RoomsManagementState extends State<RoomsManagement> {
   void updateRoomInfoById(int id, int newNumResidents, String newPhoneNumber) {
     setState(() {
       for (var room in _rooms) {
-        if (room.id == id) {
+        if (room.apartment_number == id.toString()) {
           room.num_residents = newNumResidents;  // Cập nhật số cư dân
           room.phone_number = newPhoneNumber;     // Cập nhật số điện thoại
           break; // Dừng vòng lặp khi tìm thấy
@@ -117,40 +97,43 @@ class _RoomsManagementState extends State<RoomsManagement> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
 
-              child: Expanded(
-                child: TextFormField(
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
-                    suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(
-                        color: Colors.blue,
-                        width: 2.0,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.blue[200]!,
-                        width: 2.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
-                        width: 2.0,
-                      ),
+              child: TextFormField(
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
+                  suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                      color: Colors.blue,
+                      width: 2.0,
                     ),
                   ),
-                  onChanged: (text){
-                    setState(() {
-                    });
-                  },
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      color: Colors.blue[200]!,
+                      width: 2.0,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                      color: Colors.grey,
+                      width: 2.0,
+                    ),
+                  ),
                 ),
+                onChanged: (text){
+                  setState(() {
+                    text=text.toLowerCase();
+                    _rooms=_allrooms.where((roominfo){
+                      var word= roominfo.apartment_number!.toLowerCase();
+                      return word.contains(text);
+                    }).toList();
+                  });
+                },
               ),
             ),
 
@@ -180,6 +163,8 @@ class _RoomsManagementState extends State<RoomsManagement> {
                           item: _rooms[startIndex + index],
                           onEdit: (id, newNumResidents, newPhoneNumber) {
                             updateRoomInfoById(id, newNumResidents, newPhoneNumber);
+                            setState(() {
+                            });
                           },
                         );
                       },
@@ -223,5 +208,6 @@ class _RoomsManagementState extends State<RoomsManagement> {
     );
   }
 }
+
 
 

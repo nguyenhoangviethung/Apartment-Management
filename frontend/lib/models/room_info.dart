@@ -1,25 +1,36 @@
-class RoomInfo{
-  int ?id;
-  int ?area;
-  String ?status;
-  String ?owner;
-  int ?num_residents;
-  String ?phone_number;
+class RoomInfo {
+  String? apartment_number;
+  int? area;
+  String? status;
+  String? owner;
+  int? num_residents;
+  String? phone_number;
 
-  RoomInfo(
-      { required this.id,
-        required this.area,
-        required this.status,
-        required this.owner,
-        required this.num_residents,
-        required this.phone_number
-        });
+  RoomInfo({
+    required this.apartment_number,
+    required this.area,
+    required this.status,
+    required this.owner,
+    required this.num_residents,
+    required this.phone_number,
+  });
 
-  RoomInfo.fromJson(Map<String,dynamic> json){
-    area=json['full_name'];
-    status=json['date_of_birth'];
-    owner=json['id_number'];
-    num_residents=json['age'];
-    phone_number=json['room'];
+  RoomInfo.fromJson(Map<String, dynamic> json) {
+    apartment_number=json['apartment_number'];
+    area = json['area']!=null? double.parse(json['area']).toInt() : null;
+    status = json['status'];
+    owner = json['owner'];
+    num_residents = json['num_residents'];
+    phone_number = json['phone_number'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'area': area,
+      'status': status,
+      'owner': owner,
+      'num_residents': num_residents,
+      'phone_number': phone_number,
+    };
   }
 }

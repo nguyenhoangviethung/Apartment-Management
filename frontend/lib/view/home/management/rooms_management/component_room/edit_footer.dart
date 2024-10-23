@@ -1,26 +1,76 @@
 import 'package:flutter/material.dart';
-
-class EditFooter extends StatelessWidget {
+import 'package:frontend/View/Authentication/common/show_dialog.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+class EditFooter extends StatefulWidget {
   final int id;
   final Function editRoomInfo;
 
   EditFooter({super.key, required this.id, required this.editRoomInfo});
 
+  @override
+  State<EditFooter> createState() => _EditFooterState();
+}
+
+class _EditFooterState extends State<EditFooter> {
+  bool _isload=false;
   // Tạo các controller riêng cho mỗi trường nhập liệu
   final TextEditingController numResidentsController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  @override
+  void dispose() {
+    numResidentsController.dispose();
+    phoneController.dispose();
+    super.dispose();
+  }
 
-  void handleOnClick() {
-    // Lấy giá trị từ tất cả các trường nhập liệu
-    final newNumResidents = int.tryParse(numResidentsController.text.trim())??0;
+  void handleOnClick() async {
+    setState(() {
+      _isload = true;
+    });
+
+    final newNumResidents = int.tryParse(numResidentsController.text.trim()) ?? 0;
     final newPhoneNumber = phoneController.text.trim();
+    widget.editRoomInfo(widget.id, newNumResidents, newPhoneNumber);
 
-    editRoomInfo(id, newNumResidents, newPhoneNumber);
+    final url = 'https://apartment-management-kjj9.onrender.com/admin/update${widget.id}';
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? tokenlogin = prefs.getString('tokenlogin');
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer $tokenlogin',
+        },
+        body: {
+          'num_residents': newNumResidents.toString(),
+          'phone_number': newPhoneNumber,
+        },
+      );
+
+      setState(() {
+        _isload = false;
+      });
+      if (response.statusCode == 200) {
+        widget.editRoomInfo(widget.id, newNumResidents, newPhoneNumber);
+        Navigator.of(context).pop();
+        showinform(context, 'Success', 'Update Successful');
+      } else {
+        showinform(context, 'Failed', 'Try again');
+      }
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _isload = false;
+      });
+    }
 
     // Xóa giá trị sau khi thêm
     numResidentsController.clear();
     phoneController.clear();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +92,7 @@ class EditFooter extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text('Edit room $id information', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
+            Text('Edit room ${widget.id} information', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
             const SizedBox(height: 16),
             _buildTextField('Enter new number of residents', numResidentsController),
             const SizedBox(height: 16),
@@ -61,7 +111,7 @@ class EditFooter extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              child: const Text(
+              child: _isload?const CircularProgressIndicator(color: Colors.white):const Text(
                 'Save',
                 style: TextStyle(
                   fontFamily: 'Times New Roman',

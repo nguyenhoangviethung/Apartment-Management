@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/View/Home/main_home.dart';
 import 'package:frontend/models/resident_info.dart';
 import 'package:frontend/services/fetch_residents.dart';
-import 'add_residents/add_residents.dart';
-import 'common/resident_card.dart';
+import 'component_resident/add_residents.dart';
+import 'component_resident/resident_card.dart';
 
 class ResidentsManagement extends StatefulWidget {
   const ResidentsManagement({super.key});

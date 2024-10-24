@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
@@ -12,7 +13,7 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   bool isLoading = true;
   Map<String, dynamic> userData = {};
-  final String apiUrl = "YOUR_API_URL"; // Thay thế bằng URL API của bạn
+  final String apiUrl = "https://apartment-management-kjj9.onrender.com/admin/residents";
 
   @override
   void initState() {
@@ -20,41 +21,49 @@ class _AccountScreenState extends State<AccountScreen> {
     fetchUserData();
   }
 
-  // Hàm lấy thông tin user từ API
   Future<void> fetchUserData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token') ?? '';
+      final token = prefs.getString('tokenlogin') ?? '';
+
+      print('Token: $token'); // In token để debug
 
       final response = await http.get(
-        Uri.parse('$apiUrl/user/profile'),
+        Uri.parse(apiUrl),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
 
-      // Debug: In nội dung phản hồi từ API
-      print(response.body);
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        // Kiểm tra xem phản hồi có phải JSON hợp lệ không
-        if (response.headers['content-type']?.contains('application/json') ?? false) {
-          setState(() {
-            userData = json.decode(response.body);
-            isLoading = false;
-          });
+        if (response.body.isNotEmpty) {
+          Map<String, dynamic> jsonResponse = json.decode(response.body);
+          List<dynamic> residentInfo = jsonResponse['resident_info'];
+
+          if (residentInfo.isNotEmpty) {
+            setState(() {
+              userData = residentInfo[0];
+              isLoading = false;
+            });
+          } else {
+            throw Exception('No data found');
+          }
         } else {
-          throw Exception('Invalid response format');
+          throw Exception('Empty response from API');
         }
       } else {
-        throw Exception('Failed to load user data');
+        throw Exception('Failed to load user data: ${response.statusCode}');
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      print('Error detail: $e');
       if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${e.toString()}')),
         );
@@ -62,15 +71,13 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
-
-  // Hàm xử lý logout
   Future<void> handleLogout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token') ?? '';
+      final token = prefs.getString('tokenlogin') ?? '';
 
       final response = await http.post(
-        Uri.parse('$apiUrl/auth/logout'),
+        Uri.parse('https://apartment-management-kjj9.onrender.com/auth/logout'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -78,10 +85,9 @@ class _AccountScreenState extends State<AccountScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Xóa token và chuyển về màn hình login
-        await prefs.remove('token');
+        await prefs.remove('tokenlogin');
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/login'); // Thay đổi route phù hợp
+          Navigator.of(context).pushReplacementNamed('/login');
         }
       } else {
         throw Exception('Failed to logout');
@@ -99,11 +105,11 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Account',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.blue,
+        // title: const Text(
+        //   'Account',
+        //   style: TextStyle(color: Colors.white),
+        // ),
+         backgroundColor: Colors.lightBlue,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -112,12 +118,11 @@ class _AccountScreenState extends State<AccountScreen> {
           : SingleChildScrollView(
         child: Column(
           children: [
-            // Header với avatar
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
-                color: Colors.blue,
+                 color: Colors.lightBlue,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
@@ -125,12 +130,11 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
               child: Column(
                 children: [
-                  // Avatar
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.white,
                     child: Text(
-                      (userData['name'] ?? 'U')[0].toUpperCase(),
+                      (userData['full_name'] ?? 'U')[0].toUpperCase(),
                       style: const TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
@@ -139,9 +143,8 @@ class _AccountScreenState extends State<AccountScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // Tên người dùng
                   Text(
-                    userData['name'] ?? 'Username',
+                    userData['full_name'] ?? 'Username',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -149,40 +152,46 @@ class _AccountScreenState extends State<AccountScreen> {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  // Email
                   Text(
-                    userData['email'] ?? 'email@example.com',
+                    userData['phone_number'] ?? 'Phone not provided',
                     style: const TextStyle(
                       fontSize: 16,
-                      color: Colors.white70,
+                      color: Colors.white,
                     ),
                   ),
                 ],
               ),
             ),
-            // Thông tin chi tiết
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  // Các item thông tin
                   _buildInfoItem(
-                    Icons.phone,
-                    'Phone',
-                    userData['phone'] ?? 'Not provided',
-                  ),
-                  _buildInfoItem(
-                    Icons.location_on,
-                    'Address',
-                    userData['address'] ?? 'Not provided',
+                    Icons.cake,
+                    'Age',
+                    userData['age']?.toString() ?? 'Not provided',
                   ),
                   _buildInfoItem(
                     Icons.calendar_today,
-                    'Join Date',
-                    userData['joinDate'] ?? 'Not provided',
+                    'Date of Birth',
+                    userData['date_of_birth'] ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.account_box,
+                    'ID Number',
+                    userData['id_number'] ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.room,
+                    'Room',
+                    userData['room']?.toString() ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.check_circle,
+                    'Status',
+                    userData['status'] ?? 'Not provided',
                   ),
                   const SizedBox(height: 30),
-                  // Nút Logout
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -211,7 +220,6 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  // Widget hiển thị từng item thông tin
   Widget _buildInfoItem(IconData icon, String label, String value) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15),

@@ -13,17 +13,6 @@ class ResidentsManagement extends StatefulWidget {
 }
 
 class _ResidentsManagementState extends State<ResidentsManagement> {
-
-  // final ResidentItem item = const ResidentItem(
-  //   name: 'Do Xuan Chien',
-  //   room: 'vip-909',
-  //   phoneNumber: '0999999999',
-  //   dob: '10/04/2004',
-  //   age: '20',
-  //   status: 'Single',
-  //   idNumber: '102',
-  // );
-
   List<ResidentInfo> _residents =[];
   List<ResidentInfo> _allresidents=[];
 

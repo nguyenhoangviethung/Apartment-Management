@@ -18,7 +18,7 @@ class AddResidents extends StatefulWidget {
 class _AddResidentsState extends State<AddResidents> {
   final List<ResidentInfo> items = [];
 
-  Future<void> addresident(ResidentInfo resident)async{
+  Future<bool> addresident(ResidentInfo resident)async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? tokenlogin= prefs.getString('tokenlogin');
     String url='https://apartment-management-kjj9.onrender.com/admin/validate';
@@ -29,12 +29,21 @@ class _AddResidentsState extends State<AddResidents> {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Bearer $tokenlogin',
         },
-        body: jsonEncode(resident.toJson()),
+        body: {
+          'full_name': resident.full_name,
+          'date_of_birth': resident.date_of_birth,
+          'id_number': resident.id_number,
+          'room': resident.room.toString(),
+          'phone_number': resident.phone_number,
+          'status': resident.status,
+        },
+
 
       );
       print(response.statusCode);
       if (response.statusCode == 200) {
-        return;
+        print('success');
+        return true;
       } else if (response.statusCode == 400) {
         throw Exception('Resident with this name and ID number already exists');
       } else if (response.statusCode == 404) {
@@ -44,6 +53,8 @@ class _AddResidentsState extends State<AddResidents> {
       }
     }catch(e){
       print('Error: $e');
+      print('123');
+      return false;
     }
   }
 
@@ -116,10 +127,14 @@ class _AddResidentsState extends State<AddResidents> {
                       status: resident.status,
                     );
 
-                    await addresident(residentToSend);
+                    bool success = await addresident(residentToSend);
+                    if (!success) {
+                      allSuccessful = false;  // Cập nhật trạng thái khi có lỗi
+                      showinform(context, 'Failed', 'Failed to add resident: ${resident.full_name}');
+                      break; // Ngừng thêm nếu có lỗi
+                    }
                   } catch (e) {
                     allSuccessful = false;  // Nếu có lỗi, đặt biến này về false
-                    showinform(context, 'Failed', 'An error occurred while adding a resident: $e');
                     break;
                   }
                 }
@@ -127,10 +142,7 @@ class _AddResidentsState extends State<AddResidents> {
                 if (allSuccessful) {
                   showinform(context, 'Success', 'All residents were added successfully');
                 } else {
-                  showinform(context, 'Failed', 'Some residents could not be added');
                 }
-
-
               },
             ),
           ],

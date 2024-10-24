@@ -1,42 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/fee_info.dart';
 import '../common/fee_card.dart';
-import '../common/fee_item.dart';
 
-class RequiredFees extends StatefulWidget {
-  const RequiredFees({super.key});
+class CharityActivities extends StatefulWidget {
+  const CharityActivities({super.key});
 
   @override
-  State<RequiredFees> createState() => _RequiredFeesState();
+  State<CharityActivities> createState() => _CharityActivitiesState();
 }
 
-class _RequiredFeesState extends State<RequiredFees> {
-  final FeeItem item = const FeeItem(
-    name: 'Ung ho anh Bay mua World cup',
-    fee: '1B USD',
-    id: '1',
-    startDate: '10/04/2004',
-    endDate: '10/04/2025',
+class _CharityActivitiesState extends State<CharityActivities> {
+  final FeeInfo item = FeeInfo(
+    room_id: 101,
+    service_charge: '1B USD',
+    manage_charge: '10B USD',
+    fee: 'Ung ho anh Bay mua World cup',
   );
 
-  final List<FeeItem> items = [];
+  final List<FeeInfo> items = [];
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
 
   int _currentPage = 0;
-  final int totalDots = 5;
+  final int itemsPerPage = 5; // Số lượng items trên mỗi trang
 
   @override
   void initState() {
     super.initState();
 
-    // Thêm 10 lần giá trị của item vào items
-    for (int i = 0; i < 100; i++) {
-      items.add(FeeItem(
-        name: '$i. ${item.name}', // Thêm số thứ tự vào tên để phân biệt
+    // Thêm 100 lần giá trị của item vào items
+    for (int i = 0; i < 10; i++) {
+      items.add(FeeInfo(
+        room_id: item.room_id! + i, // tao so phong khac nhau
+        service_charge: item.service_charge,
+        manage_charge: item.manage_charge,
         fee: item.fee,
-        id: '${int.parse(item.id) + i}', // Tạo ID khác nhau
-        startDate: item.startDate,
-        endDate: item.endDate,
       ));
     }
 
@@ -50,34 +48,33 @@ class _RequiredFeesState extends State<RequiredFees> {
       if (_currentPage >= 4) offset = (_currentPage * 20.0 - 60.0); // Điều chỉnh giá trị này dựa vào khoảng cách giữa các dot
       _scrollController.animateTo(
         offset,
-        duration: const Duration(milliseconds: 100),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     });
   }
 
-  void handleDeleteActivity(String id) {
+  void handleDeleteActivity(int id) {
     setState(() {
-      items.removeWhere((item) => item.id == id);
+      items.removeWhere((item) => item.room_id == id);
     });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Số lượng item trên mỗi trang
-    final int itemsPerPage = 5;
-    final int pageCount = (items.length / itemsPerPage).ceil();
+    final int pageCount = (items.length / itemsPerPage).ceil(); // Tính tổng số trang
 
     return Column(
       children: [
         const SizedBox(height: 15),
-
+        // Nội dung PageView
         Expanded(
           child: PageView.builder(
             controller: _pageController,
@@ -96,21 +93,22 @@ class _RequiredFeesState extends State<RequiredFees> {
                     childAspectRatio: 3.5, // Tỷ lệ chiều rộng/chiều cao của mỗi card
                     mainAxisSpacing: 15.0, // Khoảng cách giữa các hàng
                   ),
-                  itemCount: endIndex - startIndex, // Chỉ hiển thị số lượng card trên trang
+                  itemCount: endIndex - startIndex, // Số lượng card trên mỗi trang
                   itemBuilder: (context, index) {
                     return FeeCard(
                       item: items[startIndex + index],
-                      onDelete: handleDeleteActivity, // Truyền callback
+                      onDelete: handleDeleteActivity,
                     );
                   },
                   physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
-                  shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
+                  shrinkWrap: true,
                 ),
               );
             },
           ),
         ),
 
+        // Dot indicator
         SizedBox(
           height: 30,
           width: 100,
@@ -141,4 +139,3 @@ class _RequiredFeesState extends State<RequiredFees> {
     );
   }
 }
-

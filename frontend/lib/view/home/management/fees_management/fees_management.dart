@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/fee_info.dart';
 import '../../main_home.dart';
 import 'common/date_filter.dart';
 import 'common/fee_add_footer.dart';
-import 'common/fee_item.dart';
-import 'fees/charity_activities.dart';
-import 'fees/required_fee.dart';
+import 'charity_activities/charity_activities.dart';
+import 'required_fee/required_fee.dart';
 
 class FeesManagement extends StatefulWidget {
   const FeesManagement({super.key});
@@ -15,8 +15,8 @@ class FeesManagement extends StatefulWidget {
 
 class _FeesManagementState extends State<FeesManagement> with TickerProviderStateMixin {
   final DateFilterPopup _dateFilterPopup = DateFilterPopup(
-                                              onDateRangeSelected: (start, end) { },
-                                          );
+      onDateRangeSelected: (start, end) { },
+  );
 
   late TabController _tabController;
 
@@ -27,10 +27,10 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
 
   }
 
-  final List<FeeItem> items = [];
-  void handleAddNewFee(String name, String fee, String id, String startDate, String endDate) {
-    final newItem = FeeItem(name: name, fee: fee, id: id,
-        startDate: startDate, endDate: endDate);
+  final List<FeeInfo> items = [];
+  void handleAddNewFee(int room_id, String service_charge, String manage_charge, String fee) {
+    final newItem = FeeInfo(room_id: room_id, service_charge: service_charge, manage_charge: manage_charge,
+        fee: fee);
     setState(() {
       items.add(newItem);
     });
@@ -46,8 +46,7 @@ class _FeesManagementState extends State<FeesManagement> with TickerProviderStat
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar:
-        AppBar(
+        appBar: AppBar(
           backgroundColor: Colors.blue,
           title: _isSearching
           ? TextField(

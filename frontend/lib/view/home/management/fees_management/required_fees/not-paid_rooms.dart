@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../models/fee_info.dart';
-import '../common/fee_card.dart';
+import 'package:frontend/models/not-paid_room_info.dart';
+import 'package:frontend/view/home/management/fees_management/common/not-paid_room_card.dart';
 
 class NotPaidRooms extends StatefulWidget {
   const NotPaidRooms({super.key});
@@ -10,14 +10,16 @@ class NotPaidRooms extends StatefulWidget {
 }
 
 class _NotPaidRoomsState extends State<NotPaidRooms> {
-  final FeeInfo item = FeeInfo(
-    room_id: 101,
-    service_charge: '1B USD',
-    manage_charge: '10B USD',
-    fee: 'Ung ho anh Bay mua World cup',
+  final NotPaidRoomInfo item = NotPaidRoomInfo(
+      room_id: 101,
+      amount: 10000,
+      due_date: '31/12/2024',
+      service_fee: 5000,
+      manage_fee: 5000,
+      fee_type: 'Ung ho anh Bay mua World cup'
   );
 
-  final List<FeeInfo> items = [];
+  final List<NotPaidRoomInfo> items = [];
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
 
@@ -30,11 +32,13 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
 
     // Thêm 10 lần giá trị của item vào items
     for (int i = 0; i < 10; i++) {
-      items.add(FeeInfo(
-        room_id: item.room_id! + i, // tao so phong khac nhau
-        service_charge: item.service_charge,
-        manage_charge: item.manage_charge,
-        fee: item.fee,
+      items.add(NotPaidRoomInfo(
+          room_id: item.room_id! + i, // tao so phong khac nhau
+          amount: item.amount,
+          due_date: item.due_date,
+          service_fee: item.service_fee,
+          manage_fee: item.manage_fee,
+          fee_type: item.fee_type
       ));
     }
 
@@ -137,7 +141,7 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
                     ),
                     itemCount: endIndex - startIndex, // Chỉ hiển thị số lượng card trên trang
                     itemBuilder: (context, index) {
-                      return FeeCard(
+                      return NotPaidRoomCard(
                         item: items[startIndex + index],
                         onDelete: handleDeleteActivity, // Truyền callback
                       );

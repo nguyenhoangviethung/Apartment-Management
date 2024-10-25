@@ -58,12 +58,6 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
     });
   }
 
-  void handleDeleteActivity(int id) {
-    setState(() {
-      items.removeWhere((item) => item.room_id == id);
-    });
-  }
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -143,7 +137,6 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
                     itemBuilder: (context, index) {
                       return NotPaidRoomCard(
                         item: items[startIndex + index],
-                        onDelete: handleDeleteActivity, // Truyền callback
                       );
                     },
                     physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn

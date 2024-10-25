@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/fee_info.dart';
 import 'package:frontend/models/not-paid_room_info.dart';
 
 class NotPaidRoomCard extends StatefulWidget {
   final NotPaidRoomInfo item;
-  final Function(int) onDelete;
 
-  const NotPaidRoomCard({super.key, required this.item, required this.onDelete});
+  const NotPaidRoomCard({super.key, required this.item});
 
   @override
   State<NotPaidRoomCard> createState() => _NotPaidRoomCardState();
@@ -67,35 +65,17 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: Row(
-                      children: [
-                        Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            widget.item.room_id.toString(),
-                            style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      widget.item.room_id.toString(),
+                      style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      print("Icon Delete pressed");
-                      widget.onDelete(widget.item.room_id!);
-                    },
-                    child: const Icon(
-                      Icons.delete,
-                      size: 30,
-                      color: Color.fromRGBO(0, 0, 0, 0.6),
-                    ),
-                  )
                 ],
               ),
 

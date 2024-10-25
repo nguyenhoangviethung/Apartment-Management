@@ -82,43 +82,16 @@ class _FeeCardState extends State<FeeCard> {
                       ],
                     ),
                   ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          // showModalBottomSheet(
-                          //     context: context,
-                          //     builder: (BuildContext context) {
-                          //       return EditFooter(
-                          //         id: int.parse(widget.item.apartment_number!),
-                          //         editRoomInfo: (id, newNumResidents, newPhoneNumber) {
-                          //           widget.onEdit(id, newNumResidents, newPhoneNumber);
-                          //         },
-                          //       );
-                          //     }
-                          // );
-                        },
-                        child: const Icon (
-                          Icons.edit_calendar_outlined,
-                          size: 30,
-                          color: Color.fromRGBO(0, 0, 0, 0.6),
-                        ),
-                      ),
-
-                      const SizedBox(width: 5,),
-
-                      GestureDetector(
-                        onTap: () {
-                          print("Icon Delete pressed");
-                          widget.onDelete(widget.item.room_id!);
-                        },
-                        child: const Icon(
-                          Icons.delete,
-                          size: 30,
-                          color: Color.fromRGBO(0, 0, 0, 0.6),
-                        ),
-                      ),
-                    ],
+                  GestureDetector(
+                    onTap: () {
+                      print("Icon Delete pressed");
+                      widget.onDelete(widget.item.room_id!);
+                    },
+                    child: const Icon(
+                      Icons.delete,
+                      size: 30,
+                      color: Color.fromRGBO(0, 0, 0, 0.6),
+                    ),
                   )
                 ],
               ),

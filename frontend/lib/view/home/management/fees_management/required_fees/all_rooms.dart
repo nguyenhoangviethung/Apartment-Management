@@ -80,39 +80,62 @@ class _AllRoomsState extends State<AllRooms> {
         children: [
           const SizedBox(height: 15),
 
-          TextFormField(
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
-            decoration: InputDecoration(
-              hintText: 'Search',
-              hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
-              suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: const BorderSide(
-                  color: Colors.blue,
-                  width: 2.0,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(
-                  color: Colors.blue[200]!,
-                  width: 2.0,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: const BorderSide(
-                  color: Colors.grey,
-                  width: 2.0,
-                ),
-              ),
-            ),
-            onChanged: (text){
-              setState(() {
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
+                    suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(
+                        color: Colors.blue,
+                        width: 2.0,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.blue[200]!,
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 2.0,
+                      ),
+                    ),
+                  ),
+                  onChanged: (text){
+                    setState(() {
 
-              });
-            },
+                    });
+                  },
+                ),
+              ),
+
+              const SizedBox(width: 10),
+              Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.blue,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.add, color: Colors.white, size: 35),
+                  onPressed: () {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => const AddResidents()),
+                    // );
+                  },
+                ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 15),
@@ -181,4 +204,3 @@ class _AllRoomsState extends State<AllRooms> {
     );
   }
 }
-

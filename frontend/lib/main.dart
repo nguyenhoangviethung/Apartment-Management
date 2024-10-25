@@ -5,10 +5,10 @@ import 'package:frontend/view/home/main_home.dart';
 void main() {
 
   runApp(
-      // const MaterialApp(
-      //   debugShowCheckedModeBanner: false,
-      //   home: Login(),
-      // )
-    const MainHome(currentIndex: 2,)
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Login(),
+      )
+    // const MainHome(currentIndex: 2,)
   );
 }

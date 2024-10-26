@@ -482,6 +482,10 @@ paths:
                     type: array
                     items:
                       type: string
+                  detail:
+                    type: array
+                    items:
+                      type: string
         '400':
           description: Error in retrieving fees
 
@@ -553,3 +557,13 @@ paths:
               type: object
               required:
                 - description
+              properties:
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Delete successful
+        '400':
+          description: Description not provided
+        '404':
+          description: No fees found with the given description

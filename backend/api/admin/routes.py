@@ -327,21 +327,33 @@ def add_fee():
 @admin_required
 @handle_exceptions
 def get_fees():
-    if request.method == 'POST':
-        try:
-            query_date = validate_date(request.form['date'])
-        except KeyError:
-            return jsonify({'error': 'Date not provided in the request'}), 400
-        except ValueError as e:
-            return jsonify({'error': str(e)}), 400
-    else:
-        query_date = datetime.now().date()
+    query_date = datetime.now().date()
 
     fee = db.session.query(Fees.description).filter(query_date <= Fees.due_date).first()
+    fee_ids = db.session.query(Fees.fee_id).filter(query_date <= Fees.due_date).all()
 
-    res = {"infor": []}
+    res = {"infor": {"description": [],
+                     "detail": []
+                     }}
     if fee:
-        res['infor'].append(fee[0])
+        res['infor']["description"].append(fee[0])
+
+    for fee_id in fee_ids:
+        f_id = fee_id[0]
+        service_rate = db.session.query(Fees.service_rate).filter(Fees.fee_id == f_id).scalar() or None
+        manage_rate = db.session.query(Fees.manage_rate).filter(Fees.fee_id == f_id).scalar() or None
+        amount = db.session.query(Fees.amount).filter(Fees.fee_id == f_id).scalar() or None
+        household_id = db.session.query(Fees.household_id).filter(Fees.fee_id == f_id).scalar() or None
+
+        if not service_rate or not manage_rate or not amount:
+            continue
+
+        info = { 
+                'fee' : f'{amount}',
+                'room': f'{household_id}'
+        }
+
+        res['infor']['detail'].append(info)
 
     return jsonify(res), 200   
 

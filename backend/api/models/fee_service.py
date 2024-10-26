@@ -21,3 +21,10 @@ def get_unpaid_fees(date):
             Fees.status == 'Chưa thanh toán', 
             Fees.due_date >= date
         ).all()
+
+def get_householdID(fee_id):
+        return db.session.query(
+            Fees.household_id
+        ).filter(
+            Fees.fee_id == fee_id
+        ).all()

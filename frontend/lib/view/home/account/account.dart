@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Authentication/login.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,28 +75,45 @@ class _AccountScreenState extends State<AccountScreen> {
   Future<void> handleLogout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('tokenlogin') ?? '';
+      await prefs.remove('tokenlogin');
 
-      final response = await http.post(
-        Uri.parse('https://apartment-management-kjj9.onrender.com/auth/logout'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showMaterialBanner(
+          MaterialBanner(
+            content: Center(
+              child: Text(
+                'Logout successful',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            backgroundColor: Colors.green,
+            actions: [
+              Container(),
+            ],
+          ),
+        );
 
-      if (response.statusCode == 200) {
-        await prefs.remove('tokenlogin');
-        if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/login');
-        }
-      } else {
-        throw Exception('Failed to logout');
+        Future.delayed(Duration(seconds: 1), () {
+          ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const Login()),
+          );
+        });
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+        ScaffoldMessenger.of(context).showMaterialBanner(
+          MaterialBanner(
+            content: Text('Error logout: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            actions: [
+              TextButton(
+                child: Text('Close'),
+                onPressed: () => ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+              ),
+            ],
+          ),
         );
       }
     }

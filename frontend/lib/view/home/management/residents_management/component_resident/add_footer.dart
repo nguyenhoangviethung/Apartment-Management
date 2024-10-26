@@ -56,7 +56,7 @@ class AddFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 350, // Tăng chiều cao nếu cần
+      height: double.infinity, // Tăng chiều cao nếu cần
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),

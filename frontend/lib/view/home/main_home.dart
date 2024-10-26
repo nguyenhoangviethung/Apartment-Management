@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/view/home/account/account.dart';
 import 'package:frontend/view/home/home_page/home_page.dart';
 
 import 'management/management.dart';
@@ -12,19 +13,20 @@ class MainHome extends StatefulWidget {
 }
 
 class _MainHomeState extends State<MainHome> {
-  late int _currentIndex ;
+  late int _currentIndex;
+
   @override
   void initState() {
     super.initState();
     // TODO: implement initState
-    _currentIndex= widget.currentIndex;
+    _currentIndex = widget.currentIndex;
   }
 
   final List<Widget> _screens = [
-    const HomePage(),
+    HomePage(),
     const Center(child: Text('User Screen')),
     const Management(),
-    const Center(child: Text('Account Screen')),
+    const AccountScreen(),
   ];
 
   String _getAppBarTitle() {
@@ -50,32 +52,29 @@ class _MainHomeState extends State<MainHome> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.lightBlue,
+          backgroundColor: _currentIndex == 3 ? Colors.white : Colors.lightBlue,
           title: Text(
             _getAppBarTitle(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
+              color: _currentIndex == 3 ? Colors.black : Colors.white,
             ),
           ),
           centerTitle: true,
           leading: _shouldShowBackButton()
               ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () {
-                  setState(() {
-                    _currentIndex = 0;
-                  });
-                },
-              )
+            icon: Icon(Icons.arrow_back, color: _currentIndex == 3 ? Colors.black : Colors.white), // Thay đổi màu nút back
+            onPressed: () {
+              setState(() {
+                _currentIndex = 0;
+              });
+            },
+          )
               : null,
           actions: [
             IconButton(
               icon: const Icon(Icons.notifications, color: Colors.white),
-              onPressed: () {
-      
-              },
+              onPressed: () {},
             ),
           ],
         ),
@@ -114,4 +113,3 @@ class _MainHomeState extends State<MainHome> {
     );
   }
 }
-

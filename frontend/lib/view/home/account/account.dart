@@ -86,13 +86,10 @@ class _AccountScreenState extends State<AccountScreen> {
         },
       );
 
-      // print('Status code: ${response.statusCode}');
-      // print('Response body: ${response.body}');
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        // Xóa token sau khi logout thành công
-        await prefs.remove('tokenlogin');
-
         if (mounted) {
           // Hiển thị thông báo thành công
           ScaffoldMessenger.of(context).showMaterialBanner(

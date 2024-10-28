@@ -14,7 +14,7 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   bool isLoading = true;
   Map<String, dynamic> userData = {};
-  final String apiUrl = "https://apartment-management-kjj9.onrender.com/admin/residents";
+  final String apiUrl = "https://apartment-management-kjj9.onrender.com/user/info";
 
   @override
   void initState() {
@@ -27,8 +27,6 @@ class _AccountScreenState extends State<AccountScreen> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('tokenlogin') ?? '';
 
-      // print('Token: $token');
-
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -38,21 +36,29 @@ class _AccountScreenState extends State<AccountScreen> {
       );
 
       print('Status Code: ${response.statusCode}');
-      // print('Response Body: ${response.body}');
+      print('Raw Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         if (response.body.isNotEmpty) {
           Map<String, dynamic> jsonResponse = json.decode(response.body);
-          List<dynamic> residentInfo = jsonResponse['resident_info'];
+          print('Parsed JSON Response: $jsonResponse');
 
-          if (residentInfo.isNotEmpty) {
-            setState(() {
-              userData = residentInfo[0];
-              isLoading = false;
-            });
-          } else {
-            throw Exception('No data found');
-          }
+          Map<String, dynamic> userInfo = jsonResponse['info'];
+
+          setState(() {
+            userData = {
+              'full_name': userInfo['username'] ?? 'Not provided',
+              'phone_number': userInfo['phone_number'] ?? 'Not provided',
+              'email': userInfo['user_email'] ?? 'Not provided',
+              'role': userInfo['user_role'] ?? 'Not provided',
+              // 'age': 'Not provided',
+              // 'date_of_birth': 'Not provided',
+              // 'id_number': 'Not provided',
+              // 'room': 'Not provided',
+              // 'status': 'Not provided',
+            };
+            isLoading = false;
+          });
         } else {
           throw Exception('Empty response from API');
         }
@@ -60,7 +66,7 @@ class _AccountScreenState extends State<AccountScreen> {
         throw Exception('Failed to load user data: ${response.statusCode}');
       }
     } catch (e) {
-      // print('Error detail: $e');
+      print('Error detail: $e');
       if (mounted) {
         setState(() {
           isLoading = false;
@@ -117,7 +123,7 @@ class _AccountScreenState extends State<AccountScreen> {
           });
         }
       } else {
-        throw Exception('Logout thất bại: ${response.statusCode} - ${response.body}');
+        throw Exception('Logout failed: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       print('Error details: $e');
@@ -203,31 +209,27 @@ class _AccountScreenState extends State<AccountScreen> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
+                  // Chỉ giữ lại các thông tin có trong API
                   _buildInfoItem(
-                    Icons.cake,
-                    'Age',
-                    userData['age']?.toString() ?? 'Not provided',
+                    Icons.email,
+                    'Email',
+                    userData['email'] ?? 'Not provided',
                   ),
                   _buildInfoItem(
-                    Icons.calendar_today,
-                    'Date of Birth',
-                    userData['date_of_birth'] ?? 'Not provided',
+                    Icons.phone,
+                    'Phone',
+                    userData['phone_number'] ?? 'Not provided',
                   ),
                   _buildInfoItem(
-                    Icons.account_box,
-                    'ID Number',
-                    userData['id_number'] ?? 'Not provided',
+                    Icons.person,
+                    'Role',
+                    userData['role'] ?? 'Not provided',
                   ),
-                  _buildInfoItem(
-                    Icons.room,
-                    'Room',
-                    userData['room']?.toString() ?? 'Not provided',
-                  ),
-                  _buildInfoItem(
-                    Icons.check_circle,
-                    'Status',
-                    userData['status'] ?? 'Not provided',
-                  ),
+                  // _buildInfoItem(
+                  //   Icons.check_circle,
+                  //   'Status',
+                  //   userData['status'] ?? 'Not provided',
+                  // ),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Authentication/login.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,7 +27,7 @@ class _AccountScreenState extends State<AccountScreen> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('tokenlogin') ?? '';
 
-      print('Token: $token'); // In token để debug
+      // print('Token: $token');
 
       final response = await http.get(
         Uri.parse(apiUrl),
@@ -37,7 +38,7 @@ class _AccountScreenState extends State<AccountScreen> {
       );
 
       print('Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
+      // print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         if (response.body.isNotEmpty) {
@@ -59,7 +60,7 @@ class _AccountScreenState extends State<AccountScreen> {
         throw Exception('Failed to load user data: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error detail: $e');
+      // print('Error detail: $e');
       if (mounted) {
         setState(() {
           isLoading = false;
@@ -76,7 +77,8 @@ class _AccountScreenState extends State<AccountScreen> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('tokenlogin') ?? '';
 
-      final response = await http.post(
+      // Gọi API logout
+      final response = await http.get(
         Uri.parse('https://apartment-management-kjj9.onrender.com/auth/logout'),
         headers: {
           'Authorization': 'Bearer $token',
@@ -84,18 +86,53 @@ class _AccountScreenState extends State<AccountScreen> {
         },
       );
 
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
-        await prefs.remove('tokenlogin');
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/login');
+          // Hiển thị thông báo thành công
+          ScaffoldMessenger.of(context).showMaterialBanner(
+            MaterialBanner(
+              content: Center(
+                child: Text(
+                  'Logout successful',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+              backgroundColor: Colors.green,
+              actions: [
+                Container(),
+              ],
+            ),
+          );
+
+          // Đợi 1 giây rồi chuyển sang trang login
+          Future.delayed(Duration(seconds: 1), () {
+            ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Login()),
+            );
+          });
         }
       } else {
-        throw Exception('Failed to logout');
+        throw Exception('Logout thất bại: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
+      print('Error details: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+        ScaffoldMessenger.of(context).showMaterialBanner(
+          MaterialBanner(
+            content: Text('Error logout: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            actions: [
+              TextButton(
+                child: Text('Close'),
+                onPressed: () => ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+              ),
+            ],
+          ),
         );
       }
     }

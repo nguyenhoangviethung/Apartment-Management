@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/fee_info.dart';
+import 'package:frontend/models/not-paid_room_info.dart';
 
-class FeeCard extends StatefulWidget {
-  final FeeInfo item;
-  final Function(int) onDelete;
+class NotPaidRoomCard extends StatefulWidget {
+  final NotPaidRoomInfo item;
 
-  const FeeCard({super.key, required this.item, required this.onDelete});
+  const NotPaidRoomCard({super.key, required this.item});
 
   @override
-  State<FeeCard> createState() => _FeeCardState();
+  State<NotPaidRoomCard> createState() => _NotPaidRoomCardState();
 }
 
-class _FeeCardState extends State<FeeCard> {
+class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -32,17 +31,20 @@ class _FeeCardState extends State<FeeCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Room id:', widget.item.room_id.toString()),
-                      _buildInfoRow('Service charge:', widget.item.service_charge!),
-                      _buildInfoRow('Manage charge:', widget.item.manage_charge!),
-                      _buildInfoRow('Fee:', widget.item.fee!),
+                      _buildInfoRow('Room id:', widget.item.room ?? 'Unknown'),
+                      _buildInfoRow('Amount:', widget.item.amount?.toString() ?? '0'),
+                      _buildInfoRow('Due date:', widget.item.due_date ?? 'N/A'),
+                      _buildInfoRow('Service fee:', widget.item.service_fee?.toString() ?? '0'),
+                      _buildInfoRow('Manage fee:', widget.item.manage_fee?.toString() ?? '0'),
+                      _buildInfoRow('Fee type:', widget.item.fee_type ?? 'Unknown'),
+
                     ],
                   ),
                 ),
                 actions: [
                   TextButton(
                     child: const Center(
-                      child: Text("Merci bucu", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+                      child: Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -64,35 +66,17 @@ class _FeeCardState extends State<FeeCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: Row(
-                      children: [
-                        Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            widget.item.room_id.toString(),
-                            style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      widget.item.room ?? 'Unknown',
+                      style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      print("Icon Delete pressed");
-                      widget.onDelete(widget.item.room_id!);
-                    },
-                    child: const Icon(
-                      Icons.delete,
-                      size: 30,
-                      color: Color.fromRGBO(0, 0, 0, 0.6),
-                    ),
-                  )
                 ],
               ),
 
@@ -103,10 +87,10 @@ class _FeeCardState extends State<FeeCard> {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.design_services_outlined, color: Colors.grey[600]!, size: 25),
+                          Icon(Icons.monetization_on_outlined, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.service_charge!,
+                            widget.item.amount.toString(),
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],
@@ -116,10 +100,10 @@ class _FeeCardState extends State<FeeCard> {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.manage_accounts_outlined, color: Colors.grey[600]!, size: 25),
+                          Icon(Icons.date_range_outlined, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.manage_charge!,
+                            widget.item.due_date??'no due_date',
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],

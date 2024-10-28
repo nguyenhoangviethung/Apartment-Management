@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/not-paid_room_info.dart';
+import 'package:frontend/models/fee_required_info.dart';
 
-class NotPaidRoomCard extends StatefulWidget {
-  final NotPaidRoomInfo item;
+class FeeCard extends StatefulWidget {
+  final FeeResponse feeResponse;
+  final FeeInfo item;
 
-  const NotPaidRoomCard({super.key, required this.item});
+  const FeeCard({super.key, required this.item, required this.feeResponse});
 
   @override
-  State<NotPaidRoomCard> createState() => _NotPaidRoomCardState();
+  State<FeeCard> createState() => _FeeCardState();
 }
 
-class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
+class _FeeCardState extends State<FeeCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -31,19 +32,16 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Room id:', widget.item.room_id.toString()),
-                      _buildInfoRow('Amount:', widget.item.amount.toString()),
-                      _buildInfoRow('Due date:', widget.item.due_date!),
-                      _buildInfoRow('Service fee:', widget.item.service_fee.toString()),
-                      _buildInfoRow('Manage fee:', widget.item.manage_fee.toString()),
-                      _buildInfoRow('Fee type:', widget.item.fee_type!),
+                      _buildInfoRow('Description:',widget.feeResponse.description?.join(', ') ?? 'N/A'),
+                      _buildInfoRow('Room id:', widget.item.room ?? 'N/A'),
+                      _buildInfoRow('Fee:', widget.item.fee ?? 'N/A'),
                     ],
                   ),
                 ),
                 actions: [
                   TextButton(
                     child: const Center(
-                      child: Text("Merci bucu", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+                      child: Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -65,44 +63,49 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
-                  const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      widget.item.room_id.toString(),
-                      style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                    child: Row(
+                      children: [
+                        Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            widget.item.room ?? 'Unknown room',
+                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 11.0),
+                padding: const EdgeInsets.only(left: 10),
                 child: Row(
                   children: [
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.monetization_on_outlined, color: Colors.grey[600]!, size: 25),
+                          Icon(Icons.description, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.amount.toString(),
+                            widget.feeResponse.description!.join(', '),
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 10),
+
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.date_range_outlined, color: Colors.grey[600]!, size: 25),
+                          Icon(Icons.money, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.due_date!,
+                            widget.item.fee!,
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],
@@ -121,22 +124,19 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.black54),
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: label,
+              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 18),
             ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+            TextSpan(
+              text: ' $value',
+              style: const TextStyle(color: Colors.black, fontSize: 18),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../../models/fee_info.dart';
-import '../common/fee_card.dart';
+import 'package:frontend/services/fetch_required_fees.dart';
+import '../../../../../models/fee_required_info.dart';
+import '../fee_management_component/fee_card.dart';
 
 class AllRooms extends StatefulWidget {
   const AllRooms({super.key});
@@ -10,34 +11,20 @@ class AllRooms extends StatefulWidget {
 }
 
 class _AllRoomsState extends State<AllRooms> {
-  final FeeInfo item = FeeInfo(
-    room_id: 101,
-    service_charge: '1B USD',
-    manage_charge: '10B USD',
-    fee: 'Ung ho anh Bay mua World cup',
-  );
+  late Future<FeeResponse?> futureFees;
 
-  final List<FeeInfo> items = [];
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
 
   int _currentPage = 0;
   final int totalDots = 5;
+  List<FeeInfo> _fees = [];
+  List<FeeInfo> _allFees = [];
 
   @override
   void initState() {
     super.initState();
-
-    // Thêm 10 lần giá trị của item vào items
-    for (int i = 0; i < 10; i++) {
-      items.add(FeeInfo(
-        room_id: item.room_id! + i, // tao so phong khac nhau
-        service_charge: item.service_charge,
-        manage_charge: item.manage_charge,
-        fee: item.fee,
-      ));
-    }
-
+    futureFees = fetchRequiredFees();
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page?.round() ?? 0;
@@ -54,132 +41,148 @@ class _AllRoomsState extends State<AllRooms> {
     });
   }
 
-  void handleDeleteActivity(int id) {
-    setState(() {
-      items.removeWhere((item) => item.room_id == id);
-    });
-  }
-
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    // Số lượng item trên mỗi trang
-    final int itemsPerPage = 5;
-    final int pageCount = (items.length / itemsPerPage).ceil();
+    const int itemsPerPage = 5;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 15),
+    return FutureBuilder<FeeResponse?>(
+      future: futureFees,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (snapshot.hasData && snapshot.data!.fees != null) {
+          FeeResponse feeResponse = snapshot.data!;
+          _fees = feeResponse.fees!;
+          _allFees = feeResponse.fees!;
+          int pageCount = (_fees.length / itemsPerPage).ceil();
 
-          TextFormField(
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
-            decoration: InputDecoration(
-              hintText: 'Search',
-              hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
-              suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: const BorderSide(
-                  color: Colors.blue,
-                  width: 2.0,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(
-                  color: Colors.blue[200]!,
-                  width: 2.0,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: const BorderSide(
-                  color: Colors.grey,
-                  width: 2.0,
-                ),
-              ),
-            ),
-            onChanged: (text){
-              setState(() {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 15),
 
-              });
-            },
-          ),
-
-          const SizedBox(height: 15),
-
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: pageCount,
-              itemBuilder: (context, pageIndex) {
-                final startIndex = pageIndex * itemsPerPage;
-                final endIndex = (startIndex + itemsPerPage < items.length)
-                    ? startIndex + itemsPerPage
-                    : items.length;
-
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1, // Số cột trong lưới
-                      childAspectRatio: 3.2, // Tỷ lệ chiều rộng/chiều cao của mỗi card
-                      mainAxisSpacing: 15.0, // Khoảng cách giữa các hàng
+                // Search input
+                TextFormField(
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
+                    suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(
+                        color: Colors.blue,
+                        width: 2.0,
+                      ),
                     ),
-                    itemCount: endIndex - startIndex, // Chỉ hiển thị số lượng card trên trang
-                    itemBuilder: (context, index) {
-                      return FeeCard(
-                        item: items[startIndex + index],
-                        onDelete: handleDeleteActivity, // Truyền callback
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.blue[200]!,
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 2.0,
+                      ),
+                    ),
+                  ),
+                  onChanged: (text) {
+                    setState(() {
+                      _fees = _allFees.where((feeinfo) {
+                        var roomWord = feeinfo.room!;
+                        return roomWord.contains(text);
+                      }).toList();
+
+                      // In ra danh sách filtered fees sau khi đã lọc
+                      print('Filtered fees: ${_fees.map((fee) => 'Room: ${fee.room}, Amount: ${fee.fee}').toList()}');
+                    });
+                  },
+
+                ),
+
+                const SizedBox(height: 15),
+
+                // Danh sách các phòng
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: pageCount,
+                    itemBuilder: (context, pageIndex) {
+                      final startIndex = pageIndex * itemsPerPage;
+                      final endIndex = (startIndex + itemsPerPage < _fees.length)
+                          ? startIndex + itemsPerPage
+                          : _fees.length;
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 1, // Số cột trong lưới
+                            childAspectRatio: 3.2, // Tỷ lệ chiều rộng/chiều cao của mỗi card
+                            mainAxisSpacing: 15.0, // Khoảng cách giữa các hàng
+                          ),
+                          itemCount: endIndex - startIndex, // Chỉ hiển thị số lượng card trên trang
+                          itemBuilder: (context, index) {
+                            return FeeCard(
+                              item: _fees[startIndex + index], // Chọn khoản phí cụ thể cho trang này
+                              feeResponse: feeResponse,
+                            );
+                          },
+                          physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
+                          shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
+                        ),
                       );
                     },
-                    physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
-                    shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
                   ),
-                );
-              },
-            ),
-          ),
-
-          SizedBox(
-            height: 30,
-            width: 100,
-            child: Center(
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(pageCount, (index) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      width: 12,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _currentPage == index ? Colors.blue : Colors.grey,
-                      ),
-                    );
-                  }),
                 ),
-              ),
-            ),
-          ),
 
-          const SizedBox(height: 15),
-        ],
-      ),
+                // Các dot chuyển trang
+                SizedBox(
+                  height: 30,
+                  width: 100,
+                  child: Center(
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(pageCount, (index) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _currentPage == index ? Colors.blue : Colors.grey,
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+              ],
+            ),
+          );
+        } else {
+          return const Center(child: Text('No fees available'));
+        }
+      },
     );
   }
 }
-
-

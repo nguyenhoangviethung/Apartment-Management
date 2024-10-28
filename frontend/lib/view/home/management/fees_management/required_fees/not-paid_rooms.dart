@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/not-paid_room_info.dart';
-import 'package:frontend/view/home/management/fees_management/common/not-paid_room_card.dart';
+import 'package:frontend/services/fetch_not_paid.dart';
+
+import '../fee_management_component/not-paid_room_card.dart';
 
 class NotPaidRooms extends StatefulWidget {
   const NotPaidRooms({super.key});
@@ -10,16 +12,9 @@ class NotPaidRooms extends StatefulWidget {
 }
 
 class _NotPaidRoomsState extends State<NotPaidRooms> {
-  final NotPaidRoomInfo item = NotPaidRoomInfo(
-      room_id: 101,
-      amount: 10000,
-      due_date: '31/12/2024',
-      service_fee: 5000,
-      manage_fee: 5000,
-      fee_type: 'Ung ho anh Bay mua World cup'
-  );
 
-  final List<NotPaidRoomInfo> items = [];
+  List<NotPaidRoomInfo> _notpaidrooms = [];
+  List<NotPaidRoomInfo> _allnotpaidrooms = [];
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
 
@@ -30,18 +25,12 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
   void initState() {
     super.initState();
 
-    // Thêm 10 lần giá trị của item vào items
-    for (int i = 0; i < 10; i++) {
-      items.add(NotPaidRoomInfo(
-          room_id: item.room_id! + i, // tao so phong khac nhau
-          amount: item.amount,
-          due_date: item.due_date,
-          service_fee: item.service_fee,
-          manage_fee: item.manage_fee,
-          fee_type: item.fee_type
-      ));
-    }
-
+    fetchNotPaid().then((value){
+      setState(() {
+        _notpaidrooms=value;
+        _allnotpaidrooms=value;
+      });
+    });
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page?.round() ?? 0;
@@ -65,12 +54,11 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
     // Số lượng item trên mỗi trang
     final int itemsPerPage = 5;
-    final int pageCount = (items.length / itemsPerPage).ceil();
+    final int pageCount = (_notpaidrooms.length / itemsPerPage).ceil();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -108,7 +96,11 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
             ),
             onChanged: (text){
               setState(() {
-
+                text=text.toLowerCase();
+                _notpaidrooms=_allnotpaidrooms.where((notpaidroominfo){
+                  var roomword= notpaidroominfo.room!;
+                  return roomword.contains(text);
+                }).toList();
               });
             },
           ),
@@ -121,9 +113,9 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
               itemCount: pageCount,
               itemBuilder: (context, pageIndex) {
                 final startIndex = pageIndex * itemsPerPage;
-                final endIndex = (startIndex + itemsPerPage < items.length)
+                final endIndex = (startIndex + itemsPerPage < _notpaidrooms.length)
                     ? startIndex + itemsPerPage
-                    : items.length;
+                    : _notpaidrooms.length;
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -136,7 +128,7 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
                     itemCount: endIndex - startIndex, // Chỉ hiển thị số lượng card trên trang
                     itemBuilder: (context, index) {
                       return NotPaidRoomCard(
-                        item: items[startIndex + index],
+                        item: _notpaidrooms[startIndex + index],
                       );
                     },
                     physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn

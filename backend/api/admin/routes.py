@@ -1,6 +1,7 @@
 from api.admin import admin_bp
 from flask import jsonify, request
 from api.models.models import *
+from api.models.resident_service import *
 from dotenv import load_dotenv
 from helpers import validate_date, decimal_to_float, get_payload
 from datetime import datetime, timedelta
@@ -59,6 +60,38 @@ def get_resident(household_id):
         result['info'].append(new_info)
 
     return jsonify(result), 200
+
+@admin_bp.post('/add-resident')
+@admin_required
+@handle_exceptions
+def add_resident():
+    # Lấy thông tin từ request form
+    data = request.form.to_dict()
+    required_fields = ["resident_id", "household_id", "resident_name"]
+    for field in required_fields:
+        if field not in data or not data[field]:
+            return jsonify({"error": f"Missing required field: {field}"}), 400
+    
+    resident_service = Resident_Service(db.session)
+    try:
+        new_resident = resident_service.create_resident(data)
+        return jsonify({"message": "Resident created successfully"}), 201
+    except Exception as e:
+        return jsonify({'error': f'Unexpected error: {e}'}), 500
+    
+@admin_bp.route('remove-resident/<resident_id>')
+@admin_required
+@handle_exceptions
+def remove_resident(resident_id):
+    print(f"Removing resident with ID: {resident_id}")
+    try:
+        resident_remove = Resident_Service(db.session)
+        if resident_remove.remove_resident(resident_id):
+            return jsonify({"message": "Resident removed successfully"}), 201
+        else:
+            return jsonify("message: resident_id not found"), 404
+    except Exception as e:
+        return jsonify({'error': f'Unexpected error: {e}'}), 500
 
 @admin_bp.post('/validate<user_id>')
 @admin_required

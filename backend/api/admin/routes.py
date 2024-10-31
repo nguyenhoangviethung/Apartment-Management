@@ -100,10 +100,12 @@ def show_all_residents():
     resident_list = []
     year = datetime.today().year
     for resident in residents:
-        age = year - resident.date_of_birth.year
+        dob = resident.date_of_birth if not None else None
+        
+        age = None if dob == None else year - dob.year 
         resident_data = {
             'full_name' : resident.resident_name,
-            'date_of_birth' : resident.date_of_birth,
+            'date_of_birth' : dob,
             'id_number' : resident.id_number,
             'age' : age,
             'room' : resident.household_id,

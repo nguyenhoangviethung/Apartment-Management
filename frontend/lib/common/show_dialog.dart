@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/View/Home/main_home.dart';
 
-import '../login.dart';
+import '../View/Authentication/login.dart';
+
 
 void showinform(BuildContext context,String title, String message) {
   showDialog(

@@ -168,7 +168,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           ),
                         ),
                         onPressed: () {
-                          _forgotpass(_email.text);
+                          _forgotpass(_email.text.trim());
                         },
                         child: _isforgot? const CircularProgressIndicator(color: Colors.white): const Text(
                             'Recover Password',

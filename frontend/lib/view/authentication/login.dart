@@ -192,7 +192,7 @@ class _LoginState extends State<Login> {
                           builder: (context) {
                             return TextButton(
                                 onPressed: () {
-                                  _login(_username.text, _password.text, false);
+                                  _login(_username.text.trim(), _password.text.trim(), false);
                                 },
                                 style: TextButton.styleFrom(
                                   backgroundColor: Colors.blue,

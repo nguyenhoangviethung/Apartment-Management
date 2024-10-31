@@ -216,10 +216,10 @@ class _RegisterState extends State<Register> {
                       ),
                       onPressed: () {
                         _registerUser(
-                          _username.text,
-                          _email.text,
-                          _password.text,
-                          _confirmpass.text,
+                          _username.text.trim(),
+                          _email.text.trim(),
+                          _password.text.trim(),
+                          _confirmpass.text.trim(),
                         );
                       },
                       child: isSingup

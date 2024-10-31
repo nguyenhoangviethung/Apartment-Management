@@ -218,7 +218,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                             ),
                           ),
                           onPressed: () {
-                            resetpassword(_pass.text, _confirmpass.text);
+                            resetpassword(_pass.text.trim(), _confirmpass.text.trim());
                           },
                           child: _isload? CircularProgressIndicator(color: Colors.white,): const Text(
                             'Continue',

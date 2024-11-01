@@ -93,44 +93,52 @@ def remove_resident(resident_id):
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
 
-@admin_bp.post('/validate<user_id>')
+@admin_bp.post('/validate')
 @admin_required
 @handle_exceptions
-# @token_required
-def validate_user(data, user_id):
-    role = data.get('is_admin')
-    if role == 'false':
-        return jsonify({'message': 'user unauthorized'}), 403
+def validate_user():
     
     full_name = request.form.get('full_name')
     dob = datetime.strptime(request.form.get('date_of_birth'),'%Y-%m-%d').date()
     id_number = request.form.get('id_number')
     status = request.form.get('status')
     room = request.form.get('room')
-    # phone_number = request.form.get('phone_number')
+    phone_number = request.form.get('phone_number')
+    
+    existing_resident = Residents.query.filter_by(id_number=id_number).first()
+    if existing_resident:
+        return jsonify({'message': 'Resident with this name and ID number already exists'}), 400
+    
+    household = Households.query.filter_by(household_id=room).first()
+    if not household:
+        return jsonify({'message': 'Room does not exist'}), 404
     
     new_resident = Residents(
         resident_name = full_name,
         date_of_birth = dob,
         id_number = id_number,
-        
+        status = status,
+        household_id = room,
+        phone_number = phone_number
     )
-    # user = Users.query.filter_by(user_id = user_id).one_or_none()
-    # user.set
+    db.session.add(new_resident)
+    db.session.commit()
+    return jsonify({'message': 'Resident added successfully'}), 200
     
 @admin_bp.get('/residents')
 @admin_required
 @handle_exceptions
-# @token_required
 def show_all_residents():
     residents = Residents.query.all()
     resident_list = []
     year = datetime.today().year
     for resident in residents:
-        age = year - resident.date_of_birth.year
+        dob = resident.date_of_birth if not None else None
+        
+        age = None if dob == None else year - dob.year 
         resident_data = {
             'full_name' : resident.resident_name,
-            'date_of_birth' : resident.date_of_birth,
+            'date_of_birth' : dob,
             'id_number' : resident.id_number,
             'age' : age,
             'room' : resident.household_id,
@@ -168,11 +176,12 @@ def update_info(house_id):
     apartment = Households.query.filter_by(household_id = house_id).first()
     if not apartment:
         return jsonify({'message': 'Household not found'}), 404
-        
-    print(request.form)  
-    print(request.form.get('household_name'))
+    id = request.form.get('id_num')
+    resident = Residents.query.filter_by(id_number = id).first()
+    if not resident:
+        return jsonify({'message': 'No resident with this id'}), 404
     data = {
-        'phone_number' : request.form.get('phone_number'),
+        'managed_by' : resident.user_id,
         'num_residents' : request.form.get('num_residents'),    
     }
     for field, value in data.items():

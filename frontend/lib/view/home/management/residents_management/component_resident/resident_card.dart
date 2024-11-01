@@ -116,7 +116,7 @@ class _ResidentCardState extends State<ResidentCard> {
                           Icon(Icons.call_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.phone_number!,
+                            widget.item.phone_number??'No phone number',
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],

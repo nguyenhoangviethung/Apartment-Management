@@ -2,7 +2,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../../Authentication/common/show_dialog.dart';
+import '../../../../../../common/show_dialog.dart';
+
 class Delete extends StatefulWidget {
   const Delete({super.key});
 

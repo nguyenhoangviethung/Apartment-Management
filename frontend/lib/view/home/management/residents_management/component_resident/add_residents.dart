@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/models/resident_info.dart';
 import 'package:frontend/view/home/management/residents_management/component_resident/resident_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../../common/show_dialog.dart';
 import '../residents_management.dart';
 import '../component_resident/add_footer.dart';
 import 'package:http/http.dart' as http;

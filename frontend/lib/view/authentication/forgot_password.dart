@@ -1,9 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/login.dart';
 import 'package:http/http.dart' as http;
+import '../../common/show_dialog.dart';
 import 'email_verification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

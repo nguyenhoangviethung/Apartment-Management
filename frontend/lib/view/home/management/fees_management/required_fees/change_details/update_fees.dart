@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../../Authentication/common/show_dialog.dart';
+import '../../../../../../common/show_dialog.dart';
 class Update extends StatefulWidget {
   Update({super.key});
 

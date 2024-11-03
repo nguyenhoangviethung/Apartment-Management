@@ -203,6 +203,28 @@ def update_info(house_id):
     #         'status' : request.form.get('status')
     #     }
     #     return 200
+    
+@admin_bp.post('/update-res/<int:res_id>')
+@admin_required
+@handle_exceptions
+def update_res(res_id):
+    resident = Residents.query.filter_by(resident_id = res_id).first()
+    if not resident:
+        return jsonify({'message': 'Resident not found!!!'}), 404
+    
+    data = {
+        'full_name' : request.form.get('full_name'),
+        'date_of_birth' : datetime.strptime(request.form.get('date_of_birth'),'%Y-%m-%d').date(),
+        'status' : request.form.get('status'),
+        'phone_number' : request.form.get('phone_number')
+    }
+    for field, value in data.items():
+        if value is not None:
+            setattr(resident,field,value)
+            db.session.commit()
+    
+    return jsonify({'message': 'Household updated successfully'}), 200
+    
 
 @admin_bp.route('/fee/<int:household_id>')
 @admin_required

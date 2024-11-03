@@ -275,6 +275,47 @@ paths:
         '500':
           description: Server error
 
+  /admin/update-res/{res_id}:
+    post:
+      summary: Update resident info
+      tags:
+        - Admin
+      parameters:
+        - name: res_id
+          in: path
+          required: true
+          description: The ID of the resident to update.
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        description: Update resident information
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone_number:
+                  type: string        
+                  example: "0916243155"
+                full_name:
+                  type: string
+                  example: "Lmao"
+                status:
+                  type: string
+                  example: "Tạm vắng" 
+                date_of_birth:
+                  type: string
+                  example: "2004-12-21"   
+      responses:
+        '200':
+          description: Updated successfully
+        '404':
+          description: Resident not found
+        '500':
+          description: Server error        
+
   /admin/{household_id}/residents:
     get:
       tags:

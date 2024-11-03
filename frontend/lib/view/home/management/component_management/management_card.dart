@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/management/residents_management/residents_management.dart';
+import 'package:frontend/view/home/user/pay.dart';
+import 'package:frontend/view/home/user/update.dart';
 
 import '../fees_management/fees_management.dart';
 
@@ -54,6 +56,14 @@ class ManagementCard extends StatelessWidget {
         }
         if(title=='Fees Management'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const FeesManagement()));
+        }
+        if(title=='Payment')
+          {Navigator.push(context, MaterialPageRoute(builder: (context)=>const Pay()));
+
+          }
+        if(title=='Update')
+        {Navigator.push(context, MaterialPageRoute(builder: (context)=>const Update()));
+
         }
         // if(title=='Rooms Management'){
         //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const RoomsManagement()));

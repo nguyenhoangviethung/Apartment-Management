@@ -11,9 +11,9 @@ class User extends StatelessWidget {
   padding: EdgeInsets.all(20.0),
   child: Column(
   children: [
-  ManagementCard(imagelink: 'assets/images/resident.jpg', title: 'Update',),
+  ManagementCard(imagelink: 'frontend/assets/images/update.jpg', title: 'Update',),
   SizedBox(height: 20,),
-  ManagementCard(imagelink: 'assets/images/fee.jpg', title: 'Payment',),
+  ManagementCard(imagelink: 'frontend/assets/images/pay.jpg', title: 'Payment',),
   ],
   ),
   ),

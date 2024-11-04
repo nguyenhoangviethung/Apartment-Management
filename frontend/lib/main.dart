@@ -10,7 +10,7 @@ void main() {
   runApp(
       const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: User(),
+        home: Login(),
       )
     // const MainHome(currentIndex: 0,)
     // const AccountScreen(),

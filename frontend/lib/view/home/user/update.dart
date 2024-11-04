@@ -3,6 +3,27 @@ import 'package:flutter/material.dart';
 class Update extends StatelessWidget {
   const Update({super.key});
 
+  void _showSuccessMessage(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Center(
+          child: Text(
+            'Update successful!',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.all(16),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,14 +78,30 @@ class Update extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Nút cập nhật
-            SizedBox(
-              width: double.infinity,
+            Center(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  _showSuccessMessage(context);
+
+                  // Đợi SnackBar hiển thị xong rồi mới quay lại màn hình User
+                  await Future.delayed(const Duration(seconds: 2));
+                  Navigator.pop(context);
+                },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  backgroundColor: Colors.lightBlue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
-                child: const Text('Cập nhật'),
+                child: const Text(
+                  'Update',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ],

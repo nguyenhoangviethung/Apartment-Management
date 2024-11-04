@@ -3,7 +3,7 @@ import 'package:frontend/view/home/management/fees_management/charity_activities
 import 'package:frontend/view/home/management/fees_management/required_fees/required_fee.dart';
 
 import '../../main_home.dart';
-import 'fee_management_component/date_filter.dart';
+import '../../../../common/date_filter.dart';
 
 class FeesManagement extends StatefulWidget {
   const FeesManagement({super.key});

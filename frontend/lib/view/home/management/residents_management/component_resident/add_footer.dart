@@ -1,34 +1,38 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../models/resident_info.dart';
 
-class AddFooter extends StatelessWidget {
-  AddFooter({super.key, required this.addNewResident});
+class AddFooter extends StatefulWidget {
+  const AddFooter({super.key, required this.addNewResident});
 
   final Function addNewResident;
 
-  // Tạo các controller riêng cho mỗi trường nhập liệu
+  @override
+  State<AddFooter> createState() => _AddFooterState();
+}
+
+class _AddFooterState extends State<AddFooter> {
+  String? _selectedStatus;
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController idController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
-  final TextEditingController statusController = TextEditingController();
   final TextEditingController roomController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
   void handleOnClick() {
-    // Lấy giá trị từ tất cả các trường nhập liệu
     final name = nameController.text.trim();
     final dob = dobController.text.trim();
     var id = idController.text.trim();
     final age = int.tryParse(ageController.text.trim()) ?? 0;
-    final status = statusController.text.trim();
+    final status = _selectedStatus;
     final room = int.tryParse(roomController.text.trim()) ?? 0;
     final phone = phoneController.text.trim();
 
-    if (id == '') {
+    if (id.isEmpty) {
       id = DateTime.now().toString();
     }
+
     final resident = ResidentInfo(
       full_name: name,
       date_of_birth: dob,
@@ -39,24 +43,19 @@ class AddFooter extends StatelessWidget {
       status: status,
     );
 
-    // Gọi hàm addNewResident với đối tượng ResidentInfo
-    addNewResident(resident);
+    widget.addNewResident(resident);
 
-    // Xóa giá trị sau khi thêm
     nameController.clear();
     dobController.clear();
     idController.clear();
     ageController.clear();
-    statusController.clear();
     roomController.clear();
     phoneController.clear();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: double.infinity, // Tăng chiều cao nếu cần
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
@@ -71,7 +70,7 @@ class AddFooter extends StatelessWidget {
       ),
       child: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisSize: MainAxisSize.min, // Sử dụng mainAxisSize.min
           children: [
             _buildTextField('Enter name', nameController),
             const SizedBox(height: 16),
@@ -81,8 +80,25 @@ class AddFooter extends StatelessWidget {
             const SizedBox(height: 16),
             _buildTextField('Enter age', ageController),
             const SizedBox(height: 16),
-            _buildTextField('Enter status', statusController),
-            const SizedBox(height: 16),
+
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Status:', style: TextStyle(
+                  fontFamily: 'Times New Roman',
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildRadioOption("Thường trú"),
+                _buildRadioOption("Tạm trú"),
+                _buildRadioOption("Tạm vắng"),
+              ],
+            ),
+
+            // const SizedBox(height: 12),
             _buildTextField('Enter room', roomController),
             const SizedBox(height: 16),
             _buildTextField('Enter phone number', phoneController),
@@ -136,6 +152,24 @@ class AddFooter extends StatelessWidget {
         fontWeight: FontWeight.bold,
         fontSize: 18,
       ),
+    );
+  }
+
+  Widget _buildRadioOption(String title) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Radio<String>(
+          value: title,
+          groupValue: _selectedStatus,
+          onChanged: (String? value) {
+            setState(() {
+              _selectedStatus = value; // Cập nhật lựa chọn
+            });
+          },
+        ),
+        Text(title, style: const TextStyle(fontSize: 17),),
+      ],
     );
   }
 }

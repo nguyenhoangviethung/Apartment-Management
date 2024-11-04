@@ -5,7 +5,7 @@ import 'package:frontend/view/home/management/fees_management/required_fees/all_
 import 'package:frontend/view/home/management/fees_management/required_fees/change_details/change_details.dart';
 import 'package:frontend/view/home/management/fees_management/required_fees/not-paid_rooms.dart';
 
-import '../fee_management_component/date_filter.dart';
+import '../../../../../common/date_filter.dart';
 
 class RequiredFees extends StatefulWidget {
   const RequiredFees({super.key});

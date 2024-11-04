@@ -16,7 +16,10 @@ class RequiredFees extends StatefulWidget {
 
 class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMixin {
   final DateFilterPopup _dateFilterPopup = DateFilterPopup(
-    onDateRangeSelected: (start, end) { },
+    onDateSelected: (selectedDate) {
+      print('Selected date: $selectedDate');
+      // Xử lý ngày đã chọn
+    },
   );
 
   late TabController _tabController;

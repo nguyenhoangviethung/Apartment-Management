@@ -14,7 +14,10 @@ class FeesManagement extends StatefulWidget {
 
 class _FeesManagementState extends State<FeesManagement> {
   final DateFilterPopup _dateFilterPopup = DateFilterPopup(
-    onDateRangeSelected: (start, end) { },
+    onDateSelected: (selectedDate) {
+      print('Selected date: $selectedDate');
+      // Xử lý ngày đã chọn
+    },
   );
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;

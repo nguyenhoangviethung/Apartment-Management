@@ -4,8 +4,9 @@ import 'package:frontend/view/home/management/fees_management/fees_management.da
 import 'package:frontend/view/home/management/fees_management/required_fees/all_rooms.dart';
 import 'package:frontend/view/home/management/fees_management/required_fees/change_details/change_details.dart';
 import 'package:frontend/view/home/management/fees_management/required_fees/not-paid_rooms.dart';
+import 'package:intl/intl.dart';
 
-import '../../../../../common/date_filter.dart';
+import '../fee_management_component/date_filter.dart';
 
 class RequiredFees extends StatefulWidget {
   const RequiredFees({super.key});
@@ -16,9 +17,10 @@ class RequiredFees extends StatefulWidget {
 
 class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMixin {
   final DateFilterPopup _dateFilterPopup = DateFilterPopup(
-    onDateSelected: (selectedDate) {
-      print('Selected date: $selectedDate');
-      // Xử lý ngày đã chọn
+    onDateRangeSelected: (startDate, endDate) {
+      // Xử lý khi người dùng chọn khoảng thời gian
+      print('Selected date range: ${DateFormat('yyyy-MM-dd').format(startDate)} - ${DateFormat('yyyy-MM-dd').format(endDate)}');
+      // Bạn có thể thêm logic để xử lý ngày đã chọn, ví dụ cập nhật UI hoặc lưu trữ giá trị
     },
   );
 

@@ -191,7 +191,8 @@
 
 
 import 'package:flutter/material.dart';
-import '../../../../../common/date_filter.dart';
+import 'package:intl/intl.dart';
+import '../../../../../common/custom_date_picker.dart';
 import '../../../../../models/resident_info.dart';
 
 class AddFooter extends StatefulWidget {
@@ -206,9 +207,9 @@ class AddFooter extends StatefulWidget {
 class _AddFooterState extends State<AddFooter> {
   String? _selectedStatus;
   String _dob = '';
+  DateTime selectedDate = DateTime.now();
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController dobController = TextEditingController();
   final TextEditingController idController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController roomController = TextEditingController();
@@ -216,7 +217,7 @@ class _AddFooterState extends State<AddFooter> {
 
   void handleOnClick() {
     final name = nameController.text.trim();
-    final dob = dobController.text.trim();
+    final dob = _dob;
     var id = idController.text.trim();
     final age = int.tryParse(ageController.text.trim()) ?? 0;
     final status = _selectedStatus;
@@ -239,30 +240,12 @@ class _AddFooterState extends State<AddFooter> {
 
     widget.addNewResident(resident);
 
+    // Xóa dữ liệu sau khi thêm
     nameController.clear();
-    dobController.clear();
     idController.clear();
     ageController.clear();
     roomController.clear();
     phoneController.clear();
-  }
-
-  void showDateFilterPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: DateFilterPopup(
-          onDateSelected: (String selectedDate) {
-            setState(() {
-              dobController.text = selectedDate; // Cập nhật ngày sinh vào TextField
-            });
-          },
-        ),
-      ),
-    );
   }
 
   @override
@@ -288,12 +271,35 @@ class _AddFooterState extends State<AddFooter> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 16),
               _buildTextField('Enter name', nameController),
-              const SizedBox(height: 16),
-              _buildTextField('Enter date of birth', dobController, onTap: () {
-                showDateFilterPopup(context);
-              }),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Date of birth: ',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: CustomDatePicker(
+                      initialDate: selectedDate,
+                      onDateSelected: (date) {
+                        setState(() {
+                          selectedDate = date; // Cập nhật ngày đã chọn
+                          _dob = DateFormat('yyyy-MM-dd').format(date); // Cập nhật biến _dob
+                        });
+                      },
+                      label: '',
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
               _buildTextField('Enter id number', idController),
               const SizedBox(height: 16),
               _buildTextField('Enter age', ageController),
@@ -349,27 +355,25 @@ class _AddFooterState extends State<AddFooter> {
 
   Widget _buildTextField(String label, TextEditingController controller, {VoidCallback? onTap}) {
     return GestureDetector(
-      onTap: onTap, // Gọi hàm onTap nếu được cung cấp
-      child: AbsorbPointer( // Ngăn không cho nhập văn bản nếu không cần thiết
-        child: TextField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: label,
-            border: const OutlineInputBorder(),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.blue, width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey, width: 1),
-              borderRadius: BorderRadius.circular(10),
-            ),
+      onTap: onTap,
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.blue, width: 2),
+            borderRadius: BorderRadius.circular(10),
           ),
-          style: const TextStyle(
-            fontFamily: 'Times New Roman',
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.grey, width: 1),
+            borderRadius: BorderRadius.circular(10),
           ),
+        ),
+        style: const TextStyle(
+          fontFamily: 'Times New Roman',
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
         ),
       ),
     );

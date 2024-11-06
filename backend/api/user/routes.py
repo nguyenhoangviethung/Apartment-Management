@@ -27,16 +27,25 @@ def user_info(data):
         'username' : user.username,
         'user_role' : user.user_role,
         'user_email': user.user_email,
-        'phone_number': user.phone_number
+        'phone_number': user.phone_number,
+        
     }
     return jsonify({'info': info}), 200
     
-# @user_bp.route('/update')   
-# @token_required
-# @handle_exceptions 
-# def update_info(data):
-#     user = Users.query.filter_by(user_id = data.get('user_id')).first()
-#     username = request.form.get('new_name')
+@user_bp.route('/update')   
+@token_required
+@handle_exceptions 
+def update_user_info(data):
+    user = Users.query.filter_by(user_id = data.get('user_id')).first()
     
-#     user_email
-#     phone_number
+    data = {
+        'username' : request.form.get('new_name'),
+        'user_email' : request.form.get('new_email'),
+        'phone_number' : request.form.get('new_number')
+    }
+    for field, value in data.items():
+        if value is not None:
+            setattr(user, field, value)
+            
+    db.session.commit()
+    return jsonify({'message': 'User info updated successfully!!!'}), 200        

@@ -92,7 +92,7 @@ def remove_resident(resident_id):
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
 
-@admin_bp.post('update-resident/<resident_i>')
+@admin_bp.post('update-resident/<int:resident_id>')
 @admin_required
 @handle_exceptions
 def update_resident(resident_id):
@@ -100,11 +100,12 @@ def update_resident(resident_id):
         data = request.form.to_dict()
         resident_update = Resident_Service(db.session)
         if resident_update.update_resident(resident_id, data):
-            return jsonify({"message": "Resident update successfully"}), 201
+            return jsonify({"message": "Resident updated successfully"}), 201
         else:
             return jsonify("message: resident_id not found"), 404
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
+
 
 @admin_bp.post('/validate')
 @admin_required

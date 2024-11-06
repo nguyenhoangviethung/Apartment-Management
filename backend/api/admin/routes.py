@@ -67,7 +67,7 @@ def get_resident(household_id):
 def add_resident():
     # Lấy thông tin từ request form
     data = request.form.to_dict()
-    required_fields = ["resident_id", "household_id", "resident_name"]
+    required_fields = ["resident_id", "household_id", "resident_name","status"]
     for field in required_fields:
         if field not in data or not data[field]:
             return jsonify({"error": f"Missing required field: {field}"}), 400
@@ -79,15 +79,28 @@ def add_resident():
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
     
-@admin_bp.route('remove-resident/<resident_id>')
+@admin_bp.post('remove-resident/<resident_id>')
 @admin_required
 @handle_exceptions
 def remove_resident(resident_id):
-    print(f"Removing resident with ID: {resident_id}")
     try:
         resident_remove = Resident_Service(db.session)
         if resident_remove.remove_resident(resident_id):
             return jsonify({"message": "Resident removed successfully"}), 201
+        else:
+            return jsonify("message: resident_id not found"), 404
+    except Exception as e:
+        return jsonify({'error': f'Unexpected error: {e}'}), 500
+
+@admin_bp.post('update-resident/<resident_i>')
+@admin_required
+@handle_exceptions
+def update_resident(resident_id):
+    try:
+        data = request.form.to_dict()
+        resident_update = Resident_Service(db.session)
+        if resident_update.update_resident(resident_id, data):
+            return jsonify({"message": "Resident update successfully"}), 201
         else:
             return jsonify("message: resident_id not found"), 404
     except Exception as e:

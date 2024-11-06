@@ -316,43 +316,43 @@ paths:
         '500':
           description: Server error        
 
-/admin/add-resident:
-    post:
-      summary: "Add a new resident"
-      description: "Adds a new resident to the system by providing their information."
-      tags:
-        - Admin
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              required:
-                - resident_id
-                - household_id
-                - resident_name
-                - status
-              properties:
-                resident_id:
-                  type: integer
-                  example: 1
-                household_id:
-                  type: integer
-                  example: 101
-                resident_name:
-                  type: string
-                  example: "Nguyễn Quyết Thắng"
-                status:
-                  type: string
-                  example: "Thường trú"
-      responses:
-        '201':
-          description: "Resident created successfully"
-        '400':
-          description: "Missing required field"
-        '500':
-          description: "Unexpected error"
+  /admin/add-resident:
+      post:
+        summary: "Add a new resident"
+        description: "Adds a new resident to the system by providing their information."
+        tags:
+          - Admin
+        requestBody:
+          required: true
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                required:
+                  - resident_id
+                  - household_id
+                  - resident_name
+                  - status
+                properties:
+                  resident_id:
+                    type: integer
+                    example: 1
+                  household_id:
+                    type: integer
+                    example: 101
+                  resident_name:
+                    type: string
+                    example: "Nguyễn Quyết Thắng"
+                  status:
+                    type: string
+                    example: "Thường trú"
+        responses:
+          '201':
+            description: "Resident created successfully"
+          '400':
+            description: "Missing required field"
+          '500':
+            description: "Unexpected error"
 
   /admin/remove-resident/{resident_id}:
     post:

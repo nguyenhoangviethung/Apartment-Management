@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import random
 from api.models import user_service
 
+
 load_dotenv()
 
 @auth_bp.before_app_request
@@ -124,7 +125,7 @@ def login_post():
         return jsonify({"message": "login successful", 'token': token}), 200
     return jsonify({"message": "Login page loaded"}), 200
     
-@auth_bp.route('/forgot-password/', methods=['GET', 'POST'])
+@auth_bp.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -134,9 +135,17 @@ def forgot_password():
             return jsonify({"message": "No account registered with this email!!"}), 404
         else:
             validation_code = str(random.randint(1000, 9999))
-            session['validation_code'] = validation_code
-            session['reset_email'] = email
-
+            # session['validation_code'] = validation_code
+            # session['reset_email'] = email
+            token = jwt.encode(
+                 payload = {
+                'email': email,     
+                'code':validation_code,        
+                'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)
+            },
+            key = current_app.config['SECRET_KEY'],
+            algorithm='HS256'
+            )
             mail = Mail(current_app)
             msg = Message(
                 'Code for validation',
@@ -146,39 +155,50 @@ def forgot_password():
             )
 
             mail.send(msg)
-            flash('Reset code has been sent to your email!')
-
-            return jsonify({"message": "Mail sent successful"}), 200
+            return jsonify({'token': token}), 200
     
 @auth_bp.route('/validation-code', methods=['GET', 'POST'])
 def validation():
     if request.method == 'POST':
         input_code = request.form.get('code')
-
-        stored_code = session.get('validation_code')
-
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+        else:
+            token = None
+            
+        data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms='HS256')    
+        stored_code = data.get('code')
         # Check if the entered code matches the stored code
         if input_code != stored_code:
             flash('Invalid code. Please try again.')
             return jsonify({"message": "invalid code"}), 400
         else:
             flash('Code validated successfully! Now you can reset your password.')
-            session.pop('validation_code', None)
-            return jsonify({"message": "validate successfully"}), 200  
-
-    
+            return jsonify({"message": "validate successfully"}), 200  # Example: redirect to reset password page
 
 @auth_bp.route('/reset-password', methods=['GET', 'POST'])
 def validation_code():
     if request.method == 'POST':
         new_password = request.form.get('new_password')
-        stored_email = session.get('reset_email')
+        auth_header = request.headers.get('Authorization')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+        else:
+            return jsonify({"message": "Token missing or invalid"}), 401
+            
+        try:
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            return jsonify({"message": "Token expired"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"message": "Invalid token"}), 401
+        stored_email = data.get('email')
         
         user = Users.query.filter_by(user_email=stored_email).first()
         user_service.set_password(user, new_password)
         
         db.session.commit()
-        session.pop('reset_email', None)
         return jsonify({"message" :"Password has been reset!!!"}), 200
     
 @auth_bp.route('/logout')

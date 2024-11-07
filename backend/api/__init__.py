@@ -11,7 +11,8 @@ import json
 def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_class)
-
+    CORS(app)
+    
     db.init_app(app)
     migrate.init_app(app, db)
     with app.app_context():

@@ -333,19 +333,33 @@ paths:
                 - household_id
                 - resident_name
                 - status
+                - date_of_birth 
               properties:
                 resident_id:
                   type: integer
                   example: 1
                 household_id:
                   type: integer
-                  example: 101
+                  example: 103
                 resident_name:
                   type: string
-                  example: "Nguyễn Quyết Thắng"
+                  example: "John Doe"
+                date_of_birth:
+                  type: string
+                  format: date
+                  example: "1990-01-01"
                 status:
                   type: string
+                  enum: ["Tạm trú", "Tạm vắng", "Thường trú"]
                   example: "Thường trú"
+                id_number:
+                  type: integer
+                  example: 040201041234
+                phong_number:
+                  type: string
+                  example: 0123456789
+                user_id:
+                  type: int
       responses:
         '201':
           description: "Resident created successfully"
@@ -400,7 +414,7 @@ paths:
                 phone_number:
                   type: string
                   example: "0916243155"
-                full_name:
+                resident_name:
                   type: string
                   example: "Lmao"
                 status:

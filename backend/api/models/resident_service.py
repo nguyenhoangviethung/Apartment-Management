@@ -20,7 +20,7 @@ class Resident_Service:
             else:
                 date_of_birth = None
             if not self.db.query(Households).filter(Households.household_id == resident_data.get('household_id')).first():
-                return {"error": "Household_id not found"}
+                raise Exception(f'Household_id not found') 
             new_resident = Residents(
                 resident_id = resident_data.get('resident_id'),
                 user_id = resident_data.get('user_id'),

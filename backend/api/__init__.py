@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from config import Config
 from api.extensions import db, migrate
 from api.models.models import *
@@ -6,6 +6,7 @@ from api.models.models import db
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 
+import json
 
 def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
@@ -32,6 +33,9 @@ def create_app(config_class=Config):
 
     from api.pay import pay_bp
     app.register_blueprint(pay_bp)
+
+    from .news_for_decorate_AM.src.main.python.run import decorate_bp
+    app.register_blueprint(decorate_bp)
 
     @app.route('/')
     def test():

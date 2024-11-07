@@ -316,7 +316,7 @@ paths:
         '500':
           description: Server error        
 
-/admin/add-resident:
+  /admin/add-resident:
     post:
       summary: "Add a new resident"
       description: "Adds a new resident to the system by providing their information."
@@ -367,7 +367,6 @@ paths:
           description: "Missing required field"
         '500':
           description: "Unexpected error"
-
   /admin/remove-resident/{resident_id}:
     post:
       summary: "Remove a resident"

@@ -7,35 +7,34 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-
-      - name: Set up Python
-        uses: actions/setup-python@v3
-
-        with:
-          python-version: '3.x'
       - name: Checkout code with submodules
         uses: actions/checkout@v3
         with:
           submodules: true  
           fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+
+      - name: Set PYTHONPATH
+        run: |
+          export PYTHONPATH="${PYTHONPATH}:./backend/api/news_for_decorate_AM/src/main/python"
+
       - name: Run Gunicorn Server
         run: |
           gunicorn app:app
+
       - name: Deploy to Render
         run: |
-          curl -X POST 
+          curl -X POST \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Accept: application/json" \
             -H "Content-Type: application/json" \
             -d '{"serviceId": "${{ secrets.RENDER_SERVICE_ID }}"}' \
             https://api.render.com/deploy
-      - name: Set PYTHONPATH
-        run: |
-          export PYTHONPATH="${PYTHONPATH}:./backend/api/news_for_decorate_AM/src/main/python"

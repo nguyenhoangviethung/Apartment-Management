@@ -7,11 +7,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code with submodules
+      - name: Checkout code
         uses: actions/checkout@v3
         with:
-          submodules: true  
-          fetch-depth: 0
+          submodules: recursive
 
       - name: Set up Python
         uses: actions/setup-python@v3

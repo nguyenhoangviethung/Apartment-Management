@@ -49,8 +49,13 @@ class _AccountScreenState extends State<AccountScreen> {
             userData = {
               'full_name': userInfo['username'] ?? 'Not provided',
               'phone_number': userInfo['phone_number'] ?? 'Not provided',
-              'email': userInfo['user_email'] ?? 'Not provided',
               'role': userInfo['user_role'] ?? 'Not provided',
+              'date_of_birth': userInfo['date_of_birth'] ?? 'Not provided',
+              'age': userInfo['age'] ?? 'Not provided',
+              'id_number': userInfo['id_number'] ?? 'Not provided',
+              'room': userInfo['room'] ?? 'Not provided',
+              'email': userInfo['user_email'] ?? 'Not provided',
+
               // 'age': 'Not provided',
               // 'date_of_birth': 'Not provided',
               // 'id_number': 'Not provided',
@@ -225,6 +230,27 @@ class _AccountScreenState extends State<AccountScreen> {
                     'Role',
                     userData['role'] ?? 'Not provided',
                   ),
+                  _buildInfoItem(
+                    Icons.cake,
+                    'Date of Birth',
+                    userData['date_of_birth'] ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.calendar_today,
+                    'Age',
+                    userData['age']?.toString() ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.badge,
+                    'ID Number',
+                    userData['id_number'] ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.meeting_room,
+                    'Room',
+                    userData['room'] ?? 'Not provided',
+                  ),
+
                   // _buildInfoItem(
                   //   Icons.check_circle,
                   //   'Status',

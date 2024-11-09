@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/account/account.dart';
 import 'package:frontend/view/home/home_page/home_page.dart';
+import 'package:frontend/view/home/user/user.dart';
 
 import 'management/management.dart';
 
@@ -24,7 +25,7 @@ class _MainHomeState extends State<MainHome> {
 
   final List<Widget> _screens = [
     HomePage(),
-    const Center(child: Text('User Screen')),
+    const User(),
     const Management(),
     const AccountScreen(),
   ];

@@ -1,8 +1,11 @@
 
 alembic==1.13.3
 APScheduler==3.10.4
+beautifulsoup4==4.12.3
 blinker==1.8.2
+certifi==2024.8.30
 cffi==1.17.1
+charset-normalizer==3.4.0
 click==8.1.7
 colorama==0.4.6
 cryptography==43.0.1
@@ -16,20 +19,26 @@ Flask-SQLAlchemy==3.1.1
 flask-swagger-ui==4.11.1
 greenlet==3.1.1
 gunicorn==23.0.0
+idna==3.10
 itsdangerous==2.2.0
 Jinja2==3.1.4
 Mako==1.3.5
 MarkupSafe==2.1.5
+oauthlib==3.2.2
 packaging==24.1
 pycparser==2.22
 PyJWT==2.9.0
 PyMySQL==1.1.1
 python-dotenv==1.0.1
 pytz==2024.2
+requests==2.32.3
+requests-oauthlib==2.0.0
 six==1.16.0
+soupsieve==2.6
 SQLAlchemy==2.0.35
 typing_extensions==4.12.2
 tzdata==2024.2
 tzlocal==5.2
+urllib3==2.2.3
 Werkzeug==3.0.4
 

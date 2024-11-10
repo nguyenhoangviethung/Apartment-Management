@@ -710,15 +710,64 @@ paths:
           description: Description not provided
         '404':
           description: No fees found with the given description
-  /decorate/get-data:
+  /news/get-data:
     get:
-      summary: Get data of Apartment for decorated
-      tags:
-        - decorate
+      summary: "Crawl news data"
+      description: "Crawl news data from Baomoi website and return it in JSON format."
       responses:
-      '200':
-        description: Returns data of Apartment for decorated
-
+        '200':
+          description: "Successfully retrieved news data"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    content:
+                      type: string
+                      description: "The content of the news article."
+                      example: "Trung tâm Dự báo khí tượng thủy văn quốc gia vừa phát bản tin mới nhất về diễn biến cơn bão gần Biển Đông..."
+                    linkArticle:
+                      type: string
+                      description: "The URL of the news article."
+                      example: "https://baomoi.com/bao-toraji-gan-bien-dong-kha-nang-tro-thanh-bao-so-8-trong-2-ngay-toi-c50683366.epi"
+                    linkImage:
+                      type: string
+                      description: "The URL of the image related to the news article."
+                      example: "https://baomoi-photo-fbcrawler.bmcdn.me/w700_r3x2/2024_11_10_23_50683366/c83de46a6925807bd934.jpg"
+                    summary:
+                      type: string
+                      description: "The summary of the news article."
+                      example: "Bão Toraji đang trên vùng biển phía Đông đảo Lu Đông (Philippines)..."
+                    title:
+                      type: string
+                      description: "The title of the news article."
+                      example: "Bão Toraji gần Biển Đông, khả năng trở thành bão số 8 trong 2 ngày tới"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: Giang Lake
+                      user_role:
+                        type: string
+                        example: admin
+                      user_email:
+                        type: string
+                        example: TheLake2004@gmail.com
+                      phone_number:
+                        type: string
+                        example: 0989898989
+        '500':
+          description: Error in retrieving fees
   /user/info:
      get:
       summary: User's info

@@ -421,7 +421,7 @@ paths:
   /admin/{household_id}/residents:
     get:
       tags:
-        - Residents
+        - Admin
       summary: Get residents of a household
       description: Retrieves the owner and residents of a household by the household ID.
       parameters:

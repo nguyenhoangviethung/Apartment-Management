@@ -10,6 +10,8 @@ servers:
 paths:
   /auth/register:
     post:
+      tags:
+        - Auth
       summary: "Register a new user"
       description: "Registers a new user with a username, email, and password."
       requestBody:
@@ -38,6 +40,8 @@ paths:
 
   /auth/confirm_email/{token}:
     get:
+      tags:
+        - Auth
       summary: "Confirm user's email"
       description: "Confirms the user's email via the token received."
       parameters:
@@ -55,6 +59,8 @@ paths:
 
   /auth/login:
     post:
+      tags:
+        - Auth
       summary: "User login"
       description: "Allows a registered user to log in by providing username and password."
       requestBody:
@@ -81,6 +87,8 @@ paths:
 
   /auth/forgot-password:
     post:
+      tags:
+        - Auth
       summary: "Forgot password"
       description: "Sends a validation code to the user's email to reset the password."
       requestBody:
@@ -101,6 +109,8 @@ paths:
   
   /auth/validation-code:
     post:
+      tags:
+        - Auth
       summary: Try to validate the code
       requestBody:
         description: The code which requires checking
@@ -120,6 +130,8 @@ paths:
 
   /auth/reset-password:
     post:
+      tags:
+        - Auth
       summary: Update the password in database
       requestBody:
         description: The new password
@@ -137,6 +149,8 @@ paths:
 
   /auth/logout:
     get:
+      tags:
+        - Auth
       summary: "Logout"
       description: "Logs out the current user and clears the session."
       responses:

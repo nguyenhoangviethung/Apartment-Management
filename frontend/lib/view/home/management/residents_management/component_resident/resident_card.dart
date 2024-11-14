@@ -31,13 +31,13 @@ class _ResidentCardState extends State<ResidentCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Name:', widget.item.full_name!),
-                      _buildInfoRow('Date of Birth:', widget.item.date_of_birth!),
-                      _buildInfoRow('ID Number:', widget.item.id_number!),
-                      _buildInfoRow('Age:', widget.item.age.toString()),
-                      _buildInfoRow('Status:', widget.item.status!),
-                      _buildInfoRow('Room:', widget.item.room.toString()),
-                      _buildInfoRow('Phone:', widget.item.phone_number!),
+                      _buildInfoRow('Name:', widget.item.full_name ?? 'No name provided'),
+                      _buildInfoRow('Date of Birth:', widget.item.date_of_birth ?? 'No date provided'),
+                      _buildInfoRow('ID Number:', widget.item.id_number ?? 'No ID provided'),
+                      _buildInfoRow('Age:', widget.item.age != null ? widget.item.age.toString() : 'No age provided'),
+                      _buildInfoRow('Status:', widget.item.status ?? 'No status provided'),
+                      _buildInfoRow('Room:', widget.item.room != null ? widget.item.room.toString() : 'No room provided'),
+                      _buildInfoRow('Phone:', widget.item.phone_number ?? 'No phone number provided'),
                     ],
                   ),
                 ),
@@ -80,16 +80,32 @@ class _ResidentCardState extends State<ResidentCard> {
                     ],
                   ),
 
-                  GestureDetector(
-                    onTap: () {
-                      print("Icon Delete pressed");
-                      widget.onDelete(widget.item.id_number!);
-                    },
-                    child: const Icon (
-                      Icons.delete,
-                      size: 30,
-                      color: Color.fromRGBO(0, 0, 0, 0.6),
-                    ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          print("Icon Edit pressed");
+                          // Thêm hành động cho biểu tượng chỉnh sửa ở đây
+                        },
+                        child: const Icon(
+                          Icons.edit,
+                          size: 30,
+                          color: Color.fromRGBO(0, 0, 0, 0.6),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: () {
+                          print("Icon Delete pressed");
+                          widget.onDelete(widget.item.id_number!);
+                        },
+                        child: const Icon (
+                          Icons.delete,
+                          size: 30,
+                          color: Color.fromRGBO(0, 0, 0, 0.6),
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../../../common/show_dialog.dart';
 import '../../../../../models/resident_info.dart';
 class ResidentCard extends StatefulWidget {
   final ResidentInfo item;
-  final Function(String) onDelete; // Thêm tham số callback
+  final Function(String) onDelete;
 
   const ResidentCard({super.key, required this.item, required this.onDelete});
 
@@ -96,8 +97,7 @@ class _ResidentCardState extends State<ResidentCard> {
                       const SizedBox(width: 10),
                       GestureDetector(
                         onTap: () {
-                          print("Icon Delete pressed");
-                          widget.onDelete(widget.item.id_number!);
+                          showdeleteform(context, 'Warning', 'Are you sure to delete this resident?');
                         },
                         child: const Icon (
                           Icons.delete,
@@ -170,4 +170,49 @@ class _ResidentCardState extends State<ResidentCard> {
       ),
     );
   }
+
+  void showdeleteform(BuildContext context,String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),),
+          content: Text(message, style: const TextStyle(fontSize: 18),),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  child: const Center(
+                    child: Text("OK", style: TextStyle(fontSize: 18),),
+                  ),
+                  onPressed: () {
+                    if (widget.item.id_number != null) {
+                      widget.onDelete( widget.item.id_number!);
+                    } else {
+                      Navigator.of(context).pop();
+                      showinform(context, 'Error', 'Resident ID is missing.');
+                    }
+                  },
+                ),
+                TextButton(
+                  child: const Center(
+                    child: Text("Cancel", style: TextStyle(fontSize: 18,color: Colors.red),),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+
+
+
+

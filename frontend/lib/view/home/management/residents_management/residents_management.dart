@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Home/main_home.dart';
+import 'package:frontend/common/show_dialog.dart';
 import 'package:frontend/models/resident_info.dart';
 import 'package:frontend/services/fetch_residents.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'component_resident/add_residents.dart';
 import 'component_resident/resident_card.dart';
+import 'package:http/http.dart' as http;
 
 class ResidentsManagement extends StatefulWidget {
   const ResidentsManagement({super.key});
@@ -50,10 +53,34 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
     });
   }
 
-  void handleDeleteActivity(String id) {
-    setState(() {
-      _residents.removeWhere((item) => item.id_number == id);
-    });
+  Future<void> handleDeleteActivity(String id) async{
+    final String url= 'https://apartment-management-kjj9.onrender.com/admin/remove-resident/${int.parse(id)}';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? tokenlogin = prefs.getString('tokenlogin');
+    print(tokenlogin);
+    try{
+      Navigator.of(context).pop();
+      final response= await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $tokenlogin'
+        }
+      );
+      print(response.statusCode);
+      if(response.statusCode==201){
+        showinform(context, 'Success', 'Resident removed successfully');
+        setState(() {
+          _residents.removeWhere((item) => item.id_number == id);
+        });
+      }
+      else{
+        throw Exception('Error: ${response.statusCode}');
+      }
+    }catch(e){
+      print('Error : $e');
+      showinform(context, 'Failed', 'Can not remove this resident');
+    }
   }
 
   @override

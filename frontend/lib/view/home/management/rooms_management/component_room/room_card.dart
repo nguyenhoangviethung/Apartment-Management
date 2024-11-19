@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:frontend/models/room_info.dart';
+import 'package:frontend/view/home/management/rooms_management/component_room/detailed_room.dart';
 import 'edit_footer.dart';
 class RoomCard extends StatefulWidget {
   final RoomInfo item;
@@ -44,13 +44,28 @@ class _RoomCardState extends State<RoomCard> {
                   ),
                 ),
                 actions: [
-                  TextButton(
-                    child: const Center(
-                      child: Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TextButton(
+                        child: const Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                          onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailedRoom(detailedroom: widget.item,)));
+                          },
+                          child: const Text(
+                            'Details',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 24,fontWeight: FontWeight.bold
+                            ),
+                          )
+                      ),
+                    ],
                   ),
                 ],
               );

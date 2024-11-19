@@ -157,7 +157,8 @@ def show_all_residents():
             'age' : age,
             'room' : resident.household_id,
             'phone_number' : resident.phone_number,
-            'status' : resident.status
+            'status' : resident.status,
+            'res_id' : resident.resident_id
         }
         resident_list.append(resident_data)
     return jsonify({'resident_info': resident_list}),200

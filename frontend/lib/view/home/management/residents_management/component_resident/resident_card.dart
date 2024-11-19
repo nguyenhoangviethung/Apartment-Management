@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../models/resident_info.dart';
+import 'edit_footer.dart';
 class ResidentCard extends StatefulWidget {
   final ResidentInfo item;
   final Function(String) onDelete; // Thêm tham số callback
@@ -86,6 +87,12 @@ class _ResidentCardState extends State<ResidentCard> {
                         onTap: () {
                           print("Icon Edit pressed");
                           // Thêm hành động cho biểu tượng chỉnh sửa ở đây
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return EditFooter();
+                              }
+                          );
                         },
                         child: const Icon(
                           Icons.edit,

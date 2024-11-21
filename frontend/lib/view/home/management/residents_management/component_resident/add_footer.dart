@@ -43,7 +43,7 @@ class _AddFooterState extends State<AddFooter> {
       age: age,
       room: room,
       phone_number: phone,
-      status: status, res_id: null,
+      status: status, res_id: 1,
     );
 
     widget.addNewResident(resident);

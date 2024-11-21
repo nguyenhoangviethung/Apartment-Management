@@ -22,7 +22,7 @@ class UserComponentCard extends StatelessWidget {
             children: [
               Expanded(
                 flex: 1,
-                child: Image.asset(
+                child: Image.network(
                   imagelink,
                   height: double.infinity,
                   fit: BoxFit.cover,

@@ -62,9 +62,10 @@ class _AddResidentsState extends State<AddResidents> {
     });
   }
 
-  void handleDeleteActivity(String id) {
+  void handleDeleteActivity(int resId) {
     setState(() {
-      items.removeWhere((item) => item.id_number == id);
+      items.removeWhere((item) => item.res_id! == resId);
+      Navigator.of(context).pop();
     });
   }
 

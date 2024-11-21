@@ -3,7 +3,7 @@ import '../../../../../common/show_dialog.dart';
 import '../../../../../models/resident_info.dart';
 class ResidentCard extends StatefulWidget {
   final ResidentInfo item;
-  final Function(String) onDelete;
+  final Function(int) onDelete;
 
   const ResidentCard({super.key, required this.item, required this.onDelete});
 
@@ -189,8 +189,8 @@ class _ResidentCardState extends State<ResidentCard> {
                     child: Text("OK", style: TextStyle(fontSize: 18),),
                   ),
                   onPressed: () {
-                    if (widget.item.id_number != null) {
-                      widget.onDelete( widget.item.id_number!);
+                    if (widget.item.res_id != null) {
+                      widget.onDelete( widget.item.res_id!);
                     } else {
                       Navigator.of(context).pop();
                       showinform(context, 'Error', 'Resident ID is missing.');

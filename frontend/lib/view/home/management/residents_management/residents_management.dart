@@ -53,8 +53,8 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
     });
   }
 
-  Future<void> handleDeleteActivity(String id) async{
-    final String url= 'https://apartment-management-kjj9.onrender.com/admin/remove-resident/${int.parse(id)}';
+  Future<void> handleDeleteActivity(int residentId) async{
+    final String url= 'https://apartment-management-kjj9.onrender.com/admin/remove-resident/$residentId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? tokenlogin = prefs.getString('tokenlogin');
     print(tokenlogin);
@@ -71,7 +71,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
       if(response.statusCode==201){
         showinform(context, 'Success', 'Resident removed successfully');
         setState(() {
-          _residents.removeWhere((item) => item.id_number == id);
+          _residents.removeWhere((item) => item.res_id ==residentId);
         });
       }
       else{

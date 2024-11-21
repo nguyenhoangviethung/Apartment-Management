@@ -801,7 +801,7 @@ paths:
       summary: Update user information
       description: Updates a user's information including username, email, and phone number.
       tags:
-        - Users
+        - User
       requestBody:
         required: true
         content:

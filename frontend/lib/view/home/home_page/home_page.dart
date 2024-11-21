@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-class HomePage extends StatelessWidget {
+import 'package:frontend/services/fetch_news.dart';
+
+import '../../../models/news.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   String getRandomOctoberDate() {
 
     final random = Random();
@@ -12,6 +21,18 @@ class HomePage extends StatelessWidget {
     return '$formattedDay/10/2024';
   }
 
+  List<News> _news=[];
+  List<News> _allnews=[];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchNews().then((value){
+      _news =value!;
+      _allnews=value;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +45,7 @@ class HomePage extends StatelessWidget {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: 50,
+        itemCount: _news.length,
         itemBuilder: (context, index) {
           final randomDate = getRandomOctoberDate();
           return ArticleCard(

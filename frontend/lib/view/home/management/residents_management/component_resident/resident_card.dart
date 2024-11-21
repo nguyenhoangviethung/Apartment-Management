@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../../../../common/show_dialog.dart';
 import '../../../../../models/resident_info.dart';
 import 'edit_footer.dart';
 class ResidentCard extends StatefulWidget {
   final ResidentInfo item;
-  final Function(String) onDelete; // Thêm tham số callback
+  final Function(int) onDelete;
 
   const ResidentCard({super.key, required this.item, required this.onDelete});
 
@@ -33,6 +34,7 @@ class _ResidentCardState extends State<ResidentCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildInfoRow('Name:', widget.item.full_name ?? 'No name provided'),
+                      _buildInfoRow('Resident ID:', widget.item.res_id!=null? widget.item.res_id.toString():'No resident id'),
                       _buildInfoRow('Date of Birth:', widget.item.date_of_birth ?? 'No date provided'),
                       _buildInfoRow('ID Number:', widget.item.id_number ?? 'No ID provided'),
                       _buildInfoRow('Age:', widget.item.age != null ? widget.item.age.toString() : 'No age provided'),
@@ -103,8 +105,7 @@ class _ResidentCardState extends State<ResidentCard> {
                       const SizedBox(width: 10),
                       GestureDetector(
                         onTap: () {
-                          print("Icon Delete pressed");
-                          widget.onDelete(widget.item.id_number!);
+                          showdeleteform(context, 'Warning', 'Are you sure to delete this resident?');
                         },
                         child: const Icon (
                           Icons.delete,
@@ -177,4 +178,49 @@ class _ResidentCardState extends State<ResidentCard> {
       ),
     );
   }
+
+  void showdeleteform(BuildContext context,String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),),
+          content: Text(message, style: const TextStyle(fontSize: 18),),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  child: const Center(
+                    child: Text("OK", style: TextStyle(fontSize: 18),),
+                  ),
+                  onPressed: () {
+                    if (widget.item.res_id != null) {
+                      widget.onDelete( widget.item.res_id!);
+                    } else {
+                      Navigator.of(context).pop();
+                      showinform(context, 'Error', 'Resident ID is missing.');
+                    }
+                  },
+                ),
+                TextButton(
+                  child: const Center(
+                    child: Text("Cancel", style: TextStyle(fontSize: 18,color: Colors.red),),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+
+
+
+

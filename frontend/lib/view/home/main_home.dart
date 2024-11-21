@@ -53,18 +53,18 @@ class _MainHomeState extends State<MainHome> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: _currentIndex == 3 ? Colors.white : Colors.lightBlue,
+          backgroundColor:  Colors.lightBlue,
           title: Text(
             _getAppBarTitle(),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
-              color: _currentIndex == 3 ? Colors.black : Colors.white,
+              color: Colors.white,
             ),
           ),
           centerTitle: true,
           leading: _shouldShowBackButton()
               ? IconButton(
-            icon: Icon(Icons.arrow_back, color: _currentIndex == 3 ? Colors.black : Colors.white), // Thay đổi màu nút back
+            icon: const Icon(Icons.arrow_back, color: Colors.white), // Thay đổi màu nút back
             onPressed: () {
               setState(() {
                 _currentIndex = 0;

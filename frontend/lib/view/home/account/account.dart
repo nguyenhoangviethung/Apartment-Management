@@ -14,7 +14,8 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   bool isLoading = true;
   Map<String, dynamic> userData = {};
-  final String apiUrl = "https://apartment-management-kjj9.onrender.com/user/info";
+  final String apiUrl =
+      "https://apartment-management-kjj9.onrender.com/user/info";
 
   @override
   void initState() {
@@ -105,7 +106,7 @@ class _AccountScreenState extends State<AccountScreen> {
           // Hiển thị thông báo thành công
           ScaffoldMessenger.of(context).showMaterialBanner(
             MaterialBanner(
-              content: Center(
+              content: const Center(
                 child: Text(
                   'Logout successful',
                   style: TextStyle(fontSize: 16),
@@ -128,7 +129,8 @@ class _AccountScreenState extends State<AccountScreen> {
           });
         }
       } else {
-        throw Exception('Logout failed: ${response.statusCode} - ${response.body}');
+        throw Exception(
+            'Logout failed: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       print('Error details: $e');
@@ -140,7 +142,8 @@ class _AccountScreenState extends State<AccountScreen> {
             actions: [
               TextButton(
                 child: Text('Close'),
-                onPressed: () => ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+                onPressed: () =>
+                    ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
               ),
             ],
           ),
@@ -157,131 +160,131 @@ class _AccountScreenState extends State<AccountScreen> {
         //   'Account',
         //   style: TextStyle(color: Colors.white),
         // ),
-         backgroundColor: Colors.lightBlue,
+        backgroundColor: Colors.pink[100],
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                 color: Colors.lightBlue,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
               child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.white,
-                    child: Text(
-                      (userData['full_name'] ?? 'U')[0].toUpperCase(),
-                      style: const TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    userData['full_name'] ?? 'Username',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    userData['phone_number'] ?? 'Phone not provided',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  // Chỉ giữ lại các thông tin có trong API
-                  _buildInfoItem(
-                    Icons.email,
-                    'Email',
-                    userData['email'] ?? 'Not provided',
-                  ),
-                  _buildInfoItem(
-                    Icons.phone,
-                    'Phone',
-                    userData['phone_number'] ?? 'Not provided',
-                  ),
-                  _buildInfoItem(
-                    Icons.person,
-                    'Role',
-                    userData['role'] ?? 'Not provided',
-                  ),
-                  _buildInfoItem(
-                    Icons.cake,
-                    'Date of Birth',
-                    userData['date_of_birth'] ?? 'Not provided',
-                  ),
-                  _buildInfoItem(
-                    Icons.calendar_today,
-                    'Age',
-                    userData['age']?.toString() ?? 'Not provided',
-                  ),
-                  _buildInfoItem(
-                    Icons.badge,
-                    'ID Number',
-                    userData['id_number'] ?? 'Not provided',
-                  ),
-                  _buildInfoItem(
-                    Icons.meeting_room,
-                    'Room',
-                    userData['room'] ?? 'Not provided',
-                  ),
-
-                  // _buildInfoItem(
-                  //   Icons.check_circle,
-                  //   'Status',
-                  //   userData['status'] ?? 'Not provided',
-                  // ),
-                  const SizedBox(height: 30),
-                  SizedBox(
+                  Container(
                     width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton.icon(
-                      onPressed: handleLogout,
-                      icon: const Icon(Icons.logout),
-                      label: const Text(
-                        'Logout',
-                        style: TextStyle(fontSize: 16),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.pink[100],
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.white,
+                          child: Text(
+                            (userData['full_name'] ?? 'U')[0].toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        Text(
+                          userData['full_name'] ?? 'Username',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          userData['phone_number'] ?? 'Phone not provided',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        // Chỉ giữ lại các thông tin có trong API
+                        _buildInfoItem(
+                          Icons.email,
+                          'Email',
+                          userData['email'] ?? 'Not provided',
+                        ),
+                        _buildInfoItem(
+                          Icons.phone,
+                          'Phone',
+                          userData['phone_number'] ?? 'Not provided',
+                        ),
+                        _buildInfoItem(
+                          Icons.person,
+                          'Role',
+                          userData['role'] ?? 'Not provided',
+                        ),
+                        _buildInfoItem(
+                          Icons.cake,
+                          'Date of Birth',
+                          userData['date_of_birth'] ?? 'Not provided',
+                        ),
+                        _buildInfoItem(
+                          Icons.calendar_today,
+                          'Age',
+                          userData['age']?.toString() ?? 'Not provided',
+                        ),
+                        _buildInfoItem(
+                          Icons.badge,
+                          'ID Number',
+                          userData['id_number'] ?? 'Not provided',
+                        ),
+                        _buildInfoItem(
+                          Icons.meeting_room,
+                          'Room',
+                          userData['room'] ?? 'Not provided',
+                        ),
+
+                        // _buildInfoItem(
+                        //   Icons.check_circle,
+                        //   'Status',
+                        //   userData['status'] ?? 'Not provided',
+                        // ),
+                        const SizedBox(height: 30),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton.icon(
+                            onPressed: handleLogout,
+                            icon: const Icon(Icons.logout),
+                            label: const Text(
+                              'Logout',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 

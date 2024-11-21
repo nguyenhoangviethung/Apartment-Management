@@ -22,10 +22,13 @@ class UserComponentCard extends StatelessWidget {
             children: [
               Expanded(
                 flex: 1,
-                child: Image.network(
-                  imagelink,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
+                child: Container(
+                  color: Colors.white,
+                  child: Image.asset(
+                    imagelink,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Expanded(

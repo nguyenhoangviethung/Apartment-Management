@@ -10,6 +10,8 @@ servers:
 paths:
   /auth/register:
     post:
+      tags:
+        - Auth
       summary: "Register a new user"
       description: "Registers a new user with a username, email, and password."
       requestBody:
@@ -38,6 +40,8 @@ paths:
 
   /auth/confirm_email/{token}:
     get:
+      tags:
+        - Auth
       summary: "Confirm user's email"
       description: "Confirms the user's email via the token received."
       parameters:
@@ -55,6 +59,8 @@ paths:
 
   /auth/login:
     post:
+      tags:
+        - Auth
       summary: "User login"
       description: "Allows a registered user to log in by providing username and password."
       requestBody:
@@ -81,6 +87,8 @@ paths:
 
   /auth/forgot-password:
     post:
+      tags:
+        - Auth
       summary: "Forgot password"
       description: "Sends a validation code to the user's email to reset the password."
       requestBody:
@@ -101,6 +109,8 @@ paths:
   
   /auth/validation-code:
     post:
+      tags:
+        - Auth
       summary: Try to validate the code
       requestBody:
         description: The code which requires checking
@@ -120,6 +130,8 @@ paths:
 
   /auth/reset-password:
     post:
+      tags:
+        - Auth
       summary: Update the password in database
       requestBody:
         description: The new password
@@ -137,6 +149,8 @@ paths:
 
   /auth/logout:
     get:
+      tags:
+        - Auth
       summary: "Logout"
       description: "Logs out the current user and clears the session."
       responses:
@@ -275,10 +289,153 @@ paths:
         '500':
           description: Server error
 
+  /admin/update-res/{res_id}:
+    post:
+      summary: Update resident info
+      tags:
+        - Admin
+      parameters:
+        - name: res_id
+          in: path
+          required: true
+          description: The ID of the resident to update.
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        description: Update resident information
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone_number:
+                  type: string        
+                  example: "0916243155"
+                full_name:
+                  type: string
+                  example: "Lmao"
+                status:
+                  type: string
+                  example: "Tạm vắng" 
+                date_of_birth:
+                  type: string
+                  example: "2004-12-21"   
+      responses:
+        '200':
+          description: Updated successfully
+        '404':
+          description: Resident not found
+        '500':
+          description: Server error        
+
+  /admin/add-resident:
+    post:
+      summary: "Add a new resident"
+      description: "Adds a new resident to the system by providing their information."
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - resident_id
+                - household_id
+                - resident_name
+                - status
+              properties:
+                resident_id:
+                  type: integer
+                  example: 1
+                household_id:
+                  type: integer
+                  example: 101
+                resident_name:
+                  type: string
+                  example: "Nguyễn Quyết Thắng"
+                status:
+                  type: string
+                  example: "Thường trú"
+      responses:
+        '201':
+          description: "Resident created successfully"
+        '400':
+          description: "Missing required field"
+        '500':
+          description: "Unexpected error"
+
+  /admin/remove-resident/{resident_id}:
+    post:
+      summary: "Remove a resident"
+      description: "Removes a resident from the system using their resident ID."
+      tags:
+        - Admin
+      parameters:
+        - name: resident_id
+          in: path
+          required: true
+          description: "The ID of the resident to remove."
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '201':
+          description: "Resident removed successfully"
+        '404':
+          description: "Resident not found"
+        '500':
+          description: "Unexpected error"
+
+  /admin/update-resident/{resident_id}:
+    post:
+      summary: "Update a resident's information"
+      description: "Updates a resident's information based on the provided resident ID."
+      tags:
+        - Admin
+      parameters:
+        - name: resident_id
+          in: path
+          required: true
+          description: "The ID of the resident to update."
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone_number:
+                  type: string
+                  example: "0916243155"
+                resident_name:
+                  type: string
+                  example: "Lmao"
+                status:
+                  type: string
+                  example: "Tạm vắng"
+                date_of_birth:
+                  type: string
+                  format: date
+                  example: "2004-12-21"
+      responses:
+        '201':
+          description: "Resident updated successfully"
+        '404':
+          description: "Resident not found"
+        '500':
+          description: "Unexpected error"
+
   /admin/{household_id}/residents:
     get:
       tags:
-        - Residents
+        - Admin
       summary: Get residents of a household
       description: Retrieves the owner and residents of a household by the household ID.
       parameters:
@@ -567,7 +724,44 @@ paths:
           description: Description not provided
         '404':
           description: No fees found with the given description
-
+        
+  /news/get-data:
+    get:
+      summary: "Crawl news data"
+      description: "Crawl news data from Baomoi website and return it in JSON format."
+      responses:
+        '200':
+          description: "Successfully retrieved news data"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    content:
+                      type: string
+                      description: "The content of the news article."
+                      example: "Trung tâm Dự báo khí tượng thủy văn quốc gia vừa phát bản tin mới nhất về diễn biến cơn bão gần Biển Đông..."
+                    linkArticle:
+                      type: string
+                      description: "The URL of the news article."
+                      example: "https://baomoi.com/bao-toraji-gan-bien-dong-kha-nang-tro-thanh-bao-so-8-trong-2-ngay-toi-c50683366.epi"
+                    linkImage:
+                      type: string
+                      description: "The URL of the image related to the news article."
+                      example: "https://baomoi-photo-fbcrawler.bmcdn.me/w700_r3x2/2024_11_10_23_50683366/c83de46a6925807bd934.jpg"
+                    summary:
+                      type: string
+                      description: "The summary of the news article."
+                      example: "Bão Toraji đang trên vùng biển phía Đông đảo Lu Đông (Philippines)..."
+                    title:
+                      type: string
+                      description: "The title of the news article."
+                      example: "Bão Toraji gần Biển Đông, khả năng trở thành bão số 8 trong 2 ngày tới"
+        '500':
+          description: "Internal server error"
+         
   /user/info:
      get:
       summary: User's info

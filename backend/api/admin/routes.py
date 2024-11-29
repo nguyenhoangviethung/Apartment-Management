@@ -493,4 +493,11 @@ def delete_fee():
     db.session.commit()
     logger.info(f"Deleted {len(fees)} fees")
     return jsonify({'message': 'Delete successful'}), 200
-    
+
+# @admin_bp.before_app_request()
+
+@admin_bp.route('/contribution-fees')
+@admin_required
+@handle_exceptions
+def get_contribution_fees():
+    return "oke"

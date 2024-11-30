@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/common/custom_date_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:frontend/View/Home/main_home.dart';
-import 'package:frontend/view/home/user/user.dart';
 
-class Update extends StatelessWidget {
+
+class Update extends StatefulWidget {
   const Update({super.key});
+
+  @override
+  State<Update> createState() => _UpdateState();
+}
+
+class _UpdateState extends State<Update> {
+  DateTime selectedDate = DateTime.now();
+  String _dob = '';
 
   void _showSuccessMessage(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -29,12 +39,12 @@ class Update extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+
       appBar: AppBar(
         leading: IconButton(
             onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder: (context)=>const MainHome(currentIndex: 1,)));
-            }, 
+            },
             icon: const Icon(Icons.arrow_back,color: Colors.white,)
         ),
         backgroundColor: Colors.blueAccent,
@@ -79,7 +89,30 @@ class Update extends StatelessWidget {
             _buildInfoField(label: 'Name', icon: Icons.person),
             _buildInfoField(label: 'SDT', icon: Icons.phone),
             _buildInfoField(label: 'Role', icon: Icons.work),
-            _buildInfoField(label: 'Date of birth', icon: Icons.calendar_today),
+            // _buildInfoField(label: 'Date of birth', icon: Icons.calendar_today),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(width: 10),
+                const Text(
+                  'Date of birth: ',
+                  style: TextStyle(fontSize: 18),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: CustomDatePicker(
+                    initialDate: selectedDate,
+                    onDateSelected: (date) {
+                      setState(() {
+                        selectedDate = date; // Cập nhật ngày đã chọn
+                        _dob = DateFormat('yyyy-MM-dd').format(date);
+                      });
+                    },
+                    label: '',
+                  ),
+                ),
+              ],
+            ),
             _buildInfoField(label: 'Age', icon: Icons.person_outline),
             _buildInfoField(label: 'Avatar', icon: Icons.picture_in_picture),
             _buildInfoField(label: 'ID Number', icon: Icons.credit_card),

@@ -83,6 +83,45 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
     }
   }
 
+  Future<void> handleEditActivity(int res_id, String newName, String newDob, String newStatus, String newPhoneNumber) async {
+    final String url='https://apartment-management-kjj9.onrender.com/admin/update-res/${res_id}';
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+    String? tokenlogin=prefs.getString('tokenlogin');
+    try{
+      final response= await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer $tokenlogin'
+        },
+        body: {
+          'phone_number':newPhoneNumber,
+          'full_name':newName,
+          'status':newStatus,
+          'date_of_birth':newDob
+        }
+      );
+      print(response.statusCode);
+      if(response.statusCode==200){
+        showinform(context, 'Success', 'Resident updated successfully');
+        setState(() {
+          for (var item in _residents) {
+            if (item.res_id == res_id) {
+              item.full_name = newName;
+              item.date_of_birth = newDob;
+              item.status = newStatus;
+              item.phone_number = newPhoneNumber;
+              break;
+            }
+          }
+        });
+      }
+    }catch(e){
+      print('Error : $e');
+      showinform(context, 'Failed', 'Can not update this resident');
+    }
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -210,6 +249,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                         return ResidentCard(
                           item: _residents[startIndex + index],
                           onDelete: handleDeleteActivity,
+                          onEdit: handleEditActivity,
                         );
                       },
                       physics: const NeverScrollableScrollPhysics(),

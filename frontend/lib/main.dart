@@ -14,7 +14,7 @@ void main() {
   //       home: Login(),
   //
   //     ));
-    runApp( MainHome(currentIndex: 2,));
+    runApp( MainHome(currentIndex: 0,));
 
 }
 

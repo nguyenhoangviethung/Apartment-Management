@@ -14,10 +14,10 @@ class News{
       );
 
   News.fromJson(Map<String,dynamic> json){
-    content: json['content'];
-    linkArticle: json['linkArticle'];
-    linkImage: json['linkImage'];
-    summary: json['summary'];
-    title: json['title'];
+    content= json['content'];
+    linkArticle= json['linkArticle'];
+    linkImage=json['linkImage'];
+    summary= json['summary'];
+    title= json['title'];
   }
 }

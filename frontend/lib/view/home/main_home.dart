@@ -5,10 +5,11 @@ import 'package:frontend/view/home/user/user.dart';
 
 import 'management/management.dart';
 
-
 class MainHome extends StatefulWidget {
   final int currentIndex;
-  const MainHome({super.key, this.currentIndex=0});
+
+  const MainHome({super.key, this.currentIndex = 0});
+
   @override
   _MainHomeState createState() => _MainHomeState();
 }
@@ -53,7 +54,7 @@ class _MainHomeState extends State<MainHome> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor:  Colors.lightBlue,
+          backgroundColor: Colors.lightBlue,
           title: Text(
             _getAppBarTitle(),
             style: const TextStyle(
@@ -64,13 +65,14 @@ class _MainHomeState extends State<MainHome> {
           centerTitle: true,
           leading: _shouldShowBackButton()
               ? IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white), // Thay đổi màu nút back
-            onPressed: () {
-              setState(() {
-                _currentIndex = 0;
-              });
-            },
-          )
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  // Thay đổi màu nút back
+                  onPressed: () {
+                    setState(() {
+                      _currentIndex = 0;
+                    });
+                  },
+                )
               : null,
           actions: [
             IconButton(

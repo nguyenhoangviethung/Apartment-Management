@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/View/Home/main_home.dart';
+import 'package:frontend/view/home/user/user.dart';
 
 class Update extends StatelessWidget {
   const Update({super.key});
@@ -27,8 +29,16 @@ class Update extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AppBar(
-        title: const Text('Update'),
+        leading: IconButton(
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>const MainHome(currentIndex: 1,)));
+            }, 
+            icon: const Icon(Icons.arrow_back,color: Colors.white,)
+        ),
+        backgroundColor: Colors.blueAccent,
+        title: const Text('Update',style: TextStyle(color: Colors.white,fontSize: 25),),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

@@ -91,7 +91,7 @@ class FeesManagementCard extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Padding(
-                  padding: EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: Text(
                     title,
                     style: const TextStyle(

@@ -5,8 +5,9 @@ import 'edit_footer.dart';
 class ResidentCard extends StatefulWidget {
   final ResidentInfo item;
   final Function(int) onDelete;
+  final Function(int, String, String, String, String) onEdit;
 
-  const ResidentCard({super.key, required this.item, required this.onDelete});
+  const ResidentCard({super.key, required this.item, required this.onDelete, required this.onEdit});
 
   @override
   State<ResidentCard> createState() => _ResidentCardState();
@@ -87,12 +88,15 @@ class _ResidentCardState extends State<ResidentCard> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          print("Icon Edit pressed");
-                          // Thêm hành động cho biểu tượng chỉnh sửa ở đây
                           showModalBottomSheet(
                               context: context,
                               builder: (BuildContext context) {
-                                return EditFooter();
+                                return EditFooter(
+                                  id: int.parse(widget.item.id_number!),
+                                  editResidentInfo: (id, newName, newDob, newStatus, newPhoneNumber) {
+                                    widget.onEdit(id, newName, newDob, newStatus, newPhoneNumber);
+                                  },
+                                );
                               }
                           );
                         },

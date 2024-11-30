@@ -3,9 +3,10 @@ import 'package:intl/intl.dart';
 import '../../../../../common/custom_date_picker.dart';
 
 class EditFooter extends StatefulWidget {
-  const EditFooter({super.key});
+  final Function editResidentInfo;
+  final int id;
 
-  // final Function addNewResident;
+  const EditFooter({super.key, required this.id, required this.editResidentInfo});
 
   @override
   State<EditFooter> createState() => _EditFooterState();
@@ -18,6 +19,18 @@ class _EditFooterState extends State<EditFooter> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+
+  void handleOnClick() async {
+    final newName = nameController.text.trim();
+    final newPhoneNumber = phoneController.text.trim();
+    final newDob = _dob;
+    final newStatus = _selectedStatus;
+    widget.editResidentInfo(widget.id, newName, newDob, newStatus, newPhoneNumber);
+
+    // Xóa giá trị sau khi thêm
+    nameController.clear();
+    phoneController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +103,7 @@ class _EditFooterState extends State<EditFooter> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
+                  handleOnClick();
                   FocusScope.of(context).unfocus();
                 },
                 style: ElevatedButton.styleFrom(

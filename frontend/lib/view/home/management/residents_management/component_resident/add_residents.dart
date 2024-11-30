@@ -69,6 +69,20 @@ class _AddResidentsState extends State<AddResidents> {
     });
   }
 
+  void handleEditResident(int id, String newName, String newDob, String newStatus, String newPhoneNumber) {
+    setState(() {
+      for (var item in items) {
+        if (item.id_number == id.toString()) {
+          item.full_name = newName;
+          item.date_of_birth = newDob;
+          item.status = newStatus;
+          item.phone_number = newPhoneNumber;
+          break;
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -158,8 +172,9 @@ class _AddResidentsState extends State<AddResidents> {
             itemBuilder: (context, index) {
               return ResidentCard(
                 item: items[index],
-                onDelete: handleDeleteActivity, // Truyền callback
-              ); // Sử dụng items[index] để lấy từng phần tử
+                onDelete: handleDeleteActivity,
+                onEdit: handleEditResident,// Truyền callback
+              );
             },
             physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
             shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước

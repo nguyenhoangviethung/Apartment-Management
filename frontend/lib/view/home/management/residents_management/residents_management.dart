@@ -83,6 +83,20 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
     }
   }
 
+  void handleEditActivity(int id, String newName, String newDob, String newStatus, String newPhoneNumber) {
+    setState(() {
+      for (var item in _residents) {
+        if (item.res_id == id.toString()) {
+          item.full_name = newName;
+          item.date_of_birth = newDob;
+          item.status = newStatus;
+          item.phone_number = newPhoneNumber;
+          break;
+        }
+      }
+    });
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -210,6 +224,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                         return ResidentCard(
                           item: _residents[startIndex + index],
                           onDelete: handleDeleteActivity,
+                          onEdit: handleEditActivity,
                         );
                       },
                       physics: const NeverScrollableScrollPhysics(),

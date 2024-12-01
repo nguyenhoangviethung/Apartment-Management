@@ -782,6 +782,9 @@ paths:
                   info:
                     type: object
                     properties:
+                      user_id:
+                        type: int
+                        example: 1
                       username:
                         type: string
                         example: Giang Lake

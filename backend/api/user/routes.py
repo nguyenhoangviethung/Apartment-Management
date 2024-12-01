@@ -25,6 +25,7 @@ def pay(household_id, amount):
 def user_info(data):
     user = Users.query.filter_by(user_id = data.get('user_id')).first()
     info = {
+        'user_id' : user.user_id,
         'username' : user.username,
         'user_role' : user.user_role,
         'user_email': user.user_email,
@@ -33,7 +34,7 @@ def user_info(data):
     }
     return jsonify({'info': info}), 200
     
-@user_bp.route('/update')   
+@user_bp.post('/update')   
 @token_required
 @handle_exceptions 
 def update_user_info(data):

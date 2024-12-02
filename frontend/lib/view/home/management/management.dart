@@ -4,7 +4,6 @@ import 'package:frontend/view/home/management/residents_management/residents_man
 
 class Management extends StatelessWidget {
   const Management({super.key});
-
   @override
   Widget build(BuildContext context) {
     return const SingleChildScrollView(

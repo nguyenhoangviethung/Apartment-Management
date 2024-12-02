@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/login.dart';
 import 'package:http/http.dart' as http;
+
+import '../../common/show_dialog.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -216,10 +217,10 @@ class _RegisterState extends State<Register> {
                       ),
                       onPressed: () {
                         _registerUser(
-                          _username.text,
-                          _email.text,
-                          _password.text,
-                          _confirmpass.text,
+                          _username.text.trim(),
+                          _email.text.trim(),
+                          _password.text.trim(),
+                          _confirmpass.text.trim(),
                         );
                       },
                       child: isSingup

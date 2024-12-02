@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../models/resident_info.dart';
+
 class AddFooter extends StatelessWidget {
   AddFooter({super.key, required this.addNewResident});
 
@@ -19,16 +21,26 @@ class AddFooter extends StatelessWidget {
     final name = nameController.text.trim();
     final dob = dobController.text.trim();
     var id = idController.text.trim();
-    final age = int.tryParse(ageController.text.trim())??0;
+    final age = int.tryParse(ageController.text.trim()) ?? 0;
     final status = statusController.text.trim();
-    final room = int.tryParse(roomController.text.trim())??0;
+    final room = int.tryParse(roomController.text.trim()) ?? 0;
     final phone = phoneController.text.trim();
 
-    if(id == '') {
+    if (id == '') {
       id = DateTime.now().toString();
     }
+    final resident = ResidentInfo(
+      full_name: name,
+      date_of_birth: dob,
+      id_number: id,
+      age: age,
+      room: room,
+      phone_number: phone,
+      status: status,
+    );
 
-    addNewResident(name, dob, id, age, room, phone,status);
+    // Gọi hàm addNewResident với đối tượng ResidentInfo
+    addNewResident(resident);
 
     // Xóa giá trị sau khi thêm
     nameController.clear();
@@ -40,10 +52,11 @@ class AddFooter extends StatelessWidget {
     phoneController.clear();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 350, // Tăng chiều cao nếu cần
+      height: double.infinity, // Tăng chiều cao nếu cần
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),

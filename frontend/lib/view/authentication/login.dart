@@ -1,12 +1,12 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:frontend/View/Authentication/common/show_dialog.dart';
 import 'package:frontend/View/Authentication/forgot_password.dart';
 import 'package:frontend/View/Authentication/register.dart';
 import 'package:frontend/View/Home/main_home.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../common/show_dialog.dart';
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -192,7 +192,7 @@ class _LoginState extends State<Login> {
                           builder: (context) {
                             return TextButton(
                                 onPressed: () {
-                                  _login(_username.text, _password.text, false);
+                                  _login(_username.text.trim(), _password.text.trim(), false);
                                 },
                                 style: TextButton.styleFrom(
                                   backgroundColor: Colors.blue,

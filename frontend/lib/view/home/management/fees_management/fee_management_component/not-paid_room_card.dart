@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/not-paid_room_info.dart';
 
-import '../../../../../models/resident_info.dart';
-class ResidentCard extends StatefulWidget {
-  final ResidentInfo item;
-  final Function(String) onDelete; // Thêm tham số callback
+class NotPaidRoomCard extends StatefulWidget {
+  final NotPaidRoomInfo item;
 
-  const ResidentCard({super.key, required this.item, required this.onDelete});
+  const NotPaidRoomCard({super.key, required this.item});
 
   @override
-  State<ResidentCard> createState() => _ResidentCardState();
+  State<NotPaidRoomCard> createState() => _NotPaidRoomCardState();
 }
 
-class _ResidentCardState extends State<ResidentCard> {
+class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         showDialog(
             context: context,
-            builder: (BuildContext context){
+            builder: (BuildContext context) {
               return AlertDialog(
                 title: const Center(
                   child: Text(
@@ -32,13 +31,13 @@ class _ResidentCardState extends State<ResidentCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Name:', widget.item.full_name!),
-                      _buildInfoRow('Date of Birth:', widget.item.date_of_birth!),
-                      _buildInfoRow('ID Number:', widget.item.id_number!),
-                      _buildInfoRow('Age:', widget.item.age.toString()),
-                      _buildInfoRow('Status:', widget.item.status!),
-                      _buildInfoRow('Room:', widget.item.room.toString()),
-                      _buildInfoRow('Phone:', widget.item.phone_number!),
+                      _buildInfoRow('Room id:', widget.item.room ?? 'Unknown'),
+                      _buildInfoRow('Amount:', widget.item.amount?.toString() ?? '0'),
+                      _buildInfoRow('Due date:', widget.item.due_date ?? 'N/A'),
+                      _buildInfoRow('Service fee:', widget.item.service_fee?.toString() ?? '0'),
+                      _buildInfoRow('Manage fee:', widget.item.manage_fee?.toString() ?? '0'),
+                      _buildInfoRow('Fee type:', widget.item.fee_type ?? 'Unknown'),
+
                     ],
                   ),
                 ),
@@ -53,8 +52,7 @@ class _ResidentCardState extends State<ResidentCard> {
                   ),
                 ],
               );
-            }
-        );
+            });
       },
       child: Card(
         elevation: 3,
@@ -68,56 +66,44 @@ class _ResidentCardState extends State<ResidentCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.person_pin_outlined, color: Colors.blue[500]!, size: 45,),
-                      const SizedBox(width: 8),
-                      Text(
-                        widget.item.full_name!,
-                        style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-
-                  GestureDetector(
-                    onTap: () {
-                      print("Icon Delete pressed");
-                      widget.onDelete(widget.item.id_number!);
-                    },
-                    child: const Icon (
-                      Icons.delete,
-                      size: 30,
-                      color: Color.fromRGBO(0, 0, 0, 0.6),
+                  Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      widget.item.room ?? 'Unknown',
+                      style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                  )
+                  ),
                 ],
               ),
+
               Padding(
-                padding: const EdgeInsets.only(left: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 11.0),
                 child: Row(
                   children: [
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.home_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
+                          Icon(Icons.monetization_on_outlined, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.room.toString(),
+                            widget.item.amount.toString(),
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],
                       ),
                     ),
-
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.call_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
+                          Icon(Icons.date_range_outlined, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.phone_number!,
+                            widget.item.due_date??'no due_date',
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                           ),
                         ],
@@ -137,7 +123,7 @@ class _ResidentCardState extends State<ResidentCard> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Text(

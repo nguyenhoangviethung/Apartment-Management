@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/View/Authentication/common/show_dialog.dart';
+import '../../common/show_dialog.dart';
 import 'reset_password.dart';
 import 'package:http/http.dart' as http;
 import 'forgot_password.dart';

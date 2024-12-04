@@ -155,15 +155,6 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        // title: const Text(
-        //   'Account',
-        //   style: TextStyle(color: Colors.white),
-        // ),
-        backgroundColor: Colors.pink[100],
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -171,7 +162,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
                     decoration: BoxDecoration(
                       color: Colors.pink[100],
                       borderRadius: const BorderRadius.only(

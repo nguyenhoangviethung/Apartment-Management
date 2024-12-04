@@ -8,13 +8,13 @@ import 'package:frontend/view/home/management/management.dart';
 
 void main() {
 
-  // runApp(
-  //     const MaterialApp(
-  //       debugShowCheckedModeBanner: false,
-  //       home: Login(),
-  //
-  //     ));
-    runApp( MainHome(currentIndex: 0,));
+  runApp(
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Login(),
+
+      ));
+  //   runApp( MainHome(currentIndex: 2,));
 
 }
 

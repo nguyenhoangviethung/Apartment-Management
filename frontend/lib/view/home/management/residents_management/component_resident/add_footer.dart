@@ -119,8 +119,8 @@ class _AddFooterState extends State<AddFooter> {
                   fontSize: 18,
                 )),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                alignment: WrapAlignment.spaceBetween, // Căn chỉnh các phần tử
                 children: [
                   _buildRadioOption("Thường trú"),
                   _buildRadioOption("Tạm trú"),
@@ -200,7 +200,7 @@ class _AddFooterState extends State<AddFooter> {
             });
           },
         ),
-        Text(title, style: const TextStyle(fontSize: 17)),
+        Text(title, style: const TextStyle(fontSize: 15)),
       ],
     );
   }

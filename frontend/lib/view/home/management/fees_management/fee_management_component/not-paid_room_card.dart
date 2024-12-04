@@ -84,27 +84,35 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                 padding: const EdgeInsets.symmetric(horizontal: 11.0),
                 child: Row(
                   children: [
-                    Expanded(
+                    Flexible(
                       child: Row(
                         children: [
                           Icon(Icons.monetization_on_outlined, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
-                          Text(
-                            widget.item.amount.toString(),
-                            style: const TextStyle(fontSize: 17, color: Colors.black87),
+                          Expanded(
+                            child: Text(
+                              widget.item.amount.toString(),
+                              style: const TextStyle(fontSize: 17, color: Colors.black87),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Expanded(
+                    Flexible(
                       child: Row(
                         children: [
                           Icon(Icons.date_range_outlined, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
-                          Text(
-                            widget.item.due_date??'no due_date',
-                            style: const TextStyle(fontSize: 17, color: Colors.black87),
+                          Expanded(
+                            child: Text(
+                              widget.item.due_date ?? 'no due_date',
+                              style: const TextStyle(fontSize: 17, color: Colors.black87),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                           ),
                         ],
                       ),

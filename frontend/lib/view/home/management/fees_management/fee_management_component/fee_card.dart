@@ -75,6 +75,7 @@ class _FeeCardState extends State<FeeCard> {
                             widget.item.room ?? 'Unknown room',
                             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
                             overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ),
                       ],
@@ -86,27 +87,34 @@ class _FeeCardState extends State<FeeCard> {
                 padding: const EdgeInsets.only(left: 10),
                 child: Row(
                   children: [
-                    Expanded(
+                    Flexible(
                       child: Row(
                         children: [
-                          Icon(Icons.description, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
+                          Icon(Icons.description, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
-                          Text(
-                            widget.feeResponse.description!.join(', '),
-                            style: const TextStyle(fontSize: 17, color: Colors.black87),
+                          Expanded(
+                            child: Text(
+                              widget.feeResponse.description!.join(', '),
+                              style: const TextStyle(fontSize: 17, color: Colors.black87),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                           ),
                         ],
                       ),
                     ),
-
-                    Expanded(
+                    Flexible(
                       child: Row(
                         children: [
-                          Icon(Icons.money, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
+                          Icon(Icons.money, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
-                          Text(
-                            widget.item.fee!,
-                            style: const TextStyle(fontSize: 17, color: Colors.black87),
+                          Expanded(
+                            child: Text(
+                              widget.item.fee!,
+                              style: const TextStyle(fontSize: 17, color: Colors.black87),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                           ),
                         ],
                       ),

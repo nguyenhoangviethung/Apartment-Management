@@ -12,7 +12,7 @@ class ManagementCard extends StatelessWidget {
     return GestureDetector(
       child: Container(
         width: double.infinity,
-        height: 200,
+        height: 160,
         decoration: BoxDecoration(
           color: Colors.lightBlue[100],
           borderRadius: BorderRadius.circular(20),

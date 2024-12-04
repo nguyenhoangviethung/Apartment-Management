@@ -93,6 +93,8 @@ class _RoomCardState extends State<RoomCard> {
                       Text(
                         widget.item.apartment_number!,
                         style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ],
                   ),
@@ -131,6 +133,8 @@ class _RoomCardState extends State<RoomCard> {
                           Text(
                             widget.item.status!,
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ],
                       ),
@@ -144,6 +148,8 @@ class _RoomCardState extends State<RoomCard> {
                           Text(
                             widget.item.area.toString(),
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ],
                       ),

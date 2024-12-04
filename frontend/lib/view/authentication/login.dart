@@ -113,7 +113,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   const Padding(
-                    padding: EdgeInsets.fromLTRB(20, 0, 0, 30),
+                    padding: EdgeInsets.fromLTRB(20, 0, 0, 20),
                     child: Center(
                       child: Text(
                         'Welcome Back!',
@@ -131,13 +131,13 @@ class _LoginState extends State<Login> {
                     child: TextFormField(
                       controller: _username,
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Username', // Sử dụng hint text
-                        hintStyle: const TextStyle(color: Colors.black54, fontSize: 20), // Màu cho hint text
+                        hintStyle: const TextStyle(color: Colors.black54, fontSize: 18), // Màu cho hint text
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -157,14 +157,14 @@ class _LoginState extends State<Login> {
                         TextFormField(
                           controller: _password,
                           style: const TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.w500,
                             color: Colors.black,
                           ),
                           obscureText: !_showpass,
                           decoration: InputDecoration(
                             hintText: 'Password', // Sử dụng hint text
-                            hintStyle: const TextStyle(color: Colors.black54), // Màu cho hint text
+                            hintStyle: const TextStyle(color: Colors.black54, fontSize: 18), // Màu cho hint text
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -185,7 +185,7 @@ class _LoginState extends State<Login> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 15),
                   // Sign in button
                   Container(
                     margin: const EdgeInsets.fromLTRB(50, 30, 50, 0),
@@ -213,7 +213,7 @@ class _LoginState extends State<Login> {
                   ),
                   // (Sign up, forgot password) row
                   Container(
-                    margin: const EdgeInsets.fromLTRB(30, 40, 30, 0),
+                    margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
                     alignment: Alignment.center,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

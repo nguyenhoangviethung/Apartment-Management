@@ -59,7 +59,6 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
     String? tokenlogin = prefs.getString('tokenlogin');
     print(tokenlogin);
     try{
-      Navigator.of(context).pop();
       final response= await http.post(
         Uri.parse(url),
         headers: {

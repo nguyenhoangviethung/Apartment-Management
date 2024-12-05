@@ -200,6 +200,7 @@ class _ResidentCardState extends State<ResidentCard> {
                     child: Text("OK", style: TextStyle(fontSize: 18),),
                   ),
                   onPressed: () {
+                    Navigator.of(context).pop(); // Đóng hộp thoại
                     if (widget.item.res_id != null) {
                       widget.onDelete( widget.item.res_id!);
                     } else {

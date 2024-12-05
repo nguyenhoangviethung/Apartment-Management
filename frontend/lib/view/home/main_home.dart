@@ -58,7 +58,7 @@ class _MainHomeState extends State<MainHome> {
           title: Text(
             _getAppBarTitle(),
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 24,
               color: Colors.white,
             ),
           ),

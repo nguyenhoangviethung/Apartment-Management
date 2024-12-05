@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                                   child: Image.network(
                                     newsItem.linkImage ?? 'No Image',
                                     height: double.infinity,
-                                    width: 120,
+                                    width: 100,
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
                                       return Container(

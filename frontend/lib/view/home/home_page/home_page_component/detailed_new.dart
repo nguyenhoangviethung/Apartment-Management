@@ -19,7 +19,7 @@ class _DetailedNewState extends State<DetailedNew> {
           backgroundColor: Colors.blueAccent,
           leading: IconButton(
               onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const MainHome(currentIndex: 0,)));
+                Navigator.pop(context);
               },
               icon: const Icon(Icons.arrow_back,color: Colors.white,size: 24,)
           ),

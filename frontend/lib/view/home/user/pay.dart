@@ -12,7 +12,7 @@ class Pay extends StatelessWidget {
           'Payment Information',
           style: TextStyle(color: Colors.black87),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue,
         elevation: 0,
       ),
       body: SingleChildScrollView(

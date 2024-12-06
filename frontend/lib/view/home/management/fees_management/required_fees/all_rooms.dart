@@ -10,21 +10,30 @@ class AllRooms extends StatefulWidget {
   State<AllRooms> createState() => _AllRoomsState();
 }
 
+
 class _AllRoomsState extends State<AllRooms> {
   late Future<FeeResponse?> futureFees;
 
+  List<FeeInfo> _originalFees = []; // Danh sách gốc
+  List<FeeInfo> _displayedFees = []; // Danh sách hiển thị
   final PageController _pageController = PageController();
-  final ScrollController _scrollController = ScrollController();
-
   int _currentPage = 0;
   final int totalDots = 5;
-  List<FeeInfo> _fees = [];
-  List<FeeInfo> _allFees = [];
+  final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    futureFees = fetchRequiredFees();
+    futureFees = fetchRequiredFees().then((response) {
+      if (response != null && response.fees != null) {
+        setState(() {
+          _originalFees = response.fees!;
+          _displayedFees = _originalFees;
+        });
+      }
+      return response;
+    });
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page?.round() ?? 0;
@@ -32,7 +41,9 @@ class _AllRoomsState extends State<AllRooms> {
 
       // Tính toán vị trí của scroll view để đảm bảo dot màu xanh luôn nằm trong tầm nhìn
       double offset = 0;
-      if (_currentPage >= 4) offset = (_currentPage * 20.0 - 60.0); // Điều chỉnh giá trị này dựa vào khoảng cách giữa các dot
+      if (_currentPage >= 4) {
+        offset = (_currentPage * 20.0 - 60.0); // Điều chỉnh giá trị này dựa vào khoảng cách giữa các dot
+      }
       _scrollController.animateTo(
         offset,
         duration: const Duration(milliseconds: 100),
@@ -41,15 +52,25 @@ class _AllRoomsState extends State<AllRooms> {
     });
   }
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
+  // Hàm tìm kiếm mới
+  void _filterFees(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _displayedFees = _originalFees;
+      } else {
+        _displayedFees = _originalFees.where((feeInfo) {
+          return (feeInfo.room?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
+              (feeInfo.fee?.toString().contains(query) ?? false);
+        }).toList();
+      }
+      _pageController.jumpToPage(0);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     const int itemsPerPage = 5;
+    int pageCount = (_displayedFees.length / itemsPerPage).ceil();
 
     return FutureBuilder<FeeResponse?>(
       future: futureFees,
@@ -58,21 +79,17 @@ class _AllRoomsState extends State<AllRooms> {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (snapshot.hasData && snapshot.data!.fees != null) {
-          FeeResponse feeResponse = snapshot.data!;
-          _fees = feeResponse.fees!;
-          _allFees = feeResponse.fees!;
-          int pageCount = (_fees.length / itemsPerPage).ceil();
-
+        } else {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
               children: [
                 const SizedBox(height: 15),
-
-                // Search input
                 TextFormField(
+                  controller: _searchController,
+                  onChanged: _filterFees,
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
+
                   decoration: InputDecoration(
                     hintText: 'Search',
                     hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
@@ -99,57 +116,45 @@ class _AllRoomsState extends State<AllRooms> {
                       ),
                     ),
                   ),
-                  onChanged: (text) {
-                    setState(() {
-                      _fees = _allFees.where((feeinfo) {
-                        var roomWord = feeinfo.room!;
-                        return roomWord.contains(text);
-                      }).toList();
-
-                      // In ra danh sách filtered fees sau khi đã lọc
-                      print('Filtered fees: ${_fees.map((fee) => 'Room: ${fee.room}, Amount: ${fee.fee}').toList()}');
-                    });
-                  },
-
                 ),
-
-                const SizedBox(height: 15),
-
-                // Danh sách các phòng
+                const SizedBox(height: 15,),
                 Expanded(
                   child: PageView.builder(
                     controller: _pageController,
                     itemCount: pageCount,
                     itemBuilder: (context, pageIndex) {
                       final startIndex = pageIndex * itemsPerPage;
-                      final endIndex = (startIndex + itemsPerPage < _fees.length)
-                          ? startIndex + itemsPerPage
-                          : _fees.length;
+                      final endIndex =
+                          (startIndex + itemsPerPage < _displayedFees.length)
+                              ? startIndex + itemsPerPage
+                              : _displayedFees.length;
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: GridView.builder(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 1, // Số cột trong lưới
-                            childAspectRatio: 3.2, // Tỷ lệ chiều rộng/chiều cao của mỗi card
-                            mainAxisSpacing: 15.0, // Khoảng cách giữa các hàng
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 1,
+                            childAspectRatio: 3.2,
+                            mainAxisSpacing: 15.0,
                           ),
-                          itemCount: endIndex - startIndex, // Chỉ hiển thị số lượng card trên trang
+                          itemCount: endIndex - startIndex,
                           itemBuilder: (context, index) {
                             return FeeCard(
-                              item: _fees[startIndex + index], // Chọn khoản phí cụ thể cho trang này
-                              feeResponse: feeResponse,
+                              item: _displayedFees[startIndex + index],
+                              feeResponse:
+                                  snapshot.data!, // Truyền toàn bộ response
                             );
                           },
-                          physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
-                          shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
                         ),
                       );
                     },
                   ),
                 ),
 
-                // Các dot chuyển trang
+                // Phần dot chuyển trang
                 SizedBox(
                   height: 30,
                   width: 100,
@@ -166,7 +171,9 @@ class _AllRoomsState extends State<AllRooms> {
                             height: 12,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: _currentPage == index ? Colors.blue : Colors.grey,
+                              color: _currentPage == index
+                                  ? Colors.blue
+                                  : Colors.grey,
                             ),
                           );
                         }),
@@ -179,8 +186,6 @@ class _AllRoomsState extends State<AllRooms> {
               ],
             ),
           );
-        } else {
-          return const Center(child: Text('No fees available'));
         }
       },
     );

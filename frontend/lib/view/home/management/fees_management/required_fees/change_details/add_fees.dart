@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../../../../common/custom_date_picker.dart';
 import '../../../../../../common/show_dialog.dart';
 
 class Add extends StatefulWidget {
@@ -12,6 +14,11 @@ class Add extends StatefulWidget {
 }
 
 class _AddState extends State<Add> {
+  DateTime selectedStartDate = DateTime.now();
+  DateTime selectedDueDate = DateTime.now();
+  String _startDate = '';
+  String _dueDate = '';
+
   // Tạo các controller riêng cho mỗi trường nhập liệu
   final TextEditingController startDateController = TextEditingController();
 
@@ -30,8 +37,8 @@ class _AddState extends State<Add> {
       _isload = true;
     });
 
-    final startdate = startDateController.text.trim();
-    final duedate = dueDateController.text.trim();
+    final startdate = _startDate;
+    final duedate = _dueDate;
     final servicerate = double.tryParse(serviceRateController.text.trim());
     final managerate = double.tryParse(manageRateController.text.trim());
     final description = descriptionController.text.trim();
@@ -92,59 +99,108 @@ class _AddState extends State<Add> {
               showModalBottomSheet(
                   context: context,
                   builder: (BuildContext context) {
-                    return Container(
-                      height: 465, // Tăng chiều cao nếu cần
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const SizedBox(height: 15),
-                            _buildTextField('Enter start date', startDateController),
-                            const SizedBox(height: 16),
-                            _buildTextField('Enter due date', dueDateController),
-                            const SizedBox(height: 16),
-                            _buildTextField('Enter service rate', serviceRateController),
-                            const SizedBox(height: 16),
-                            _buildTextField('Enter manage rate', manageRateController),
-                            const SizedBox(height: 16),
-                            _buildTextField('Enter description', descriptionController),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: (){
-                                handleOnClick();
-                                FocusScope.of(context).unfocus();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: _isload?CircularProgressIndicator(color: Colors.white): const Text(
-                                'Add',
-                                style: TextStyle(
-                                  fontFamily: 'Times New Roman',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                ),
-                              ),
+                    return GestureDetector(
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                      },
+                      child: Container(
+                        height: 465, // Tăng chiều cao nếu cần
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
                             ),
                           ],
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              const SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const SizedBox(width: 10),
+                                  const Text(
+                                    'Start date: ',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: CustomDatePicker(
+                                      initialDate: selectedStartDate,
+                                      onDateSelected: (date) {
+                                        setState(() {
+                                          selectedStartDate = date;
+                                          _startDate = DateFormat('yyyy-MM-dd').format(date); // Cập nhật biến _dob
+                                        });
+                                      },
+                                      label: '',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const SizedBox(width: 10),
+                                  const Text(
+                                    'Due date: ',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  const SizedBox(width: 18),
+                                  Expanded(
+                                    child: CustomDatePicker(
+                                      initialDate: selectedDueDate,
+                                      onDateSelected: (date) {
+                                        setState(() {
+                                          selectedDueDate = date; // Cập nhật ngày đã chọn
+                                          _dueDate = DateFormat('yyyy-MM-dd').format(date); // Cập nhật biến _dob
+                                        });
+                                      },
+                                      label: '',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              _buildTextField('Enter service rate', serviceRateController),
+                              const SizedBox(height: 16),
+                              _buildTextField('Enter manage rate', manageRateController),
+                              const SizedBox(height: 16),
+                              _buildTextField('Enter description', descriptionController),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: (){
+                                  handleOnClick();
+                                  FocusScope.of(context).unfocus();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: _isload?CircularProgressIndicator(color: Colors.white): const Text(
+                                  'Add',
+                                  style: TextStyle(
+                                    fontFamily: 'Times New Roman',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );

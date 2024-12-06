@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/view/home/management/residents_management/residents_management.dart';
-import '../fees_management/fees_management.dart';
-import '../rooms_management/rooms_management.dart';
+import 'package:frontend/view/home/user/pay.dart';
+import 'package:frontend/view/home/user/update.dart';
 
-class ManagementCard extends StatelessWidget {
+class UserComponentCard extends StatelessWidget {
   final String imagelink;
   final String title;
-  const ManagementCard({super.key, required this.imagelink, required this.title});
+  const UserComponentCard({super.key, required this.imagelink, required this.title});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -23,10 +22,13 @@ class ManagementCard extends StatelessWidget {
             children: [
               Expanded(
                 flex: 1,
-                child: Image.asset(
-                  imagelink,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
+                child: Container(
+                  color: Colors.white,
+                  child: Image.asset(
+                    imagelink,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Expanded(
@@ -49,14 +51,13 @@ class ManagementCard extends StatelessWidget {
         ),
       ),
       onTap: (){
-        if(title=='Residents Management'){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const ResidentsManagement()));
+        if(title=='Payment')
+        {Navigator.push(context, MaterialPageRoute(builder: (context)=>const Pay()));
+
         }
-        if(title=='Fees Management'){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const FeesManagement()));
-        }
-        if(title=='Rooms Management'){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const RoomsManagement()));
+        if(title=='Update')
+        {Navigator.push(context, MaterialPageRoute(builder: (context)=>const Update()));
+
         }
       },
     );

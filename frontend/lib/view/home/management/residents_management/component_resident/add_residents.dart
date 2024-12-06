@@ -20,7 +20,7 @@ class _AddResidentsState extends State<AddResidents> {
   Future<bool> addresident(ResidentInfo resident)async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? tokenlogin= prefs.getString('tokenlogin');
-    String url='https://apartment-management-kjj9.onrender.com/admin/validate';
+    String url='https://apartment-management-kjj9.onrender.com/admin/add-resident';
     try {
       final response= await http.post(
         Uri.parse(url),
@@ -29,10 +29,10 @@ class _AddResidentsState extends State<AddResidents> {
           'Authorization': 'Bearer $tokenlogin',
         },
         body: {
-          'full_name': resident.full_name,
+          'resident_name': resident.full_name,
           'date_of_birth': resident.date_of_birth,
-          'id_number': resident.id_number,
-          'room': resident.room.toString(),
+          'resident_id': resident.id_number,
+          'household_id': resident.room.toString(),
           'phone_number': resident.phone_number,
           'status': resident.status,
         },
@@ -40,19 +40,16 @@ class _AddResidentsState extends State<AddResidents> {
 
       );
       print(response.statusCode);
-      if (response.statusCode == 200) {
-        print('success');
+      if (response.statusCode == 201) {
         return true;
       } else if (response.statusCode == 400) {
-        throw Exception('Resident with this name and ID number already exists');
-      } else if (response.statusCode == 404) {
-        throw Exception('Room doesn\'t exist');
+        throw Exception('Missing required field');
+      } else if (response.statusCode == 500) {
+        throw Exception('Unexpected error');
       } else {
         throw Exception('An error occurred: ${response.statusCode}');
       }
     }catch(e){
-      print('Error: $e');
-      print('123');
       return false;
     }
   }
@@ -65,9 +62,24 @@ class _AddResidentsState extends State<AddResidents> {
     });
   }
 
-  void handleDeleteActivity(String id) {
+  void handleDeleteActivity(int resId) {
     setState(() {
-      items.removeWhere((item) => item.id_number == id);
+      items.removeWhere((item) => item.res_id! == resId);
+      Navigator.of(context).pop();
+    });
+  }
+
+  void handleEditResident(int id, String newName, String newDob, String newStatus, String newPhoneNumber) {
+    setState(() {
+      for (var item in items) {
+        if (item.id_number == id.toString()) {
+          item.full_name = newName;
+          item.date_of_birth = newDob;
+          item.status = newStatus;
+          item.phone_number = newPhoneNumber;
+          break;
+        }
+      }
     });
   }
 
@@ -113,10 +125,9 @@ class _AddResidentsState extends State<AddResidents> {
                 color: Colors.white,
               ),
               onPressed: () async{
-                bool allSuccessful = true;  // Biến kiểm tra nếu tất cả thêm thành công
+                bool allSuccessful = true;
                 for (var resident in items) {
                   try {
-                    // Tạo đối tượng chỉ chứa các trường cần thiết cho API
                     var residentToSend = ResidentInfo.forApi(
                       full_name: resident.full_name,
                       date_of_birth: resident.date_of_birth,
@@ -128,16 +139,15 @@ class _AddResidentsState extends State<AddResidents> {
 
                     bool success = await addresident(residentToSend);
                     if (!success) {
-                      allSuccessful = false;  // Cập nhật trạng thái khi có lỗi
+                      allSuccessful = false;
                       showinform(context, 'Failed', 'Failed to add resident: ${resident.full_name}');
-                      break; // Ngừng thêm nếu có lỗi
+                      break;
                     }
                   } catch (e) {
-                    allSuccessful = false;  // Nếu có lỗi, đặt biến này về false
+                    allSuccessful = false;
                     break;
                   }
                 }
-                // Kiểm tra kết quả thêm tất cả residents
                 if (allSuccessful) {
                   showinform(context, 'Success', 'All residents were added successfully');
                 } else {
@@ -162,8 +172,9 @@ class _AddResidentsState extends State<AddResidents> {
             itemBuilder: (context, index) {
               return ResidentCard(
                 item: items[index],
-                onDelete: handleDeleteActivity, // Truyền callback
-              ); // Sử dụng items[index] để lấy từng phần tử
+                onDelete: handleDeleteActivity,
+                onEdit: handleEditResident,// Truyền callback
+              );
             },
             physics: const NeverScrollableScrollPhysics(), // Ngăn không cho GridView cuộn
             shrinkWrap: true, // Giúp GridView tự động điều chỉnh kích thước

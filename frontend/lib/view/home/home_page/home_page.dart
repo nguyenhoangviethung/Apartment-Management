@@ -1,240 +1,243 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:frontend/services/fetch_news.dart';
+import 'package:frontend/view/home/home_page/home_page_component/detailed_new.dart';
+import '../../../models/news.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-  String getRandomOctoberDate() {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
 
-    final random = Random();
-    final day = random.nextInt(20) + 1;
-    final formattedDay = day.toString().padLeft(2, '0');
-    return '$formattedDay/10/2024';
+class _HomePageState extends State<HomePage> {
+  List<News> _news = [];
+  bool _isLoading = true;
+  int _currentPage = 1;
+  final int _itemsPerPage = 10;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNewsData();
+  }
+
+  Future<void> _fetchNewsData() async {
+    try {
+      final allNews = await fetchNews();
+      setState(() {
+        _news = allNews ?? [];
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      // Optionally handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load news: $e')),
+      );
+    }
+  }
+
+  List<News> get _paginatedNews {
+    final startIndex = (_currentPage - 1) * _itemsPerPage;
+    final endIndex = startIndex + _itemsPerPage;
+    return _news.sublist(
+        startIndex, endIndex > _news.length ? _news.length : endIndex);
+  }
+
+  int get _totalPages => (_news.length / _itemsPerPage).ceil();
+
+  void _goToNextPage() {
+    if (_currentPage < _totalPages) {
+      setState(() {
+        _currentPage++;
+      });
+    }
+  }
+
+  void _goToPreviousPage() {
+    if (_currentPage > 1) {
+      setState(() {
+        _currentPage--;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
+        backgroundColor: Colors.blue[700],
         title: const Text(
           'Apartment News',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: 50,
-        itemBuilder: (context, index) {
-          final randomDate = getRandomOctoberDate();
-          return ArticleCard(
-            articleTitle: 'News ${index + 1}',
-            articleDescription: 'Short discription ${index + 1}',
-            articleDate: randomDate,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ArticleDetailPage(
-                    articleTitle: 'News ${index + 1}',
-                    articleDescription: 'Chiu r k biet viet gi',
-                    articleDate: randomDate,
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-
-class ArticleCard extends StatelessWidget {
-  final String articleTitle;
-  final String articleDescription;
-  final String articleDate;
-  final VoidCallback onPressed;
-
-  const ArticleCard({
-    super.key,
-    required this.articleTitle,
-    required this.articleDescription,
-    required this.articleDate,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.white, Color(0xFFE3F2FD)],
-            ),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            color: Colors.white,
+            letterSpacing: 1.2,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        centerTitle: true,
+        elevation: 2,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
+      ),
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        articleTitle,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1565C0),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1565C0).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        articleDate,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF1565C0),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  articleDescription,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[800],
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton.icon(
-                      onPressed: onPressed,
-                      icon: const Icon(
-                        Icons.arrow_forward,
-                        size: 16,
-                       // color: Colors.white70,
-                      ),
-                      label: const Text('Xem thêm'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.lightBlue,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _paginatedNews.length,
+                    itemBuilder: (context, index) {
+                      final newsItem = _paginatedNews[index];
+                      return Card(
+                        elevation: 5,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(15),
                         ),
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        child: Container(
+                          height: 120,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.white,
+                                Colors.blue.withOpacity(0.1),
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  bottomLeft: Radius.circular(15),
+                                ),
+                                child: Hero(
+                                  tag: 'news-${_currentPage}-$index',
+                                  child: Image.network(
+                                    newsItem.linkImage ?? 'No Image',
+                                    height: double.infinity,
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        color: Colors.grey[300],
+                                        child: const Icon(
+                                          Icons.image_not_supported,
+                                          size: 40,
+                                          color: Colors.grey,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue[700],
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Text(
+                                          'News ${(_currentPage - 1) * _itemsPerPage + index + 1}',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        newsItem.title ?? 'No Title',
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        newsItem.content ?? 'No Content',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailedNew(currentNews: _paginatedNews[index],)));
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                // Pagination Controls
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: _currentPage > 1 ? _goToPreviousPage : null,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'Page $_currentPage of $_totalPages',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.arrow_forward),
+                        onPressed:
+                            _currentPage < _totalPages ? _goToNextPage : null,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ArticleDetailPage extends StatelessWidget {
-  final String articleTitle;
-  final String articleDescription;
-  final String articleDate;
-
-  const ArticleDetailPage({
-    super.key,
-    required this.articleTitle,
-    required this.articleDescription,
-    required this.articleDate,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white), 
-        title: const Text(
-          'Chi tiết',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.lightBlueAccent,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                articleTitle,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1565C0),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1565C0).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  articleDate,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF1565C0),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                articleDescription,
-                style: TextStyle(
-                  fontSize: 16,
-                  height: 1.5,
-                  color: Colors.grey[800],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

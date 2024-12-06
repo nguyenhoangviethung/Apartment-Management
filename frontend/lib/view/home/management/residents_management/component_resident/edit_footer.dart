@@ -1,58 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../../common/custom_date_picker.dart';
-import '../../../../../models/resident_info.dart';
 
-class AddFooter extends StatefulWidget {
-  const AddFooter({super.key, required this.addNewResident});
+class EditFooter extends StatefulWidget {
+  final Function editResidentInfo;
+  final int id;
 
-  final Function addNewResident;
+  const EditFooter({super.key, required this.id, required this.editResidentInfo});
 
   @override
-  State<AddFooter> createState() => _AddFooterState();
+  State<EditFooter> createState() => _EditFooterState();
 }
 
-class _AddFooterState extends State<AddFooter> {
+class _EditFooterState extends State<EditFooter> {
   String? _selectedStatus;
   String _dob = '';
   DateTime selectedDate = DateTime.now();
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController idController = TextEditingController();
-  final TextEditingController ageController = TextEditingController();
-  final TextEditingController roomController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
-  void handleOnClick() {
-    final name = nameController.text.trim();
-    final dob = _dob;
-    var id = idController.text.trim();
-    final age = int.tryParse(ageController.text.trim()) ?? 0;
-    final status = _selectedStatus;
-    final room = int.tryParse(roomController.text.trim()) ?? 0;
-    final phone = phoneController.text.trim();
+  void handleOnClick() async {
+    final newName = nameController.text.trim();
+    final newPhoneNumber = phoneController.text.trim();
+    final newDob = _dob;
+    final newStatus = _selectedStatus;
+    widget.editResidentInfo(widget.id, newName, newDob, newStatus, newPhoneNumber);
 
-    if (id.isEmpty) {
-      id = DateTime.now().toString();
-    }
-
-    final resident = ResidentInfo(
-      full_name: name,
-      date_of_birth: dob,
-      id_number: id,
-      age: age,
-      room: room,
-      phone_number: phone,
-      status: status, res_id: 1,
-    );
-
-    widget.addNewResident(resident);
-
-    // Xóa dữ liệu sau khi thêm
+    // Xóa giá trị sau khi thêm
     nameController.clear();
-    idController.clear();
-    ageController.clear();
-    roomController.clear();
     phoneController.clear();
   }
 
@@ -108,10 +84,6 @@ class _AddFooterState extends State<AddFooter> {
               ),
 
               const SizedBox(height: 8),
-              _buildTextField('Enter id number', idController),
-              const SizedBox(height: 16),
-              _buildTextField('Enter age', ageController),
-              const SizedBox(height: 16),
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text('Status:', style: TextStyle(
@@ -127,8 +99,6 @@ class _AddFooterState extends State<AddFooter> {
                   _buildRadioOption("Tạm vắng"),
                 ],
               ),
-              _buildTextField('Enter room', roomController),
-              const SizedBox(height: 16),
               _buildTextField('Enter phone number', phoneController),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -145,7 +115,7 @@ class _AddFooterState extends State<AddFooter> {
                   ),
                 ),
                 child: const Text(
-                  'Add',
+                  'Edit',
                   style: TextStyle(
                     fontFamily: 'Times New Roman',
                     fontWeight: FontWeight.bold,

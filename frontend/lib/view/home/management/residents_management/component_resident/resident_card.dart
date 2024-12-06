@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../../../../common/show_dialog.dart';
 import '../../../../../models/resident_info.dart';
+import 'edit_footer.dart';
 class ResidentCard extends StatefulWidget {
   final ResidentInfo item;
-  final Function(String) onDelete; // Thêm tham số callback
+  final Function(int) onDelete;
+  final Function(int, String, String, String, String) onEdit;
 
-  const ResidentCard({super.key, required this.item, required this.onDelete});
+  const ResidentCard({super.key, required this.item, required this.onDelete, required this.onEdit});
 
   @override
   State<ResidentCard> createState() => _ResidentCardState();
@@ -31,13 +34,14 @@ class _ResidentCardState extends State<ResidentCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Name:', widget.item.full_name!),
-                      _buildInfoRow('Date of Birth:', widget.item.date_of_birth!),
-                      _buildInfoRow('ID Number:', widget.item.id_number!),
-                      _buildInfoRow('Age:', widget.item.age.toString()),
-                      _buildInfoRow('Status:', widget.item.status!),
-                      _buildInfoRow('Room:', widget.item.room.toString()),
-                      _buildInfoRow('Phone:', widget.item.phone_number!),
+                      _buildInfoRow('Name:', widget.item.full_name ?? 'No name provided'),
+                      _buildInfoRow('Resident ID:', widget.item.res_id!=null? widget.item.res_id.toString():'No resident id'),
+                      _buildInfoRow('Date of Birth:', widget.item.date_of_birth ?? 'No date provided'),
+                      _buildInfoRow('ID Number:', widget.item.id_number ?? 'No ID provided'),
+                      _buildInfoRow('Age:', widget.item.age != null ? widget.item.age.toString() : 'No age provided'),
+                      _buildInfoRow('Status:', widget.item.status ?? 'No status provided'),
+                      _buildInfoRow('Room:', widget.item.room != null ? widget.item.room.toString() : 'No room provided'),
+                      _buildInfoRow('Phone:', widget.item.phone_number ?? 'No phone number provided'),
                     ],
                   ),
                 ),
@@ -80,16 +84,40 @@ class _ResidentCardState extends State<ResidentCard> {
                     ],
                   ),
 
-                  GestureDetector(
-                    onTap: () {
-                      print("Icon Delete pressed");
-                      widget.onDelete(widget.item.id_number!);
-                    },
-                    child: const Icon (
-                      Icons.delete,
-                      size: 30,
-                      color: Color.fromRGBO(0, 0, 0, 0.6),
-                    ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return EditFooter(
+                                  id: widget.item.res_id!,
+                                  editResidentInfo: (id, newName, newDob, newStatus, newPhoneNumber) {
+                                    widget.onEdit(id, newName, newDob, newStatus, newPhoneNumber);
+                                  },
+                                );
+                              }
+                          );
+                        },
+                        child: const Icon(
+                          Icons.edit,
+                          size: 30,
+                          color: Color.fromRGBO(0, 0, 0, 0.6),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: () {
+                          showdeleteform(context, 'Warning', 'Are you sure to delete this resident?');
+                        },
+                        child: const Icon (
+                          Icons.delete,
+                          size: 30,
+                          color: Color.fromRGBO(0, 0, 0, 0.6),
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),
@@ -154,4 +182,50 @@ class _ResidentCardState extends State<ResidentCard> {
       ),
     );
   }
+
+  void showdeleteform(BuildContext context,String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),),
+          content: Text(message, style: const TextStyle(fontSize: 18),),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  child: const Center(
+                    child: Text("OK", style: TextStyle(fontSize: 18),),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Đóng hộp thoại
+                    if (widget.item.res_id != null) {
+                      widget.onDelete( widget.item.res_id!);
+                    } else {
+                      Navigator.of(context).pop();
+                      showinform(context, 'Error', 'Resident ID is missing.');
+                    }
+                  },
+                ),
+                TextButton(
+                  child: const Center(
+                    child: Text("Cancel", style: TextStyle(fontSize: 18,color: Colors.red),),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+
+
+
+

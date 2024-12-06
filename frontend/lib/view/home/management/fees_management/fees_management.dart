@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/management/fees_management/charity_activities/charity_activities.dart';
 import 'package:frontend/view/home/management/fees_management/required_fees/required_fee.dart';
+import 'package:intl/intl.dart';
 
 import '../../main_home.dart';
 import 'fee_management_component/date_filter.dart';
@@ -13,28 +14,12 @@ class FeesManagement extends StatefulWidget {
 }
 
 class _FeesManagementState extends State<FeesManagement> {
-  final DateFilterPopup _dateFilterPopup = DateFilterPopup(
-    onDateRangeSelected: (start, end) { },
-  );
-  final TextEditingController _searchController = TextEditingController();
-  bool _isSearching = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: _isSearching
-            ? TextField(
-          controller: _searchController,
-          decoration: const InputDecoration(
-            hintText: 'Tìm kiếm...',
-            border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.white54, fontSize: 20),
-          ),
-          style: const TextStyle(color: Colors.white, fontSize: 20),
-        )
-            : const Text(
+        title: const Text(
           'Fees Management',
           style: TextStyle(
             fontSize: 25,
@@ -59,39 +44,6 @@ class _FeesManagementState extends State<FeesManagement> {
               );
             }
         ),
-
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isSearching ? Icons.close : Icons.search,
-              size: 30,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              setState(() {
-                _isSearching = !_isSearching; // Chuyển đổi trạng thái tìm kiếm
-                if (!_isSearching) {
-                  _searchController.clear(); // Xóa nội dung khi thoát tìm kiếm
-                }
-              });
-            },
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.filter_alt_outlined,
-              size: 30,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => Center(
-                    child: _dateFilterPopup
-                ),
-              );
-            },
-          ),
-        ],
       ),
       body: const SingleChildScrollView(
         child: Padding(
@@ -139,7 +91,7 @@ class FeesManagementCard extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Padding(
-                  padding: EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: Text(
                     title,
                     style: const TextStyle(

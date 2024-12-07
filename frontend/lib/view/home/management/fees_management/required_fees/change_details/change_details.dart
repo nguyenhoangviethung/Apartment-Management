@@ -33,7 +33,9 @@ class _ChangeDetailsState extends State<ChangeDetails> {
             Expanded(
               child: TabBarView(
                 children: [
-                  Add(),
+                  Add(
+
+                  ),
                   Update(),
                   const Delete(),
                 ],

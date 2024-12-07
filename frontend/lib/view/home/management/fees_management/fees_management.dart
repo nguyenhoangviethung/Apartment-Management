@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/view/home/management/fees_management/charity_activities/charity_activities.dart';
+import 'package:frontend/view/home/management/fees_management/contribution_fees/contribution_fees.dart';
 import 'package:frontend/view/home/management/fees_management/required_fees/required_fee.dart';
 import 'package:intl/intl.dart';
 
@@ -52,7 +52,7 @@ class _FeesManagementState extends State<FeesManagement> {
             children: [
               FeesManagementCard(imagelink: 'assets/images/fee.jpg', title: 'Required Fees',),
               SizedBox(height: 20,),
-              FeesManagementCard(imagelink: 'assets/images/charity_activities.png', title: 'Charity Activities',),
+              FeesManagementCard(imagelink: 'assets/images/charity_activities.png', title: 'Contribution Fees',),
             ],
           ),
         ),
@@ -111,8 +111,8 @@ class FeesManagementCard extends StatelessWidget {
         if(title=='Required Fees'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const RequiredFees()));
         }
-        if(title=='Charity Activities'){
-          // Navigator.push(context, MaterialPageRoute(builder: (context)=>const CharityActivities()));
+        if(title=='Contribution Fees'){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const ContributionFees()));
         }
       },
     );

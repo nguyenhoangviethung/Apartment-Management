@@ -13,16 +13,18 @@ class Delete extends StatefulWidget {
 
 class _DeleteState extends State<Delete> {
   final TextEditingController descriptionController = TextEditingController();
-  bool _isload=false;
+  bool _isLoad = false;
 
   void handleOnClick() async {
     final description = descriptionController.text.trim();
     const url = 'https://apartment-management-kjj9.onrender.com/admin/delete-fee';
+
     setState(() {
-      _isload=true;
+      _isLoad = true;
     });
+
     try {
-      SharedPreferences prefs= await SharedPreferences.getInstance();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       String? tokenlogin = prefs.getString('tokenlogin');
 
       final response = await http.post(
@@ -35,133 +37,112 @@ class _DeleteState extends State<Delete> {
           'description': description,
         },
       );
-      print(response.statusCode);
+
       if (response.statusCode == 200) {
-        Navigator.of(context).pop();
         showinform(context, 'Success', 'Delete Successful');
       } else {
-        if(response.statusCode==400){
+        if (response.statusCode == 400) {
           showinform(context, 'Failed', 'Description not provided');
-        }else{
+        } else {
           showinform(context, 'Failed', 'No fees found with the given description');
         }
       }
     } catch (e) {
-      print('Error: $e');
       showinform(context, 'Error', 'An error occurred. Please try again.');
     } finally {
       setState(() {
-        _isload = false;
+        _isLoad = false;
       });
       descriptionController.clear();
     }
   }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          bottom: 20,
-          right: 20,
-          child: FloatingActionButton(
-            onPressed: () {
-              showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return GestureDetector(
-                      onTap: () {
-                        FocusScope.of(context).unfocus();
-                      },
-                      child: Container(
-                        height: 172, // Tăng chiều cao nếu cần
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 15),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.3),
-                              blurRadius: 10,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              const SizedBox(height: 15),
-                              _buildTextField('Enter description',
-                                  descriptionController),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: () {
-                                  handleOnClick();
-                                  FocusScope.of(context).unfocus();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 5, horizontal: 20),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                                child:_isload?CircularProgressIndicator(color: Colors.white): const Text(
-                                  'Delete',
-                                  style: TextStyle(
-                                    fontFamily: 'Times New Roman',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-              );
-            },
-            backgroundColor: Colors.blue,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(90),
-            ),
-            child: const Icon(
-                Icons.delete_outline,
-              color: Colors.white,
-              size: 40,
-            ),
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              const Center(
+                child: Text(
+                  'Delete Fee Information',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildLabeledTextField(
+                'Description',
+                'Enter description',
+                descriptionController,
+                maxLines: 2,
+              ),
+              const SizedBox(height: 30),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _isLoad ? null : handleOnClick,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 28),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: _isLoad
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                    'Delete Fee',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
 
-Widget _buildTextField(String label, TextEditingController controller) {
-  return TextField(
-    controller: controller,
-    decoration: InputDecoration(
-      labelText: label,
-      border: const OutlineInputBorder(),
-      focusedBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.blue, width: 2),
-        borderRadius: BorderRadius.circular(10),
+Widget _buildLabeledTextField(String label, String placeholder, TextEditingController controller,
+    {int maxLines = 1}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
       ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.grey, width: 1),
-        borderRadius: BorderRadius.circular(10),
+      const SizedBox(height: 5),
+      TextField(
+        controller: controller,
+        maxLines: maxLines,
+        decoration: InputDecoration(
+          hintText: placeholder,
+          hintStyle: const TextStyle(color: Colors.grey),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.blue, width: 2),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.grey, width: 1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
-    ),
-    style: const TextStyle(
-      fontFamily: 'Times New Roman',
-      fontWeight: FontWeight.bold,
-      fontSize: 18,
-    ),
+    ],
   );
 }

@@ -130,13 +130,13 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
             labelPadding: const EdgeInsets.only(bottom: 2),
             tabs: const <Widget>[
               Tab(
-                child: Text('All Rooms', style: TextStyle(fontSize: 17), textAlign:TextAlign.center),
+                child: Text('All Rooms', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
-                child: Text('Not-paid Rooms', style: TextStyle(fontSize: 17), textAlign:TextAlign.center),
+                child: Text('Not-paid Rooms', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
-                child: Text('Change Details', style: TextStyle(fontSize: 17), textAlign:TextAlign.center),
+                child: Text('Change Details', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
             ],
           ),

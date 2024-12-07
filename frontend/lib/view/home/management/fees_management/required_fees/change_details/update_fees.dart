@@ -3,32 +3,32 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../../common/show_dialog.dart';
+
 class Update extends StatefulWidget {
-  Update({super.key});
+  const Update({super.key});
 
   @override
   State<Update> createState() => _UpdateState();
 }
 
 class _UpdateState extends State<Update> {
-  // Tạo các controller riêng cho mỗi trường nhập liệu
   final TextEditingController descriptionController = TextEditingController();
-
   final TextEditingController manageRateController = TextEditingController();
-
   final TextEditingController serviceRateController = TextEditingController();
-  bool _isload=false;
+  bool _isLoad = false;
 
   void handleOnClick() async {
     final description = descriptionController.text.trim();
     final manageRate = double.tryParse(manageRateController.text.trim());
     final serviceRate = double.tryParse(serviceRateController.text.trim());
     const url = 'https://apartment-management-kjj9.onrender.com/admin/update-fee';
+
     setState(() {
-      _isload=true;
+      _isLoad = true;
     });
+
     try {
-      SharedPreferences prefs= await SharedPreferences.getInstance();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       String? tokenlogin = prefs.getString('tokenlogin');
 
       final response = await http.post(
@@ -43,23 +43,21 @@ class _UpdateState extends State<Update> {
           'manage_rate': manageRate.toString(),
         },
       );
-      print(response.statusCode);
+
       if (response.statusCode == 200) {
-        Navigator.of(context).pop();
         showinform(context, 'Success', 'Fees updated successfully');
       } else {
-        if(response.statusCode==400){
+        if (response.statusCode == 400) {
           showinform(context, 'Failed', 'Invalid or missing data');
-        }else{
+        } else {
           showinform(context, 'Failed', 'Fees not found with the given description');
         }
       }
     } catch (e) {
-      print('Error: $e');
       showinform(context, 'Error', 'An error occurred. Please try again.');
     } finally {
       setState(() {
-        _isload = false;
+        _isLoad = false;
       });
       descriptionController.clear();
       manageRateController.clear();
@@ -67,118 +65,96 @@ class _UpdateState extends State<Update> {
     }
   }
 
-    @override
-    Widget build(BuildContext context) {
-      return Stack(
-        children: [
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton(
-              onPressed: () {
-                showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return GestureDetector(
-                        onTap: () {
-                          FocusScope.of(context).unfocus();
-                        },
-                        child: Container(
-                          height: 320, // Tăng chiều cao nếu cần
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.3),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                const SizedBox(height: 15),
-                                _buildTextField('Enter new description',
-                                    descriptionController),
-                                const SizedBox(height: 16),
-                                _buildTextField('Enter new manage rate',
-                                    manageRateController),
-                                const SizedBox(height: 16),
-                                _buildTextField('Enter new service rate',
-                                    serviceRateController),
-                                const SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    handleOnClick();
-                                    FocusScope.of(context).unfocus();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5, horizontal: 20),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                  ),
-                                  child:_isload?CircularProgressIndicator(color: Colors.white): const Text(
-                                    'Update',
-                                    style: TextStyle(
-                                      fontFamily: 'Times New Roman',
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                );
-              },
-              backgroundColor: Colors.blue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(90),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              const Center(
+                child: Text(
+                  'Update Fee Information',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
-              child: const Icon(
-                Icons.edit_calendar_outlined,
-                color: Colors.white,
-                size: 40,
+              const SizedBox(height: 30),
+              _buildLabeledTextField(
+                'Description',
+                'Enter description',
+                descriptionController,
+                maxLines: 2,
               ),
-            ),
+              const SizedBox(height: 20),
+              _buildLabeledTextField('Manage Rate', 'Enter new manage rate', manageRateController),
+              const SizedBox(height: 20),
+              _buildLabeledTextField('Service Rate', 'Enter new service rate', serviceRateController),
+              const SizedBox(height: 30),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _isLoad ? null : handleOnClick,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 28),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: _isLoad
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                    'Update Fee',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      );
-    }
+        ),
+      ),
+    );
+  }
 }
 
-Widget _buildTextField(String label, TextEditingController controller) {
-  return TextField(
-    controller: controller,
-    decoration: InputDecoration(
-      labelText: label,
-      border: const OutlineInputBorder(),
-      focusedBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.blue, width: 2),
-        borderRadius: BorderRadius.circular(10),
+Widget _buildLabeledTextField(String label, String placeholder, TextEditingController controller,
+    {int maxLines = 1}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
       ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.grey, width: 1),
-        borderRadius: BorderRadius.circular(10),
+      const SizedBox(height: 5),
+      TextField(
+        controller: controller,
+        maxLines: maxLines,
+        decoration: InputDecoration(
+          hintText: placeholder,
+          hintStyle: const TextStyle(color: Colors.grey),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.blue, width: 2),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.grey, width: 1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
-    ),
-    style: const TextStyle(
-      fontFamily: 'Times New Roman',
-      fontWeight: FontWeight.bold,
-      fontSize: 18,
-    ),
+    ],
   );
 }

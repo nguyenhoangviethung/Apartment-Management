@@ -24,20 +24,18 @@ class _ChangeDetailsState extends State<ChangeDetails> {
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.white60,
                 tabs: [
-                  Tab(child: Text('Add', style: TextStyle(fontSize: 15), textAlign:TextAlign.center)),
-                  Tab(child: Text('Update', style: TextStyle(fontSize: 15), textAlign:TextAlign.center)),
-                  Tab(child: Text('Delete', style: TextStyle(fontSize: 15), textAlign:TextAlign.center)),
+                  Tab(child: Text('Add', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign:TextAlign.center)),
+                  Tab(child: Text('Update', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign:TextAlign.center)),
+                  Tab(child: Text('Delete', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign:TextAlign.center)),
                 ],
               ),
             ),
-            Expanded(
+            const Expanded(
               child: TabBarView(
                 children: [
-                  Add(
-
-                  ),
+                  Add(),
                   Update(),
-                  const Delete(),
+                  Delete(),
                 ],
               ),
             ),

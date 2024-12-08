@@ -57,8 +57,11 @@ class Contributions(db.Model):
     household_id = Column(INTEGER, ForeignKey('Households.household_id'))
     contribution_type = Column(String(40), default = None)
     contribution_amount = Column(DECIMAL(10, 2),  default = None)
-    contribution_date = Column(Date,  default = None)
     contribution_event = Column(JSON,  default = None)
+    due_date = Column(Date, default = None)
+    create_date = Column(Date, default = None)
+    created_by = Column(INTEGER, ForeignKey('Users.user_id'))
+    updated_by = Column(INTEGER, ForeignKey('Users.user_id'))
 
 class TokenBlacklist(db.Model):
     id = db.Column(db.Integer, primary_key=True)

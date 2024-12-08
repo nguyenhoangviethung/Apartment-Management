@@ -736,7 +736,207 @@ paths:
           description: Description not provided
         '404':
           description: No fees found with the given description
+
+  /admin/add-contributions:
+    post:
+      summary: Add Contribution Fees
+      description: Add contribution fees for all households
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - start_date
+                - due_date
+                - description
+                - amount
+              properties:
+                start_date:
+                  type: string
+                  format: date
+                  description: Start date of the contribution fee
+                due_date:
+                  type: string
+                  format: date
+                  description: Due date of the contribution fee
+                description:
+                  type: string
+                  description: Type or description of the contribution fee
+                amount:
+                  type: number
+                  description: Amount of the contribution fee
+      responses:
+        '200':
+          description: Contribution fees added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Add fee successful
+        '400':
+          description: Bad Request - Missing or invalid fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Missing required fields
+      security:
+        - bearerAuth: []  
         
+  /admin/update-contributions-fee:
+    post:
+      summary: Update Contribution Fees
+      description: Update contribution fees for all households of a specific type
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - description
+                - amount
+              properties:
+                description:
+                  type: string
+                  description: Type or description of the contribution fee to update
+                amount:
+                  type: number
+                  description: New amount for the contribution fee
+      responses:
+        '200':
+          description: Contribution fees updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Update successful
+        '400':
+          description: Bad Request - Missing or invalid fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid rate values
+        '404':
+          description: Not Found - No contribution fees found with the given description
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No contribution fees found with the given description
+      security:
+        - bearerAuth: []
+
+  /admin/delete-contribution-fee:
+    post:
+      summary: Delete Contribution Fees
+      description: Delete contribution fees based on their description
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - description
+              properties:
+                description:
+                  type: string
+                  description: The description of the contribution fees to be deleted
+      responses:
+        '200':
+          description: Fees deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Delete successful
+        '400':
+          description: Bad Request - Description not provided
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Description not provided
+        '404':
+          description: Not Found - No fees found with the given description
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No fees found with the given description
+      security:
+        - bearerAuth: []
+
+  /admin/contributions:
+    get:
+      summary: Get Current Contributions
+      description: Retrieve current contribution fees and details
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Successfully retrieved contribution fees
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  infor:
+                    type: object
+                    properties:
+                      description:
+                        type: array
+                        items:
+                          type: string
+                        description: List of contribution fee descriptions
+                      detail:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            contribution_fee:
+                              type: string
+                              description: Amount of the contribution fee
+                            room:
+                              type: string
+                              description: Household ID associated with the fee
+      security:
+        - bearerAuth: []                
+
   /news/get-data:
     get:
       summary: "Crawl news data"

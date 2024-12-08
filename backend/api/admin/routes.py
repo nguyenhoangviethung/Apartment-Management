@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from helpers import validate_date, decimal_to_float, get_payload
 from datetime import datetime, timedelta
 from api.extensions import db
-from api.models import fee_service
+from api.models import fee_service, contribution_service
 from api.middlewares import admin_required, handle_exceptions
 from decimal import Decimal, InvalidOperation
 import logging
@@ -494,10 +494,137 @@ def delete_fee():
     logger.info(f"Deleted {len(fees)} fees")
     return jsonify({'message': 'Delete successful'}), 200
 
-# @admin_bp.before_app_request()
-
-@admin_bp.route('/contribution-fees')
+@admin_bp.route('/add-contributions', methods = ['POST'])
 @admin_required
 @handle_exceptions
-def get_contribution_fees():
-    return "oke"
+def add_contributions():
+    data = request.form
+    required_fields = ['start_date', 'due_date', 'description', 'amount']
+
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    try:
+        start_date = validate_date(data['start_date'])
+        due_date = validate_date(data['due_date'])
+        amount = Decimal(data['amount'])
+    except (ValueError, InvalidOperation) as e:
+        return jsonify({'error': str(e)}), 400
+
+    existing_fee = Contributions.query.filter_by(contribution_type=data['description']).first()
+    if existing_fee:
+        return jsonify({'error': 'A contribution fee with this description already exists'}), 400
+    
+    households = db.session.query(Households.household_id, Households.area, Households.num_residents).all()
+    # get updater
+    payload = get_payload()
+    creator = payload.get('user_id')
+    
+    for household in households:
+        if household.num_residents == 0:
+            continue
+        
+        contribution_fees = Contributions(
+            contribution_amount=amount,
+            create_date=start_date,
+            due_date=due_date,
+            household_id=household.household_id,
+            contribution_type=data['description'],
+            created_by=creator
+        )
+        
+        contribution_service.add_contribution_fee(contribution_fees)
+    
+    logger.info(f"Added fees for {len(households)} households")
+    return jsonify({'message': 'Add fee successful'}), 200
+
+@admin_bp.route('/update-contributions-fee', methods = ['POST'])
+@admin_required
+@handle_exceptions
+def update_contributions_fee():
+    data = request.form
+
+    required_fields = ['description', 'amount']
+
+    if not all(field in data for field in required_fields):
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    try:
+        amount = Decimal(data['amount'])
+    except InvalidOperation:
+        return jsonify({'error': 'Invalid rate values'}), 400
+    
+    contribution_fees = Contributions.query.filter(Contributions.contribution_type == data['description']).all()
+
+    if not contribution_fees:
+        return jsonify({'error': 'No contribution fees found with the given description'}), 404
+    # get updater
+    payload = get_payload()
+    updater = payload.get('user_id')
+
+    for contribution_fee in contribution_fees:
+        household = Households.query.filter_by(household_id=contribution_fee.household_id).first()
+        
+        if not household:
+            logger.warning(f"Household not found for contribution_fee ID {contribution_fee.id}")
+            continue
+
+        contribution_fee.contribution_amount = amount
+        contribution_fee.updated_by = updater
+
+    db.session.commit()
+    logger.info(f"Updated {len(contribution_fees)} fees")
+    return jsonify({'message': 'Update successful'}), 200
+
+@admin_bp.route('delete-contribution-fee', methods = ['POST'])
+@admin_required
+@handle_exceptions
+def delete_contribution_fee():
+    description_fee = request.form.get('description')
+    
+    if not description_fee:
+        return jsonify({'error': 'Description not provided'}), 400
+
+    contribution_fees = Contributions.query.filter(Contributions.contribution_type == description_fee).all()
+    
+    if not contribution_fees:
+        return jsonify({'error': 'No fees found with the given description'}), 404
+
+    for contribution_fee in contribution_fees:
+        db.session.delete(contribution_fee)
+    
+    db.session.commit()
+    logger.info(f"Deleted {len(contribution_fees)} fees")
+    return jsonify({'message': 'Delete successful'}), 200    
+
+@admin_bp.route('/contributions', methods=['GET', 'POST'])
+@admin_required
+@handle_exceptions
+def get_contributions():
+    query_date = datetime.now().date()
+
+    fee = db.session.query(Contributions.contribution_type).filter(query_date <= Contributions.due_date).first()
+    fee_ids = db.session.query(Contributions.contribution_id_id).filter(query_date <= Contributions.due_date).all()
+
+    res = {"infor": {"description": [],
+                     "detail": []
+                     }}
+    if fee:
+        res['infor']["description"].append(fee[0])
+
+    for fee_id in fee_ids:
+        f_id = fee_id[0]
+        amount = db.session.query(Contributions.contribution_amount).filter(Contributions.contribution_id == f_id).scalar() or None
+        household_id = db.session.query(Contributions.household_id).filter(Contributions.contribution_id == f_id).scalar() or None
+
+        if not amount:
+            continue
+
+        info = { 
+                'contribution fee' : f'{amount}',
+                'room': f'{household_id}'
+        }
+
+        res['infor']['detail'].append(info)
+
+    return jsonify(res), 200   

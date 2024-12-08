@@ -3,6 +3,10 @@ import 'package:frontend/View/Authentication/login.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+import 'dart:io';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -16,11 +20,13 @@ class _AccountScreenState extends State<AccountScreen> {
   Map<String, dynamic> userData = {};
   final String apiUrl =
       "https://apartment-management-kjj9.onrender.com/user/info";
+  File? _selectedImage;
 
   @override
   void initState() {
     super.initState();
     fetchUserData();
+    _loadSavedImage();
   }
 
   Future<void> fetchUserData() async {
@@ -36,14 +42,9 @@ class _AccountScreenState extends State<AccountScreen> {
         },
       );
 
-      print('Status Code: ${response.statusCode}');
-      print('Raw Response Body: ${response.body}');
-
       if (response.statusCode == 200) {
         if (response.body.isNotEmpty) {
           Map<String, dynamic> jsonResponse = json.decode(response.body);
-          print('Parsed JSON Response: $jsonResponse');
-
           Map<String, dynamic> userInfo = jsonResponse['info'];
 
           setState(() {
@@ -56,12 +57,6 @@ class _AccountScreenState extends State<AccountScreen> {
               'id_number': userInfo['id_number'] ?? 'Not provided',
               'room': userInfo['room'] ?? 'Not provided',
               'email': userInfo['user_email'] ?? 'Not provided',
-
-              // 'age': 'Not provided',
-              // 'date_of_birth': 'Not provided',
-              // 'id_number': 'Not provided',
-              // 'room': 'Not provided',
-              // 'status': 'Not provided',
             };
             isLoading = false;
           });
@@ -84,12 +79,104 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
+  // Phương thức tải ảnh đã lưu
+  Future<void> _loadSavedImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedImagePath = prefs.getString('saved_profile_image_path');
+
+    if (savedImagePath != null && File(savedImagePath).existsSync()) {
+      setState(() {
+        _selectedImage = File(savedImagePath);
+      });
+    }
+  }
+
+  // Phương thức chọn và lưu ảnh
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    try {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Chọn ảnh đại diện'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.photo_library),
+                  title: Text('Chọn từ thư viện'),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    final XFile? image = await picker.pickImage(
+                      source: ImageSource.gallery,
+                      maxWidth: 1800,
+                      maxHeight: 1800,
+                      imageQuality: 85,
+                    );
+
+                    if (image != null) {
+                      // Lưu ảnh vào thư mục local của ứng dụng
+                      final appDir = await getApplicationDocumentsDirectory();
+                      final fileName = path.basename(image.path);
+                      final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
+                      print('Đường dẫn ảnh đã lưu: ${savedImage.path}'); // Thêm dòng này
+
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('saved_profile_image_path', savedImage.path);
+                      print('Đường dẫn ảnh trong SharedPreferences: ${prefs.getString('saved_profile_image_path')}'); // Thêm dòng này
+
+                      setState(() {
+                        _selectedImage = savedImage;
+                      });
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.camera_alt),
+                  title: Text('Chụp ảnh mới'),
+                  onTap: () async {
+                    Navigator.of(context).pop();
+                    final XFile? image = await picker.pickImage(
+                      source: ImageSource.camera,
+                      maxWidth: 1800,
+                      maxHeight: 1800,
+                      imageQuality: 85,
+                    );
+
+                    if (image != null) {
+                      // Lưu ảnh vào thư mục local của ứng dụng
+                      final appDir = await getApplicationDocumentsDirectory();
+                      final fileName = path.basename(image.path);
+                      final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
+
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('saved_profile_image_path', savedImage.path);
+
+                      setState(() {
+                        _selectedImage = savedImage;
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      print('Lỗi chọn ảnh: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Không thể chọn ảnh: $e')),
+      );
+    }
+  }
+
   Future<void> handleLogout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('tokenlogin') ?? '';
 
-      // Gọi API logout
       final response = await http.get(
         Uri.parse('https://apartment-management-kjj9.onrender.com/auth/logout'),
         headers: {
@@ -98,12 +185,8 @@ class _AccountScreenState extends State<AccountScreen> {
         },
       );
 
-      print('Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
       if (response.statusCode == 200) {
         if (mounted) {
-          // Hiển thị thông báo thành công
           ScaffoldMessenger.of(context).showMaterialBanner(
             MaterialBanner(
               content: const Center(
@@ -119,7 +202,6 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
           );
 
-          // Đợi 1 giây rồi chuyển sang trang login
           Future.delayed(Duration(seconds: 1), () {
             ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
             Navigator.push(
@@ -158,124 +240,147 @@ class _AccountScreenState extends State<AccountScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
+              decoration: BoxDecoration(
+                color: Colors.pink[100],
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+              ),
               child: Column(
                 children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-                    decoration: BoxDecoration(
-                      color: Colors.pink[100],
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.white,
-                          child: Text(
-                            (userData['full_name'] ?? 'U')[0].toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          userData['full_name'] ?? 'Username',
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.white,
+                        backgroundImage: _selectedImage != null
+                            ? FileImage(_selectedImage!)
+                            : null,
+                        child: _selectedImage == null
+                            ? Text(
+                          (userData['full_name'] ?? 'U')[0]
+                              .toUpperCase(),
                           style: const TextStyle(
-                            fontSize: 24,
+                            fontSize: 40,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Colors.blue,
+                          ),
+                        )
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            onPressed: _pickImage,
+                            padding: EdgeInsets.all(4),
+                            constraints: BoxConstraints(),
                           ),
                         ),
-                        const SizedBox(height: 5),
-                        Text(
-                          userData['phone_number'] ?? 'Phone not provided',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    userData['full_name'] ?? 'Username',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        // Chỉ giữ lại các thông tin có trong API
-                        _buildInfoItem(
-                          Icons.email,
-                          'Email',
-                          userData['email'] ?? 'Not provided',
-                        ),
-                        _buildInfoItem(
-                          Icons.phone,
-                          'Phone',
-                          userData['phone_number'] ?? 'Not provided',
-                        ),
-                        _buildInfoItem(
-                          Icons.person,
-                          'Role',
-                          userData['role'] ?? 'Not provided',
-                        ),
-                        _buildInfoItem(
-                          Icons.cake,
-                          'Date of Birth',
-                          userData['date_of_birth'] ?? 'Not provided',
-                        ),
-                        _buildInfoItem(
-                          Icons.calendar_today,
-                          'Age',
-                          userData['age']?.toString() ?? 'Not provided',
-                        ),
-                        _buildInfoItem(
-                          Icons.badge,
-                          'ID Number',
-                          userData['id_number'] ?? 'Not provided',
-                        ),
-                        _buildInfoItem(
-                          Icons.meeting_room,
-                          'Room',
-                          userData['room'] ?? 'Not provided',
-                        ),
-
-                        // _buildInfoItem(
-                        //   Icons.check_circle,
-                        //   'Status',
-                        //   userData['status'] ?? 'Not provided',
-                        // ),
-                        const SizedBox(height: 30),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton.icon(
-                            onPressed: handleLogout,
-                            icon: const Icon(Icons.logout),
-                            label: const Text(
-                              'Logout',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: 5),
+                  Text(
+                    userData['phone_number'] ?? 'Phone not provided',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
                     ),
                   ),
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  _buildInfoItem(
+                    Icons.email,
+                    'Email',
+                    userData['email'] ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.phone,
+                    'Phone',
+                    userData['phone_number'] ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.person,
+                    'Role',
+                    userData['role'] ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.cake,
+                    'Date of Birth',
+                    userData['date_of_birth'] ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.calendar_today,
+                    'Age',
+                    userData['age']?.toString() ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.badge,
+                    'ID Number',
+                    userData['id_number'] ?? 'Not provided',
+                  ),
+                  _buildInfoItem(
+                    Icons.meeting_room,
+                    'Room',
+                    userData['room'] ?? 'Not provided',
+                  ),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton.icon(
+                      onPressed: handleLogout,
+                      icon: const Icon(Icons.logout),
+                      label: const Text(
+                        'Logout',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

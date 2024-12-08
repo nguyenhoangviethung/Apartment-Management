@@ -1,6 +1,7 @@
 from api.auth import auth_bp
 from api.extensions import db
 from api.models.models import *
+from api.middlewares import token_required
 from flask import g, url_for, session, request, jsonify, current_app, flash
 from flask_mail import Mail, Message
 import jwt, datetime
@@ -117,7 +118,7 @@ def login_post():
         payload = {
             'user_id':  user.user_id ,
             'role': user.user_role,
-            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days = 30)
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=1)
         },
         key = current_app.config['SECRET_KEY'],
         algorithm='HS256'
@@ -207,3 +208,7 @@ def logout():
 
     return jsonify({"message": "logout"}), 200
 
+@auth_bp.get('check_autolog')
+@token_required
+def check_autolog():
+    return jsonify({"message": "token is valid"}), 200

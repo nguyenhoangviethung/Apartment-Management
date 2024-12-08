@@ -157,6 +157,18 @@ paths:
         '200':
           description: "Logout successful"
 
+  /auth/check_autolog:
+    get:
+      tags:
+        - Auth
+      summary: "Check token validity"     
+      description: "A token have limited time, first login will try to save the token sent and try to sent it back"  
+      responses:
+        '200':
+          description: "The token still valid and can be used, proceed to homepage"   
+        '401':
+          description: "Token expired, force logging in again"
+
   /admin/residents:
     get:
       summary: Get all residents

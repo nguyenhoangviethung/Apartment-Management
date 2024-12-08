@@ -120,7 +120,7 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
                 return GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 1, // Số cột trong lưới
-                    childAspectRatio: 3.2, // Tỷ lệ chiều rộng/chiều cao của mỗi card
+                    childAspectRatio: 3.3, // Tỷ lệ chiều rộng/chiều cao của mỗi card
                     mainAxisSpacing: 15.0, // Khoảng cách giữa các hàng
                   ),
                   itemCount: endIndex - startIndex, // Chỉ hiển thị số lượng card trên trang

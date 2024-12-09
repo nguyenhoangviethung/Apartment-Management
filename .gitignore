@@ -5,3 +5,4 @@
 backend/src/ultralytics/
 venv/
 backend/migrations/
+.vscode

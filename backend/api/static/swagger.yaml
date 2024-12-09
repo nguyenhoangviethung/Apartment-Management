@@ -221,6 +221,9 @@ paths:
                         res_id:
                           type: integer
                           example: 1  
+                        household_registration:
+                          type: string
+                          example: Số 21, Ngõ 32 Lê Thanh Nghị, Nam Từ Liêm, Hà Nội 
         '500':
           description: Server error
 
@@ -439,6 +442,9 @@ paths:
                   type: string
                   format: date
                   example: "2004-12-21"
+                household_registration:
+                  type: string
+                  example: Số 12, ngõ 22 Khuất Duy Tiến, Nam Từ Liêm, Hà Nội  
       responses:
         '201':
           description: "Resident updated successfully"

@@ -39,7 +39,7 @@ def payment():
     vnpay_payment_url = payment.get_payment_url(os.getenv('VNP_URL'), os.getenv('VNP_HASHSECRET'))
     # print(vnpay_payment_url)
 
-    return redirect(vnpay_payment_url)
+    return jsonify(vnpay_payment_url), 200
 
 @pay_bp.route('/ipn')
 def ipn():

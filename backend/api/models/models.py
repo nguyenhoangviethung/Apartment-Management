@@ -34,6 +34,7 @@ class Residents(db.Model):
     id_number = Column(String(20), unique=True, default = None)
     status = Column(Enum('Tạm trú', 'Tạm vắng', 'Thường trú'), default = 'Thường trú')
     phone_number = Column(String(15), default = None)
+    household_registration = Column(String(150), default = None)
 
 
 class Fees(db.Model):

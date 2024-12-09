@@ -70,5 +70,25 @@ class Resident_Service:
             self.db.rollback()  
             raise Exception(f'{e}')
             
-
+    def show_all_residents(self):
+        residents = Residents.query.all()
+        resident_list = []
+        year = datetime.today().year
+        for resident in residents:
+            dob = resident.date_of_birth if not None else None
+            
+            age = None if dob == None else year - dob.year 
+            resident_data = {
+                'full_name' : resident.resident_name,
+                'date_of_birth' : dob,
+                'id_number' : resident.id_number,
+                'age' : age,
+                'room' : resident.household_id,
+                'phone_number' : resident.phone_number,
+                'status' : resident.status,
+                'household_registration' : resident.household_registration,
+                'res_id' : resident.resident_id
+            }
+            resident_list.append(resident_data)
+        return resident_list
 

@@ -79,7 +79,7 @@ def update_resident(resident_id):
         return jsonify({'error': f'Unexpected error: {e}'}), 500
 
 
-@admin_bp.post('/validate')
+@admin_bp.post('/validate')#có thể bỏ
 @admin_required
 @handle_exceptions
 def validate_user():
@@ -115,24 +115,12 @@ def validate_user():
 @admin_required
 @handle_exceptions
 def show_all_residents():
-    residents = Residents.query.all()
-    resident_list = []
-    year = datetime.today().year
-    for resident in residents:
-        dob = resident.date_of_birth if not None else None
-        
-        age = None if dob == None else year - dob.year 
-        resident_data = {
-            'full_name' : resident.resident_name,
-            'date_of_birth' : dob,
-            'id_number' : resident.id_number,
-            'age' : age,
-            'room' : resident.household_id,
-            'phone_number' : resident.phone_number,
-            'status' : resident.status
-        }
-        resident_list.append(resident_data)
-    return jsonify({'resident_info': resident_list}),200
+    all_resident = Resident_Service(db.session)
+    try:
+        resident_list = all_resident.show_all_residents()
+        return jsonify({'resident_info': resident_list}),200
+    except Exception as e:
+        return jsonify({'error': f'Unexpected error: {e}'}), 500
 
 @admin_bp.get('/house')
 @admin_required
@@ -207,18 +195,8 @@ def update_info(house_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
-    # else:
-    #     resident = Residents.query.filter_by(id_number = id).first()
-    #     if not resident:
-    #         return jsonify({'message': 'Resident not found'}), 404 
-    #     data = {
-    #         'resident_name' : request.form.get('resident_name'),
-    #         'phone_number' : request.form.get('phone_number'),
-    #         'status' : request.form.get('status')
-    #     }
-    #     return 200
     
-@admin_bp.post('/update-res/<int:res_id>')
+@admin_bp.post('/update-res/<int:res_id>')#có thể bỏ
 @admin_required
 @handle_exceptions
 def update_res(res_id):

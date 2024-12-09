@@ -36,6 +36,17 @@ class _AllContributionFeesState extends State<AllContributionFees> {
       setState(() {
         _currentPage = _pageController.page?.round() ?? 0;
       });
+
+      // Tính toán vị trí của scroll view để đảm bảo dot màu xanh luôn nằm trong tầm nhìn
+      double offset = 0;
+      if (_currentPage >= 4) {
+        offset = (_currentPage * 20.0 - 60.0); // Điều chỉnh giá trị này dựa vào khoảng cách giữa các dot
+      }
+      _scrollController.animateTo(
+        offset,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+      );
     });
   }
 
@@ -45,9 +56,9 @@ class _AllContributionFeesState extends State<AllContributionFees> {
       if (query.isEmpty) {
         _displayedFees = _originalFees;
       } else {
-        _displayedFees = _originalFees.where((feeInfo) {
-          return (feeInfo.room?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
-              (feeInfo.contributionFee?.toString().contains(query) ?? false);
+        _displayedFees = _originalFees.where((contributionInfo) {
+          return (contributionInfo.room?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
+              (contributionInfo.contributionFee?.toString().contains(query) ?? false);
         }).toList();
       }
       _pageController.jumpToPage(0);

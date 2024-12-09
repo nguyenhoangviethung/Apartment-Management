@@ -604,7 +604,7 @@ def get_contributions():
     query_date = datetime.now().date()
 
     fee = db.session.query(Contributions.contribution_type).filter(query_date <= Contributions.due_date).first()
-    fee_ids = db.session.query(Contributions.contribution_id_id).filter(query_date <= Contributions.due_date).all()
+    fee_ids = db.session.query(Contributions.contribution_id).filter(query_date <= Contributions.due_date).all()
 
     res = {"infor": {"description": [],
                      "detail": []

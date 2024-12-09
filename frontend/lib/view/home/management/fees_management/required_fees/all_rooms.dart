@@ -129,26 +129,23 @@ class _AllRoomsState extends State<AllRooms> {
                               ? startIndex + itemsPerPage
                               : _displayedFees.length;
 
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 1,
-                            childAspectRatio: 3.2,
-                            mainAxisSpacing: 15.0,
-                          ),
-                          itemCount: endIndex - startIndex,
-                          itemBuilder: (context, index) {
-                            return FeeCard(
-                              item: _displayedFees[startIndex + index],
-                              feeResponse:
-                                  snapshot.data!, // Truyền toàn bộ response
-                            );
-                          },
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1,
+                          childAspectRatio: 3.2,
+                          mainAxisSpacing: 15.0,
                         ),
+                        itemCount: endIndex - startIndex,
+                        itemBuilder: (context, index) {
+                          return FeeCard(
+                            item: _displayedFees[startIndex + index],
+                            feeResponse:
+                                snapshot.data!, // Truyền toàn bộ response
+                          );
+                        },
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
                       );
                     },
                   ),

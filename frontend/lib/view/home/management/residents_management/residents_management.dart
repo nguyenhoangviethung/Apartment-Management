@@ -151,6 +151,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
             icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context)=> const MainHome(currentIndex: 2,)));
+              //Navigator.pop(context);
             },
           ),
         ),

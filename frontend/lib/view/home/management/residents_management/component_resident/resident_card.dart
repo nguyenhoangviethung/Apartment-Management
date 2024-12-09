@@ -80,6 +80,8 @@ class _ResidentCardState extends State<ResidentCard> {
                       Text(
                         widget.item.full_name!,
                         style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ],
                   ),
@@ -133,6 +135,8 @@ class _ResidentCardState extends State<ResidentCard> {
                           Text(
                             widget.item.room.toString(),
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ],
                       ),
@@ -141,11 +145,15 @@ class _ResidentCardState extends State<ResidentCard> {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.call_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 3
+                          Icon(Icons.call_outlined, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
-                          Text(
-                            widget.item.phone_number??'No phone number',
-                            style: const TextStyle(fontSize: 17, color: Colors.black87),
+                          Expanded(
+                            child: Text(
+                              widget.item.phone_number ?? 'No phone number',
+                              style: const TextStyle(fontSize: 17, color: Colors.black87),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                           ),
                         ],
                       ),

@@ -47,7 +47,7 @@ class _AddState extends State<Add> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? tokenlogin = prefs.getString('tokenlogin');
-
+      print(tokenlogin);
       final response = await http.post(
         Uri.parse(url),
         headers: {

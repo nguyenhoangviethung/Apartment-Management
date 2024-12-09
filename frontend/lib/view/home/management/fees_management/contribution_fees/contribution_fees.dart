@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/fee_required_info.dart';
+import 'package:frontend/view/home/management/fees_management/contribution_fees/all_contribution_fees.dart';
 import 'package:frontend/view/home/management/fees_management/contribution_fees/change_details/change_details.dart';
 import 'package:frontend/view/home/management/fees_management/fees_management.dart';
-import 'package:frontend/view/home/management/fees_management/required_fees/all_rooms.dart';
-import 'package:frontend/view/home/management/fees_management/required_fees/not-paid_rooms.dart';
 import 'package:intl/intl.dart';
 
 import '../fee_management_component/date_filter.dart';
@@ -29,7 +28,7 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
 
   }
 
@@ -127,7 +126,7 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
         body: TabBarView(
           controller: _tabController,
           children: const <Widget>[
-            NotPaidRooms(),
+            AllContributionFees(),
             ChangeDetails(),
           ],
         ),

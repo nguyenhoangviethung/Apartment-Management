@@ -5,7 +5,11 @@ from datetime import datetime, timedelta
 from api.middlewares import token_required, handle_exceptions
 from api.extensions import db
 from models.models import *
+from services import fee_service, cloudinary_service
+import cloudinary
 from services import fee_service
+
+fee_service = fee_service.FeeService()
 
 @user_bp.route('/<int:household_id>/<int:amount>/pay')
 def pay(household_id, amount):
@@ -54,17 +58,41 @@ def update_user_info(data):
 
 @user_bp.route('/fees')
 @token_required
-def fees(data):
-    user_id = data.get('user_id')
-    resident_id = db.session.query(Residents.resident_id).filter(Residents.user_id == user_id).scalar()
-    if not resident_id:
-        return jsonify({'message': 'you do not have permission'}), 403
+def fees(request_data):
+    # data = {"user_id": request_data["user_id"]}
+    response, status_code = fee_service.get_fee_by_userID(request_data)
+    return jsonify(response), status_code
     
-    fee_info = fee_service.user_get_current_fee(resident_id)
-    result = {
-        'amount' : fee_info.amount,
-        'due_date' : fee_info.due_date,
-        'status' : fee_info.status,
-        'name_fee' : fee_info.description
-    }
-    return jsonify(result), 200
+
+@user_bp.route('/upload-image', methods = ["POST"])
+@token_required
+@handle_exceptions
+def upload_image(data):
+    default_img: str = "https://res.cloudinary.com/dxjwzkk8j/image/upload/v1733854843/default.png"
+
+    # if dont have path_to_image, use default instead
+    path_to_image = request.form.get("path_to_image", default_img)
+
+    try:
+        user_id = data.get('user_id')
+        if not user_id:
+            return jsonify({"error": "Missing user_id"}), 400
+
+        img_name = f"avatar/{str(user_id)}"
+
+        res = cloudinary_service.upload_image_to_cloudinary(path_to_image, public_id=img_name)
+
+        img_url = res.get("secure_url")
+        if not img_url:
+            return jsonify({"error": "Image URL not found"}), 500
+
+        return jsonify(img_url), 200
+
+    except cloudinary.exceptions.Error as e:
+        return jsonify({"error": "Failed to upload image", "details": str(e)}), 500
+
+    except KeyError as e:
+        return jsonify({"error": f"Missing key in response: {str(e)}"}), 500
+
+    except Exception as e:
+        return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500

@@ -7,6 +7,7 @@ import logging
 from helpers import validate_date
 from api.middlewares import handle_exceptions
 
+
 class ResidentService:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -91,4 +92,3 @@ class ResidentService:
             }
             resident_list.append(resident_data)
         return resident_list
-

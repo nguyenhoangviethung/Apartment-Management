@@ -1050,3 +1050,62 @@ paths:
           description: Unauthorized access
         500:
           description: Internal server error
+
+  /user/upload-image:
+      post:
+        summary: Upload user avatar
+        description: Upload a user's avatar to Cloudinary and return the image URL. If no `path_to_image` is provided, a default image will be used.
+        tags:
+          - User
+        parameters:
+          - name: Authorization
+            in: header
+            required: true
+            schema:
+              type: string
+            description: Bearer token for user authentication
+        requestBody:
+          required: false
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  path_to_image:
+                    type: string
+                    description: Path to the image file (URL or local path). Defaults to a predefined URL if not provided.
+                    example: https://example.com/sample.jpg
+        responses:
+          '200':
+            description: Successfully uploaded image.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    image_url:
+                      type: string
+                      example: https://res.cloudinary.com/your_cloud_name/image/upload/v123456789/avatar/1.jpg
+          '400':
+            description: Bad request due to missing required fields (e.g., user_id).
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: Missing user_id
+          '500':
+            description: Server error while processing the image.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: Failed to upload image
+                    details:
+                      type: string
+                      example: Image format not supported

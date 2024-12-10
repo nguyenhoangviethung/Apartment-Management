@@ -241,3 +241,27 @@ class FeeService:
         res['info'].append(info)
 
         return res, 200
+    
+    @handle_exceptions
+    def get_fee_by_userID(self, data):
+
+        required_fields = ["user_id"]
+
+        if not all(field in data for field in required_fields):
+            return {'error': 'Missing required fields'}, 400
+
+        user_id = data["user_id"]
+        resident_id = db.session.query(Residents.resident_id).filter(Residents.user_id == user_id).scalar()
+
+        if not resident_id:
+            return ({'message': 'you do not have permission'}), 403
+        
+        fee_info = self.user_get_current_fee(resident_id)
+
+        result = {
+            'amount' : fee_info.amount,
+            'due_date' : fee_info.due_date,
+            'status' : fee_info.status,
+            'name_fee' : fee_info.description
+        }
+        return (result), 200

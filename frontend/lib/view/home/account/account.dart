@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -20,7 +21,7 @@ class _AccountScreenState extends State<AccountScreen> {
   Map<String, dynamic> userData = {};
   final String apiUrl =
       "https://apartment-management-kjj9.onrender.com/user/info";
-  File? _selectedImage;
+  dynamic _selectedImage; // Thay đổi kiểu để hỗ trợ đa nền tảng
 
   @override
   void initState() {
@@ -82,12 +83,23 @@ class _AccountScreenState extends State<AccountScreen> {
   // Phương thức tải ảnh đã lưu
   Future<void> _loadSavedImage() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedImagePath = prefs.getString('saved_profile_image_path');
 
-    if (savedImagePath != null && File(savedImagePath).existsSync()) {
-      setState(() {
-        _selectedImage = File(savedImagePath);
-      });
+    if (kIsWeb) {
+      // Xử lý cho web - lấy base64
+      final savedImageBase64 = prefs.getString('profile_image_base64');
+      if (savedImageBase64 != null) {
+        setState(() {
+          _selectedImage = savedImageBase64;
+        });
+      }
+    } else {
+      // Xử lý cho mobile
+      final savedImagePath = prefs.getString('saved_profile_image_path');
+      if (savedImagePath != null && File(savedImagePath).existsSync()) {
+        setState(() {
+          _selectedImage = File(savedImagePath);
+        });
+      }
     }
   }
 
@@ -108,7 +120,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   title: Text('Chọn từ thư viện'),
                   onTap: () async {
                     Navigator.of(context).pop();
-                    final XFile? image = await picker.pickImage(
+                    final XFile? image = await ImagePicker().pickImage(
                       source: ImageSource.gallery,
                       maxWidth: 1800,
                       maxHeight: 1800,
@@ -116,19 +128,30 @@ class _AccountScreenState extends State<AccountScreen> {
                     );
 
                     if (image != null) {
-                      // Lưu ảnh vào thư mục local của ứng dụng
-                      final appDir = await getApplicationDocumentsDirectory();
-                      final fileName = path.basename(image.path);
-                      final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
-                      print('Đường dẫn ảnh đã lưu: ${savedImage.path}'); // Thêm dòng này
-
                       final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('saved_profile_image_path', savedImage.path);
-                      print('Đường dẫn ảnh trong SharedPreferences: ${prefs.getString('saved_profile_image_path')}'); // Thêm dòng này
 
-                      setState(() {
-                        _selectedImage = savedImage;
-                      });
+                      if (kIsWeb) {
+                        // Xử lý cho web - lưu base64
+                        final bytes = await image.readAsBytes();
+                        final base64Image = base64Encode(bytes);
+
+                        await prefs.setString('profile_image_base64', base64Image);
+
+                        setState(() {
+                          _selectedImage = base64Image;
+                        });
+                      } else {
+                        // Xử lý cho mobile
+                        final appDir = await getApplicationDocumentsDirectory();
+                        final fileName = path.basename(image.path);
+                        final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
+
+                        await prefs.setString('saved_profile_image_path', savedImage.path);
+
+                        setState(() {
+                          _selectedImage = savedImage;
+                        });
+                      }
                     }
                   },
                 ),
@@ -137,25 +160,32 @@ class _AccountScreenState extends State<AccountScreen> {
                   title: Text('Chụp ảnh mới'),
                   onTap: () async {
                     Navigator.of(context).pop();
-                    final XFile? image = await picker.pickImage(
-                      source: ImageSource.camera,
-                      maxWidth: 1800,
-                      maxHeight: 1800,
-                      imageQuality: 85,
-                    );
 
-                    if (image != null) {
-                      // Lưu ảnh vào thư mục local của ứng dụng
-                      final appDir = await getApplicationDocumentsDirectory();
-                      final fileName = path.basename(image.path);
-                      final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
+                    // Chỉ cho phép chụp ảnh trên mobile
+                    if (!kIsWeb) {
+                      final XFile? image = await picker.pickImage(
+                        source: ImageSource.camera,
+                        maxWidth: 1800,
+                        maxHeight: 1800,
+                        imageQuality: 85,
+                      );
 
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('saved_profile_image_path', savedImage.path);
+                      if (image != null) {
+                        final appDir = await getApplicationDocumentsDirectory();
+                        final fileName = path.basename(image.path);
+                        final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
 
-                      setState(() {
-                        _selectedImage = savedImage;
-                      });
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setString('saved_profile_image_path', savedImage.path);
+
+                        setState(() {
+                          _selectedImage = savedImage;
+                        });
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Chức năng chụp ảnh không khả dụng trên web')),
+                      );
                     }
                   },
                 ),
@@ -259,9 +289,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       CircleAvatar(
                         radius: 50,
                         backgroundColor: Colors.white,
-                        backgroundImage: _selectedImage != null
-                            ? FileImage(_selectedImage!)
-                            : null,
+                        backgroundImage: _buildImageProvider(),
                         child: _selectedImage == null
                             ? Text(
                           (userData['full_name'] ?? 'U')[0]
@@ -382,6 +410,21 @@ class _AccountScreenState extends State<AccountScreen> {
         ),
       ),
     );
+  }
+  ImageProvider? _buildImageProvider() {
+    if (_selectedImage == null) return null;
+
+    if (kIsWeb) {
+      // Cho web - sử dụng base64
+      return _selectedImage is String
+          ? MemoryImage(base64Decode(_selectedImage))
+          : null;
+    } else {
+      // Cho mobile
+      return _selectedImage is File
+          ? FileImage(_selectedImage)
+          : null;
+    }
   }
 
   Widget _buildInfoItem(IconData icon, String label, String value) {

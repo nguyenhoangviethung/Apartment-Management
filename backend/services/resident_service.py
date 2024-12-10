@@ -1,9 +1,9 @@
-from api.models.models import Residents, Households
+from models.models import Residents, Households
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 
-class Resident_Service:
+class ResidentService:
     def __init__(self, db : Session):
         self.db = db
     def create_resident(self, resident_data): # nho them kiem tra da ton tai resident_id

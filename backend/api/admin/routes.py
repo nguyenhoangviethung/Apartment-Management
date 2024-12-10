@@ -1,12 +1,11 @@
 from api.admin import admin_bp
 from flask import jsonify, request
-from api.models.models import *
-from api.models.resident_service import *
+from models.models import *
 from dotenv import load_dotenv
 from helpers import validate_date, decimal_to_float, get_payload
 from datetime import datetime, timedelta
 from api.extensions import db
-from api.models import fee_service, contribution_service, households_service
+from services import fee_service, contribution_service, households_service, resident_service
 from api.middlewares import admin_required, handle_exceptions
 from decimal import Decimal, InvalidOperation
 import logging
@@ -19,6 +18,7 @@ load_dotenv()
 # cần chỉnh sửa chỗ này, move ra khỏi folder model, tạo folder riêng tên là services
 contribution_service = contribution_service.ContributionService()
 households_service = households_service.HouseholdsService()
+resident_service = resident_service.ResidentService()
 
 @admin_bp.route('/')
 @admin_required
@@ -44,7 +44,7 @@ def add_resident():
         if field not in data or not data[field]:
             return jsonify({"error": f"Missing required field: {field}"}), 400
     
-    resident_service = Resident_Service(db.session)
+    resident_service = ResidentService(db.session)
     try:
         new_resident = resident_service.create_resident(data)
         return jsonify({"message": "Resident created successfully"}), 201

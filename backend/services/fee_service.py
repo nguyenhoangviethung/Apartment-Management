@@ -64,6 +64,8 @@ class FeeService:
                 created_by=creator
             )
             
+            db.session.add(fee)
+            db.session.commit()
         
         logger.info(f"Added fees for {len(households)} households")
         return ({'message': 'Add fee successful'}), 200

@@ -19,6 +19,7 @@ load_dotenv()
 contribution_service = contribution_service.ContributionService()
 households_service = households_service.HouseholdsService()
 resident_service = resident_service.ResidentService()
+fee_service = fee_service.FeeService()
 
 @admin_bp.route('/')
 @admin_required

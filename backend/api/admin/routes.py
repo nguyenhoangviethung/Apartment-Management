@@ -39,25 +39,16 @@ def get_resident(household_id):
 def add_resident():
     # Lấy thông tin từ request form
     data = request.form.to_dict()
-    required_fields = ["resident_id", "household_id", "resident_name","status"]
-    for field in required_fields:
-        if field not in data or not data[field]:
-            return jsonify({"error": f"Missing required field: {field}"}), 400
     
-    resident_service = ResidentService(db.session)
-    try:
-        new_resident = resident_service.create_resident(data)
-        return jsonify({"message": "Resident created successfully"}), 201
-    except Exception as e:
-        return jsonify({'error': f'Unexpected error: {e}'}), 500
+    response, status_code = resident_service.add_resident(data)
+    return jsonify(response), status_code
     
 @admin_bp.post('remove-resident/<resident_id>')
 @admin_required
 @handle_exceptions
 def remove_resident(resident_id):
     try:
-        resident_remove = Resident_Service(db.session)
-        if resident_remove.remove_resident(resident_id):
+        if resident_service.remove_resident(resident_id):
             return jsonify({"message": "Resident removed successfully"}), 201
         else:
             return jsonify("message: resident_id not found"), 404
@@ -70,8 +61,7 @@ def remove_resident(resident_id):
 def update_resident(resident_id):
     try:
         data = request.form.to_dict()
-        resident_update = Resident_Service(db.session)
-        if resident_update.update_resident(resident_id, data):
+        if resident_service.update_resident(resident_id, data):
             return jsonify({"message": "Resident updated successfully"}), 201
         else:
             return jsonify("message: resident_id not found"), 404
@@ -115,9 +105,8 @@ def validate_user():
 @admin_required
 @handle_exceptions
 def show_all_residents():
-    all_resident = Resident_Service(db.session)
     try:
-        resident_list = all_resident.show_all_residents()
+        resident_list = resident_service.show_all_residents()
         return jsonify({'resident_info': resident_list}),200
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500

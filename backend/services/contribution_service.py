@@ -1,4 +1,4 @@
-from api.models.models import Contributions, Households
+from models.models import Contributions, Households
 from api.extensions import db
 import logging
 from api.middlewares import handle_exceptions

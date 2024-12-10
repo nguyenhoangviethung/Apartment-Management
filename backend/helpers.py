@@ -5,7 +5,7 @@ from decimal import Decimal
 from datetime import datetime
 from sqlalchemy import event, func
 from sqlalchemy.orm import sessionmaker
-from api.models.models import *
+from models.models import *
 from api.extensions import db
 
 def getIP():
@@ -46,6 +46,7 @@ def validate_date(date_string):
         return datetime.strptime(date_string, '%Y-%m-%d').date()
     except ValueError:
         raise ValueError("Invalid date format. Use YYYY-MM-DD")
+        
     
 def update_num_residents(mapper, connection, target):
     

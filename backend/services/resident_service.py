@@ -1,4 +1,4 @@
-from api.models.models import Residents, Households
+from models.models import Residents, Households
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime

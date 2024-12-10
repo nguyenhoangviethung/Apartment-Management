@@ -1,4 +1,4 @@
-from api.models.models import Fees, Households, Residents
+from models.models import Fees, Households, Residents
 from api.extensions import db
 from datetime import datetime, timedelta
 import logging

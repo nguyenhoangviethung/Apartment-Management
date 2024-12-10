@@ -1,8 +1,8 @@
 from flask import Flask, jsonify
 from config import Config
 from api.extensions import db, migrate
-from api.models.models import *
-from api.models.models import db
+from models.models import *
+from models.models import db
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 

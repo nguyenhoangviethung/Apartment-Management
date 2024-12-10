@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from api.models.models import Users
+from models.models import Users
 
 def get_id(user: Users):
     return user.user_id 

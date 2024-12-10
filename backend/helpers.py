@@ -5,7 +5,7 @@ from decimal import Decimal
 from datetime import datetime
 from sqlalchemy import event, func
 from sqlalchemy.orm import sessionmaker
-from api.models.models import *
+from models.models import *
 from api.extensions import db
 
 def getIP():

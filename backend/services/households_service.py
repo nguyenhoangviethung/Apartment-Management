@@ -1,4 +1,4 @@
-from api.models.models import Residents, Households, Users
+from models.models import Residents, Households, Users
 from api.middlewares import handle_exceptions
 from api.extensions import db
 import logging

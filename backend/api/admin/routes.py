@@ -1,12 +1,13 @@
 from api.admin import admin_bp
 from flask import jsonify, request
-from api.models.models import *
-from api.models.resident_service import *
+from backend.services import contribution_service, fee_service
+from models.models import *
+from backend.services.resident_service import *
 from dotenv import load_dotenv
 from helpers import validate_date, decimal_to_float, get_payload
 from datetime import datetime, timedelta
 from api.extensions import db
-from api.models import fee_service, contribution_service, households_service
+from backend.services import households_service, contribution_service
 from api.middlewares import admin_required, handle_exceptions
 from decimal import Decimal, InvalidOperation
 import logging

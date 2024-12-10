@@ -4,8 +4,8 @@ from helpers import getIP
 from datetime import datetime, timedelta
 from api.middlewares import token_required, handle_exceptions
 from api.extensions import db
-from api.models.models import *
-from api.models import fee_service
+from models.models import *
+from backend.services import fee_service
 
 @user_bp.route('/<int:household_id>/<int:amount>/pay')
 def pay(household_id, amount):

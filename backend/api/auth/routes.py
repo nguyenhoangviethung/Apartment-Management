@@ -1,6 +1,6 @@
 from api.auth import auth_bp
 from api.extensions import db
-from api.models.models import *
+from models.models import *
 from api.middlewares import token_required
 from flask import g, url_for, session, request, jsonify, current_app, flash
 from flask_mail import Mail, Message
@@ -11,8 +11,7 @@ import re, dns.resolver
 import os
 from dotenv import load_dotenv
 import random
-from api.models import user_service
-
+from services import user_service
 
 load_dotenv()
 

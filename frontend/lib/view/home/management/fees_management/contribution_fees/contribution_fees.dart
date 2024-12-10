@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/fee_required_info.dart';
+import 'package:frontend/view/home/management/fees_management/contribution_fees/all_contribution_fees.dart';
+import 'package:frontend/view/home/management/fees_management/contribution_fees/change_details/change_details.dart';
 import 'package:frontend/view/home/management/fees_management/fees_management.dart';
-import 'package:frontend/view/home/management/fees_management/required_fees/all_rooms.dart';
-import 'package:frontend/view/home/management/fees_management/required_fees/change_details/change_details.dart';
-import 'package:frontend/view/home/management/fees_management/required_fees/not-paid_rooms.dart';
 import 'package:intl/intl.dart';
 
 import '../fee_management_component/date_filter.dart';
 
-class RequiredFees extends StatefulWidget {
-  const RequiredFees({super.key});
+class ContributionFees extends StatefulWidget {
+  const ContributionFees({super.key});
 
   @override
-  State<RequiredFees> createState() => _RequiredFeesState();
+  State<ContributionFees> createState() => _ContributionFeesState();
 }
 
-class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMixin {
+class _ContributionFeesState extends State<ContributionFees> with TickerProviderStateMixin {
   final DateFilterPopup _dateFilterPopup = DateFilterPopup(
     onDateRangeSelected: (startDate, endDate) {
       // Xử lý khi người dùng chọn khoảng thời gian
@@ -29,7 +28,7 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
 
   }
 
@@ -65,7 +64,7 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
             style: const TextStyle(color: Colors.white, fontSize: 20),
           )
               : const Text(
-            'Required Fees',
+            'Contribution Fees',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -91,21 +90,6 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
           ),
 
           actions: [
-            // IconButton(
-            //   icon: Icon(
-            //     _isSearching ? Icons.close : Icons.search,
-            //     size: 30,
-            //     color: Colors.white,
-            //   ),
-            //   onPressed: () {
-            //     setState(() {
-            //       _isSearching = !_isSearching; // Chuyển đổi trạng thái tìm kiếm
-            //       if (!_isSearching) {
-            //         _searchController.clear(); // Xóa nội dung khi thoát tìm kiếm
-            //       }
-            //     });
-            //   },
-            // ),
             IconButton(
               icon: const Icon(
                 Icons.filter_alt_outlined,
@@ -130,10 +114,7 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
             labelPadding: const EdgeInsets.only(bottom: 2),
             tabs: const <Widget>[
               Tab(
-                child: Text('All Rooms', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
-              ),
-              Tab(
-                child: Text('Not-paid Rooms', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('All', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
                 child: Text('Change Details', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
@@ -145,8 +126,7 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
         body: TabBarView(
           controller: _tabController,
           children: const <Widget>[
-            AllRooms(),
-            NotPaidRooms(),
+            AllContributionFees(),
             ChangeDetails(),
           ],
         ),
@@ -154,4 +134,5 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
     );
   }
 }
+
 

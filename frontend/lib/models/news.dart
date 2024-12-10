@@ -20,4 +20,14 @@ class News{
     summary= json['summary'];
     title= json['title'];
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'content': content,
+      'linkArticle': linkArticle,
+      'linkImage': linkImage,
+      'summary': summary,
+      'title': title,
+    };
+  }
 }

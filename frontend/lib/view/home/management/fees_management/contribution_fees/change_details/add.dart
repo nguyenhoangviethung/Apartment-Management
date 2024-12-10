@@ -1,27 +1,39 @@
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
+import '../../../../../../common/custom_date_picker.dart';
 import '../../../../../../common/show_dialog.dart';
 
-class Delete extends StatefulWidget {
-  const Delete({super.key});
+class Add extends StatefulWidget {
+  const Add({super.key});
 
   @override
-  State<Delete> createState() => _DeleteState();
+  State<Add> createState() => _AddState();
 }
 
-class _DeleteState extends State<Delete> {
+class _AddState extends State<Add> {
+  DateTime selectedStartDate = DateTime.now();
+  DateTime selectedDueDate = DateTime.now();
+  String _startDate = '';
+  String _dueDate = '';
+
+  final TextEditingController amountController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+
   bool _isLoad = false;
 
   void handleOnClick() async {
-    final description = descriptionController.text.trim();
-    const url = 'https://apartment-management-kjj9.onrender.com/admin/delete-fee';
-
     setState(() {
       _isLoad = true;
     });
+
+    final startdate = _startDate.isNotEmpty ? _startDate : DateFormat('yyyy-MM-dd').format(selectedStartDate);
+    final duedate = _dueDate.isNotEmpty ? _dueDate : DateFormat('yyyy-MM-dd').format(selectedDueDate);
+    final amount = double.tryParse(amountController.text.trim());
+    final description = descriptionController.text.trim();
+    const url = 'https://apartment-management-kjj9.onrender.com/admin/add-contributions';
 
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -34,18 +46,18 @@ class _DeleteState extends State<Delete> {
           'Authorization': 'Bearer $tokenlogin',
         },
         body: {
+          'start_date': startdate,
+          'due_date': duedate,
           'description': description,
+          'amount': amount.toString()
         },
       );
+      print(response.statusCode);
 
       if (response.statusCode == 200) {
-        showinform(context, 'Success', 'Delete Successful');
+        showinform(context, 'Success', 'Fees added successfully');
       } else {
-        if (response.statusCode == 400) {
-          showinform(context, 'Failed', 'Description not provided');
-        } else {
-          showinform(context, 'Failed', 'No fees found with the given description');
-        }
+        showinform(context, 'Failed', 'Cannot add fee');
       }
     } catch (e) {
       showinform(context, 'Error', 'An error occurred. Please try again.');
@@ -53,6 +65,7 @@ class _DeleteState extends State<Delete> {
       setState(() {
         _isLoad = false;
       });
+      amountController.clear();
       descriptionController.clear();
     }
   }
@@ -69,7 +82,7 @@ class _DeleteState extends State<Delete> {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  'Delete Fee Information',
+                  'Add New Fee Information',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -78,6 +91,46 @@ class _DeleteState extends State<Delete> {
                   textAlign: TextAlign.center,
                 ),
               ),
+              const SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text('Start date:', style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: CustomDatePicker(
+                      initialDate: selectedStartDate,
+                      onDateSelected: (date) {
+                        setState(() {
+                          selectedStartDate = date;
+                          _startDate = DateFormat('yyyy-MM-dd').format(date);
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text('Due date:  ', style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: CustomDatePicker(
+                      initialDate: selectedDueDate,
+                      onDateSelected: (date) {
+                        setState(() {
+                          selectedDueDate = date;
+                          _dueDate = DateFormat('yyyy-MM-dd').format(date);
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              _buildLabeledTextField('Amount', 'Enter amount', amountController),
               const SizedBox(height: 20),
               _buildLabeledTextField(
                 'Description',
@@ -90,7 +143,7 @@ class _DeleteState extends State<Delete> {
                 child: ElevatedButton(
                   onPressed: _isLoad ? null : handleOnClick,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
+                    backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 28),
                     shape: RoundedRectangleBorder(
@@ -100,7 +153,7 @@ class _DeleteState extends State<Delete> {
                   child: _isLoad
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                    'Delete Fee',
+                    'Add Fee',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),

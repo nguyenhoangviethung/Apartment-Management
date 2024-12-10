@@ -21,7 +21,7 @@ class CustomDatePicker extends StatelessWidget {
           context: context,
           initialDate: initialDate,
           firstDate: DateTime(2000),
-          lastDate: DateTime(2025),
+          lastDate: DateTime(2050),
           builder: (BuildContext context, Widget? child) {
             return Theme(
               data: ThemeData.light().copyWith(

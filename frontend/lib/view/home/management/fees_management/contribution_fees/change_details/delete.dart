@@ -17,7 +17,7 @@ class _DeleteState extends State<Delete> {
 
   void handleOnClick() async {
     final description = descriptionController.text.trim();
-    const url = 'https://apartment-management-kjj9.onrender.com/admin/delete-fee';
+    const url = 'https://apartment-management-kjj9.onrender.com/admin/delete-contribution-fee';
 
     setState(() {
       _isLoad = true;
@@ -37,6 +37,7 @@ class _DeleteState extends State<Delete> {
           'description': description,
         },
       );
+      print(response.statusCode);
 
       if (response.statusCode == 200) {
         showinform(context, 'Success', 'Delete Successful');

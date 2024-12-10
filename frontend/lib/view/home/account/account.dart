@@ -45,7 +45,6 @@ class _AccountScreenState extends State<AccountScreen> {
           print('Parsed JSON Response: $jsonResponse');
 
           Map<String, dynamic> userInfo = jsonResponse['info'];
-
           setState(() {
             userData = {
               'full_name': userInfo['username'] ?? 'Not provided',
@@ -56,12 +55,6 @@ class _AccountScreenState extends State<AccountScreen> {
               'id_number': userInfo['id_number'] ?? 'Not provided',
               'room': userInfo['room'] ?? 'Not provided',
               'email': userInfo['user_email'] ?? 'Not provided',
-
-              // 'age': 'Not provided',
-              // 'date_of_birth': 'Not provided',
-              // 'id_number': 'Not provided',
-              // 'room': 'Not provided',
-              // 'status': 'Not provided',
             };
             isLoading = false;
           });
@@ -102,6 +95,7 @@ class _AccountScreenState extends State<AccountScreen> {
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
+        await prefs.remove('tokenlogin');
         if (mounted) {
           // Hiển thị thông báo thành công
           ScaffoldMessenger.of(context).showMaterialBanner(

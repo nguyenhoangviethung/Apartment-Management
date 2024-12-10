@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend/services/fetch_news.dart';
 import 'package:frontend/view/home/home_page/home_page_component/detailed_new.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../models/news.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,24 +23,50 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _fetchNewsData();
   }
-
   Future<void> _fetchNewsData() async {
     try {
-      final allNews = await fetchNews();
-      setState(() {
-        _news = allNews ?? [];
-        _isLoading = false;
-      });
+      final prefs = await SharedPreferences.getInstance();
+      final String? savedNews = prefs.getString('news_data');
+      final int? timestamp = prefs.getInt('news_timestamp');
+
+      // Kiểm tra xem dữ liệu có cũ hơn 24 giờ không
+      if (timestamp != null &&
+          DateTime.now().millisecondsSinceEpoch - timestamp > 86400000) {
+        print('Dữ liệu quá cũ, xóa news_data');
+        await prefs.remove('news_data');
+        await prefs.remove('news_timestamp');
+      }
+
+      if (savedNews != null) {
+        final List<dynamic> decodedNews = jsonDecode(savedNews);
+        setState(() {
+          _news = decodedNews.map((json) => News.fromJson(json)).toList();
+          _isLoading = false;
+        });
+      } else {
+        final allNews = await fetchNews();
+        if (allNews != null) {
+          // Lưu dữ liệu vào SharedPreferences
+          final List<Map<String, dynamic>> newsJsonList =
+          allNews.map((news) => news.toJson()).toList();
+          await prefs.setString('news_data', jsonEncode(newsJsonList));
+          await prefs.setInt('news_timestamp', DateTime.now().millisecondsSinceEpoch);
+        }
+        setState(() {
+          _news = allNews ?? [];
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      // Optionally handle error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load news: $e')),
       );
     }
   }
+
 
   List<News> get _paginatedNews {
     final startIndex = (_currentPage - 1) * _itemsPerPage;

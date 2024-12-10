@@ -1,31 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/services/fetch_required_fees.dart';
-import '../../../../../models/fee_required_info.dart';
-import '../fee_management_component/fee_card.dart';
+import 'package:frontend/services/fetch_contribution_fees.dart'; // Đảm bảo import đúng dịch vụ
+import '../../../../../models/contribution_fee_info.dart'; // Nhập mô hình ContributionFeeInfo
+import '../fee_management_component/contribution_fee_card.dart'; // Nhập ContributionFeeCard
 
-class AllRooms extends StatefulWidget {
-  const AllRooms({super.key});
+class AllContributionFees extends StatefulWidget {
+  const AllContributionFees({super.key});
 
   @override
-  State<AllRooms> createState() => _AllRoomsState();
+  State<AllContributionFees> createState() => _AllContributionFeesState();
 }
 
+class _AllContributionFeesState extends State<AllContributionFees> {
+  late Future<ContributionFeeResponse?> futureContributionFees;
 
-class _AllRoomsState extends State<AllRooms> {
-  late Future<FeeResponse?> futureFees;
-
-  List<FeeInfo> _originalFees = []; // Danh sách gốc
-  List<FeeInfo> _displayedFees = []; // Danh sách hiển thị
+  List<ContributionFeeInfo> _originalFees = []; // Danh sách gốc
+  List<ContributionFeeInfo> _displayedFees = []; // Danh sách hiển thị
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  final int totalDots = 5;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    futureFees = fetchRequiredFees().then((response) {
+    futureContributionFees = fetchContributionFees().then((response) {
       if (response != null && response.fees != null) {
         setState(() {
           _originalFees = response.fees!;
@@ -58,9 +56,9 @@ class _AllRoomsState extends State<AllRooms> {
       if (query.isEmpty) {
         _displayedFees = _originalFees;
       } else {
-        _displayedFees = _originalFees.where((feeInfo) {
-          return (feeInfo.room?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
-              (feeInfo.fee?.toString().contains(query) ?? false);
+        _displayedFees = _originalFees.where((contributionInfo) {
+          return (contributionInfo.room?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
+              (contributionInfo.contributionFee?.toString().contains(query) ?? false);
         }).toList();
       }
       _pageController.jumpToPage(0);
@@ -72,8 +70,8 @@ class _AllRoomsState extends State<AllRooms> {
     const int itemsPerPage = 5;
     int pageCount = (_displayedFees.length / itemsPerPage).ceil();
 
-    return FutureBuilder<FeeResponse?>(
-      future: futureFees,
+    return FutureBuilder<ContributionFeeResponse?>(
+      future: futureContributionFees,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -89,31 +87,21 @@ class _AllRoomsState extends State<AllRooms> {
                   controller: _searchController,
                   onChanged: _filterFees,
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
-
                   decoration: InputDecoration(
                     hintText: 'Search',
                     hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
                     suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(
-                        color: Colors.blue,
-                        width: 2.0,
-                      ),
+                      borderSide: const BorderSide(color: Colors.blue, width: 2.0),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.blue[200]!,
-                        width: 2.0,
-                      ),
+                      borderSide: BorderSide(color: Colors.blue[200]!, width: 2.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
-                        width: 2.0,
-                      ),
+                      borderSide: const BorderSide(color: Colors.grey, width: 2.0),
                     ),
                   ),
                 ),
@@ -125,23 +113,21 @@ class _AllRoomsState extends State<AllRooms> {
                     itemBuilder: (context, pageIndex) {
                       final startIndex = pageIndex * itemsPerPage;
                       final endIndex =
-                          (startIndex + itemsPerPage < _displayedFees.length)
-                              ? startIndex + itemsPerPage
-                              : _displayedFees.length;
+                      (startIndex + itemsPerPage < _displayedFees.length)
+                          ? startIndex + itemsPerPage
+                          : _displayedFees.length;
 
                       return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 1,
                           childAspectRatio: 3.3,
                           mainAxisSpacing: 15.0,
                         ),
                         itemCount: endIndex - startIndex,
                         itemBuilder: (context, index) {
-                          return FeeCard(
+                          return ContributionFeeCard(
                             item: _displayedFees[startIndex + index],
-                            feeResponse:
-                                snapshot.data!, // Truyền toàn bộ response
+                            contributionFeeResponse: snapshot.data!, // Truyền toàn bộ response
                           );
                         },
                         physics: const NeverScrollableScrollPhysics(),
@@ -156,25 +142,21 @@ class _AllRoomsState extends State<AllRooms> {
                   height: 30,
                   width: 100,
                   child: Center(
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(pageCount, (index) {
-                          return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _currentPage == index
-                                  ? Colors.blue
-                                  : Colors.grey,
-                            ),
-                          );
-                        }),
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(pageCount, (index) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _currentPage == index
+                                ? Colors.blue
+                                : Colors.grey,
+                          ),
+                        );
+                      }),
                     ),
                   ),
                 ),

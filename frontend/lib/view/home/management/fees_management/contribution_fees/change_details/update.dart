@@ -1,23 +1,25 @@
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../../common/show_dialog.dart';
 
-class Delete extends StatefulWidget {
-  const Delete({super.key});
+class Update extends StatefulWidget {
+  const Update({super.key});
 
   @override
-  State<Delete> createState() => _DeleteState();
+  State<Update> createState() => _UpdateState();
 }
 
-class _DeleteState extends State<Delete> {
+class _UpdateState extends State<Update> {
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
   bool _isLoad = false;
 
   void handleOnClick() async {
     final description = descriptionController.text.trim();
-    const url = 'https://apartment-management-kjj9.onrender.com/admin/delete-fee';
+    final amount = double.tryParse(amountController.text.trim());
+    const url = 'https://apartment-management-kjj9.onrender.com/admin/update-contributions-fee';
 
     setState(() {
       _isLoad = true;
@@ -35,16 +37,17 @@ class _DeleteState extends State<Delete> {
         },
         body: {
           'description': description,
+          'amount': amount.toString(),
         },
       );
-
+      print(response.statusCode);
       if (response.statusCode == 200) {
-        showinform(context, 'Success', 'Delete Successful');
+        showinform(context, 'Success', 'Fees updated successfully');
       } else {
         if (response.statusCode == 400) {
-          showinform(context, 'Failed', 'Description not provided');
+          showinform(context, 'Failed', 'Invalid or missing data');
         } else {
-          showinform(context, 'Failed', 'No fees found with the given description');
+          showinform(context, 'Failed', 'Fees not found with the given description');
         }
       }
     } catch (e) {
@@ -54,6 +57,7 @@ class _DeleteState extends State<Delete> {
         _isLoad = false;
       });
       descriptionController.clear();
+      amountController.clear();
     }
   }
 
@@ -69,7 +73,7 @@ class _DeleteState extends State<Delete> {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  'Delete Fee Information',
+                  'Update Fee Information',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -78,19 +82,21 @@ class _DeleteState extends State<Delete> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               _buildLabeledTextField(
                 'Description',
                 'Enter description',
                 descriptionController,
                 maxLines: 2,
               ),
+              const SizedBox(height: 20),
+              _buildLabeledTextField('Amount', 'Enter new amount', amountController),
               const SizedBox(height: 30),
               Center(
                 child: ElevatedButton(
                   onPressed: _isLoad ? null : handleOnClick,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
+                    backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 28),
                     shape: RoundedRectangleBorder(
@@ -100,7 +106,7 @@ class _DeleteState extends State<Delete> {
                   child: _isLoad
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                    'Delete Fee',
+                    'Update Fee',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),

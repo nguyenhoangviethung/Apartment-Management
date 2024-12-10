@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/view/home/management/fees_management/required_fees/change_details/update_fees.dart';
-import 'add_fees.dart';
-import 'delete_fees.dart';
+import 'package:frontend/view/home/management/fees_management/contribution_fees/change_details/add.dart';
+import 'package:frontend/view/home/management/fees_management/contribution_fees/change_details/delete.dart';
+import 'package:frontend/view/home/management/fees_management/contribution_fees/change_details/update.dart';
 
 class ChangeDetails extends StatefulWidget {
   const ChangeDetails({super.key});

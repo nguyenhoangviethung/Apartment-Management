@@ -1,21 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/View/Authentication/login.dart';
-import 'package:frontend/View/Home/management/management.dart';
-import 'package:frontend/view/home/account/account.dart';
 import 'package:frontend/view/home/main_home.dart';
-import 'package:frontend/view/home/user/user.dart';
-import 'package:frontend/view/home/management/management.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart'as http;
 
-void main() {
+Future<bool> checkAutoLog() async{
+     const String url='https://apartment-management-kjj9.onrender.com/auth/check_autolog';
+     try{
+          SharedPreferences prefs= await SharedPreferences.getInstance();
+          String? tokenlogin=prefs.getString('tokenlogin');
+          final response=await http.get(
+               Uri.parse(url),
+               headers: {
+                    'Authorization': 'Bearer $tokenlogin',
+               }
+          );
+          print(response.body);
+          if(response.statusCode==200){
+               return true;
+          }else{
+               return false;
+          }
+     }catch(e){
+          return false;
+     }
 
-  runApp(
-      const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Login(),
-
-      ));
-     //runApp( MainHome(currentIndex: 2,));
-
+}
+void main() async{
+     WidgetsFlutterBinding.ensureInitialized(); // Đảm bảo Flutter được khởi tạo trước
+     if(await checkAutoLog()){
+          runApp(const MainHome(currentIndex: 0,));
+     }else{
+          runApp(
+              const MaterialApp(
+                   debugShowCheckedModeBanner: false,
+                   home: Login(),
+              )
+          );
+     }
 }
 
 

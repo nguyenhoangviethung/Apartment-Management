@@ -44,3 +44,46 @@ class HouseholdsService:
             result['info'].append(new_info)
 
         return result, 200
+    
+    def get_all_house(self):
+        apartments = Households.query.all()
+        house_list = []
+        for apartment in apartments:    
+            pop = apartment.num_residents
+            owner = Users.query.filter_by(user_id = apartment.managed_by).first()
+            owner_name = owner.username if owner else 'Unknown'
+            if pop == 0:
+                status = 'empty'
+            else: 
+                status = 'occupied'   
+            apartment_data = {
+                'area': apartment.area,
+                'status': status,
+                'owner': owner_name,
+                'num_residents': pop,
+                'phone_number': apartment.phone_number,
+                'apartment_number': apartment.apartment_number
+            }
+            house_list.append(apartment_data)
+        return house_list, 200
+    
+    def update_info(self, house_id, id, pnumber):
+        apartment = Households.query.filter_by(household_id = house_id).first()
+        if not apartment:
+            return "Apartment not found!!",404
+        resident = Residents.query.filter_by(id_number = id).first()
+        if not resident:
+            return "Resident not found !!",404
+        data = {
+            'managed_by' : resident.user_id,
+            'phone_number' : pnumber
+        }
+        for field, value in data.items():
+            if value is not None:
+                setattr(apartment, field, value)
+        try:
+            db.session.commit()
+            return "Update successfully !!", 200
+        except Exception as e:
+            db.session.rollback()
+            return {'error': f'Unexpected error: {e}'}, 500

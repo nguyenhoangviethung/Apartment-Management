@@ -118,7 +118,7 @@ def login_post():
         payload = {
             'user_id':  user.user_id ,
             'role': user.user_role,
-            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=30)
         },
         key = current_app.config['SECRET_KEY'],
         algorithm='HS256'

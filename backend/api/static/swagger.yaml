@@ -296,7 +296,7 @@ paths:
                 phone_number:
                   type: string        
                   example: "0916243155"
-                num_residents:
+                id_num:
                   type: integer
                   example: 5
       responses:

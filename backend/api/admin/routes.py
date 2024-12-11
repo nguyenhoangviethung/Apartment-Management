@@ -116,26 +116,8 @@ def show_all_residents():
 @admin_required
 @handle_exceptions
 def show_all_house():
-    apartments = Households.query.all()
-    house_list = []
-    for apartment in apartments:    
-        pop = apartment.num_residents
-        owner = Users.query.filter_by(user_id = apartment.managed_by).first()
-        owner_name = owner.username if owner else 'Unknown'
-        if pop == 0:
-            status = 'empty'
-        else: 
-            status = 'occupied'   
-        apartment_data = {
-            'area': apartment.area,
-            'status': status,
-            'owner': owner_name,
-            'num_residents': pop,
-            'phone_number': apartment.phone_number,
-            'apartment_number': apartment.apartment_number
-        }
-        house_list.append(apartment_data)
-    return jsonify({'info': house_list}), 200
+    house_list, code = households_service.get_all_house()
+    return jsonify({'info': house_list}), code
 
 @admin_bp.get('/house<apartment_number>')
 @admin_required
@@ -165,26 +147,30 @@ def show_house_info(apartment_number):
 @admin_required
 @handle_exceptions
 def update_info(house_id):
-    apartment = Households.query.filter_by(household_id = house_id).first()
-    if not apartment:
-        return jsonify({'message': 'Household not found'}), 404
     id = request.form.get('id_num')
-    resident = Residents.query.filter_by(id_number = id).first()
-    if not resident:
-        return jsonify({'message': 'No resident with this id'}), 404
-    data = {
-        'managed_by' : resident.user_id,
-        'num_residents' : request.form.get('num_residents'),    
-    }
-    for field, value in data.items():
-        if value is not None:
-            setattr(apartment, field, value)
-    try:
-        db.session.commit()
-        return jsonify({'message': 'Household updated successfully'}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+    phone_number = request.form.get('phone_number')
+    message, code = households_service.update_info(house_id, id, phone_number)
+    return jsonify(message), code
+    # apartment = Households.query.filter_by(household_id = house_id).first()
+    # if not apartment:
+    #     return jsonify({'message': 'Household not found'}), 404
+    # id = request.form.get('id_num')
+    # resident = Residents.query.filter_by(id_number = id).first()
+    # if not resident:
+    #     return jsonify({'message': 'No resident with this id'}), 404
+    # data = {
+    #     'managed_by' : resident.user_id,
+    #     'num_residents' : request.form.get('num_residents'),    
+    # }
+    # for field, value in data.items():
+    #     if value is not None:
+    #         setattr(apartment, field, value)
+    # try:
+    #     db.session.commit()
+    #     return jsonify({'message': 'Household updated successfully'}), 200
+    # except Exception as e:
+    #     db.session.rollback()
+    #     return jsonify({'message': f'An error occurred: {str(e)}'}), 500
     
 @admin_bp.post('/update-res/<int:res_id>')#có thể bỏ
 @admin_required

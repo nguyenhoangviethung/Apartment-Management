@@ -11,6 +11,7 @@ class Users(db.Model):
     user_email = Column(String(100), unique=True)
     last_login = Column(Date, default = None)
     phone_number = Column(String(15), default = None)
+    url_image = Column(NVARCHAR(2083), default="https://res.cloudinary.com/dxjwzkk8j/image/upload/v1733854843/default.png")
 
 class Households(db.Model):
     __tablename__ = 'Households'
@@ -40,7 +41,7 @@ class Residents(db.Model):
 class Fees(db.Model):
     __tablename__ = 'Fees'
     fee_id = Column(INTEGER,  primary_key=True)
-    description = Column(NVARCHAR(150), nullable=False, unique=True)
+    description = Column(NVARCHAR(150), nullable=False)
     household_id = Column(INTEGER, ForeignKey('Households.household_id'))
     amount = Column(DECIMAL(10, 2), nullable=False)
     create_date = Column(Date, default = None)

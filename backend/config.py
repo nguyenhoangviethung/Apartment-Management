@@ -16,3 +16,7 @@ class Config:
     MAIL_USE_TLS = False
     SWAGGER_URL = os.getenv('SWAGGER_URL')
     API_URL = os.getenv('API_URL')
+    API_SECRET_CLOUDINARY = os.getenv('API_SECRET_CLOUDINARY')
+    API_PUBLIC_CLOUDINARY = os.getenv('API_PUBLIC_CLOUDINARY')
+    CLOUD_NAME_CLOUDINARY = os.getenv('CLOUD_NAME_CLOUDINARY')
+    API_ENV_VAR = os.getenv('API_ENV_VAR')

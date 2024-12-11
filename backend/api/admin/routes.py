@@ -19,6 +19,7 @@ load_dotenv()
 contribution_service = contribution_service.ContributionService()
 households_service = households_service.HouseholdsService()
 resident_service = resident_service.ResidentService()
+fee_service = fee_service.FeeService()
 
 @admin_bp.route('/')
 @admin_required
@@ -39,45 +40,24 @@ def get_resident(household_id):
 def add_resident():
     # Lấy thông tin từ request form
     data = request.form.to_dict()
-    required_fields = ["resident_id", "household_id", "resident_name","status"]
-    for field in required_fields:
-        if field not in data or not data[field]:
-            return jsonify({"error": f"Missing required field: {field}"}), 400
     
-    resident_service = ResidentService(db.session)
-    try:
-        new_resident = resident_service.create_resident(data)
-        return jsonify({"message": "Resident created successfully"}), 201
-    except Exception as e:
-        return jsonify({'error': f'Unexpected error: {e}'}), 500
+    response, status_code = resident_service.add_resident(data)
+    return jsonify(response), status_code
     
 @admin_bp.post('remove-resident/<resident_id>')
 @admin_required
 @handle_exceptions
 def remove_resident(resident_id):
-    try:
-        resident_remove = Resident_Service(db.session)
-        if resident_remove.remove_resident(resident_id):
-            return jsonify({"message": "Resident removed successfully"}), 201
-        else:
-            return jsonify("message: resident_id not found"), 404
-    except Exception as e:
-        return jsonify({'error': f'Unexpected error: {e}'}), 500
+    response, status_code = resident_service.remove_resident(resident_id)
+    return response, status_code
 
 @admin_bp.post('update-resident/<int:resident_id>')
 @admin_required
 @handle_exceptions
 def update_resident(resident_id):
-    try:
-        data = request.form.to_dict()
-        resident_update = Resident_Service(db.session)
-        if resident_update.update_resident(resident_id, data):
-            return jsonify({"message": "Resident updated successfully"}), 201
-        else:
-            return jsonify("message: resident_id not found"), 404
-    except Exception as e:
-        return jsonify({'error': f'Unexpected error: {e}'}), 500
-
+    data = request.form.to_dict()
+    response, status_code = resident_service.update_resident(resident_id, data)
+    return response, status_code
 
 @admin_bp.post('/validate')#có thể bỏ
 @admin_required
@@ -115,9 +95,8 @@ def validate_user():
 @admin_required
 @handle_exceptions
 def show_all_residents():
-    all_resident = Resident_Service(db.session)
     try:
-        resident_list = all_resident.show_all_residents()
+        resident_list = resident_service.show_all_residents()
         return jsonify({'resident_info': resident_list}),200
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
@@ -126,26 +105,8 @@ def show_all_residents():
 @admin_required
 @handle_exceptions
 def show_all_house():
-    apartments = Households.query.all()
-    house_list = []
-    for apartment in apartments:    
-        pop = apartment.num_residents
-        owner = Users.query.filter_by(user_id = apartment.managed_by).first()
-        owner_name = owner.username if owner else 'Unknown'
-        if pop == 0:
-            status = 'empty'
-        else: 
-            status = 'occupied'   
-        apartment_data = {
-            'area': apartment.area,
-            'status': status,
-            'owner': owner_name,
-            'num_residents': pop,
-            'phone_number': apartment.phone_number,
-            'apartment_number': apartment.apartment_number
-        }
-        house_list.append(apartment_data)
-    return jsonify({'info': house_list}), 200
+    house_list, code = households_service.get_all_house()
+    return jsonify({'info': house_list}), code
 
 @admin_bp.get('/house<apartment_number>')
 @admin_required
@@ -175,26 +136,30 @@ def show_house_info(apartment_number):
 @admin_required
 @handle_exceptions
 def update_info(house_id):
-    apartment = Households.query.filter_by(household_id = house_id).first()
-    if not apartment:
-        return jsonify({'message': 'Household not found'}), 404
     id = request.form.get('id_num')
-    resident = Residents.query.filter_by(id_number = id).first()
-    if not resident:
-        return jsonify({'message': 'No resident with this id'}), 404
-    data = {
-        'managed_by' : resident.user_id,
-        'num_residents' : request.form.get('num_residents'),    
-    }
-    for field, value in data.items():
-        if value is not None:
-            setattr(apartment, field, value)
-    try:
-        db.session.commit()
-        return jsonify({'message': 'Household updated successfully'}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+    phone_number = request.form.get('phone_number')
+    message, code = households_service.update_info(house_id, id, phone_number)
+    return jsonify(message), code
+    # apartment = Households.query.filter_by(household_id = house_id).first()
+    # if not apartment:
+    #     return jsonify({'message': 'Household not found'}), 404
+    # id = request.form.get('id_num')
+    # resident = Residents.query.filter_by(id_number = id).first()
+    # if not resident:
+    #     return jsonify({'message': 'No resident with this id'}), 404
+    # data = {
+    #     'managed_by' : resident.user_id,
+    #     'num_residents' : request.form.get('num_residents'),    
+    # }
+    # for field, value in data.items():
+    #     if value is not None:
+    #         setattr(apartment, field, value)
+    # try:
+    #     db.session.commit()
+    #     return jsonify({'message': 'Household updated successfully'}), 200
+    # except Exception as e:
+    #     db.session.rollback()
+    #     return jsonify({'message': f'An error occurred: {str(e)}'}), 500
     
 @admin_bp.post('/update-res/<int:res_id>')#có thể bỏ
 @admin_required

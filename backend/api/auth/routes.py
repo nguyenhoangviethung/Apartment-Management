@@ -117,7 +117,7 @@ def login_post():
         payload = {
             'user_id':  user.user_id ,
             'role': user.user_role,
-            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=30)
         },
         key = current_app.config['SECRET_KEY'],
         algorithm='HS256'
@@ -207,7 +207,7 @@ def logout():
 
     return jsonify({"message": "logout"}), 200
 
-@auth_bp.get('check_autolog')
+@auth_bp.get('check-autolog')
 @token_required
 def check_autolog(data):
-    return jsonify({"message": "token is valid"}), 200
+    pass

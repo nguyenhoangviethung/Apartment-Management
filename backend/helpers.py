@@ -46,6 +46,7 @@ def validate_date(date_string):
         return datetime.strptime(date_string, '%Y-%m-%d').date()
     except ValueError:
         raise ValueError("Invalid date format. Use YYYY-MM-DD")
+        
     
 def update_num_residents(mapper, connection, target):
     

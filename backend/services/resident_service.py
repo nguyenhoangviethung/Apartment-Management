@@ -41,35 +41,28 @@ class ResidentService:
         return ('message: add resident successfully'), 201
 
     def get_resident(self, resident_id):
-        return db.query(Residents).filter(Residents.resident_id == resident_id).first()
+        return db.session.query(Residents).filter(Residents.resident_id == resident_id).first()
 
+    @handle_exceptions
     def remove_resident(self, resident_id):
-        try:
-            resident = self.get_resident(resident_id)
-            if resident:
-                db.delete(resident)
-                db.commit()
-                return True
-            return False
-        except SQLAlchemyError as e:
-            db.rollback()
-            raise Exception(f'Error removing resident {id} {e}')
-        
+        resident = self.get_resident(resident_id)
+        if resident:
+            db.session.delete(resident)
+            db.session.commit()
+            return ("message: Resident removed successfully"), 201
+        return ("message: Resident is not existed"), 404
+    @handle_exceptions
     def update_resident(self, resident_id, resident_data):
-        try:
-            resident = self.get_resident(resident_id)
-            if resident:
-                for key, value in resident_data.items():
-                    if hasattr(resident, key):  # Kiểm tra xem resident có thuộc tính đó không
-                        setattr(resident, key, value)
-                db.commit()
-                db.refresh(resident)
-                return True
-            else:
-                raise Exception('Resident not found')
-        except SQLAlchemyError as e:
-            db.rollback()  
-            raise Exception(f'{e}')
+        resident = self.get_resident(resident_id)
+        if resident:
+            for key, value in resident_data.items():
+                if hasattr(resident, key):  # Kiểm tra xem resident có thuộc tính đó không
+                    setattr(resident, key, value)
+            db.session.commit()
+            db.session.refresh(resident)
+            return ("message: Resident updated successfully"), 201
+        else:
+            return ("message: resident_id not found"), 404
             
     def show_all_residents(self):
         residents = Residents.query.all()

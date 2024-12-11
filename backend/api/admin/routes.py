@@ -48,27 +48,16 @@ def add_resident():
 @admin_required
 @handle_exceptions
 def remove_resident(resident_id):
-    try:
-        if resident_service.remove_resident(resident_id):
-            return jsonify({"message": "Resident removed successfully"}), 201
-        else:
-            return jsonify("message: resident_id not found"), 404
-    except Exception as e:
-        return jsonify({'error': f'Unexpected error: {e}'}), 500
+    response, status_code = resident_service.remove_resident(resident_id)
+    return response, status_code
 
 @admin_bp.post('update-resident/<int:resident_id>')
 @admin_required
 @handle_exceptions
 def update_resident(resident_id):
-    try:
-        data = request.form.to_dict()
-        if resident_service.update_resident(resident_id, data):
-            return jsonify({"message": "Resident updated successfully"}), 201
-        else:
-            return jsonify("message: resident_id not found"), 404
-    except Exception as e:
-        return jsonify({'error': f'Unexpected error: {e}'}), 500
-
+    data = request.form.to_dict()
+    response, status_code = resident_service.update_resident(resident_id, data)
+    return response, status_code
 
 @admin_bp.post('/validate')#có thể bỏ
 @admin_required

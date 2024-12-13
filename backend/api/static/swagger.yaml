@@ -912,44 +912,51 @@ paths:
 
   /admin/contributions:
     get:
-      summary: Get Current Contributions
-      description: Retrieve current contribution fees and details
-      tags:
+      summary: Retrieve Contributions
+      description: Fetches contributions due on or before the current date
+      operationId: getContributions
+      tags: 
         - Admin
       responses:
         '200':
-          description: Successfully retrieved contribution fees
+          description: Successful retrieval of contributions
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  infor:
-                    type: object
-                    properties:
-                      description:
-                        type: array
-                        items:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        description:
                           type: string
-                        description: List of contribution fee descriptions
-                      detail:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            contribution_fee:
-                              type: string
-                              description: Amount of the contribution fee
-                            room:
-                              type: string
-                              description: Household ID associated with the fee
-      security:
-        - bearerAuth: []                
+                          description: Type of contribution
+                          example: Tiền khuyết tật
+                        amount:
+                          type: number
+                          description: Amount of contribution
+                          example: 100000.00
+                      required:
+                        - description
+                        - amount
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string           
 
   /news/get-data:
     get:
       summary: "Crawl news data"
       description: "Crawl news data from Baomoi website and return it in JSON format."
+      tags:
+        - News
       responses:
         '200':
           description: "Successfully retrieved news data"

@@ -22,7 +22,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                 title: const Center(
                   child: Text(
                     'Information',
-                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500, color: Colors.blue),
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
@@ -129,20 +129,22 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0), // Tăng khoảng cách giữa các hàng
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
+            flex: 2, // Tăng kích thước cho nhãn
             child: Text(
               label,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.black54),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
             ),
           ),
           Expanded(
+            flex: 3, // Tăng kích thước cho giá trị
             child: Text(
               value,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Colors.black54),
             ),
           ),
         ],

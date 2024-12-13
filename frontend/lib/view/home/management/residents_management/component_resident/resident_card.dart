@@ -25,7 +25,7 @@ class _ResidentCardState extends State<ResidentCard> {
                 title: const Center(
                   child: Text(
                     'Information',
-                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500, color: Colors.blue),
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
@@ -35,7 +35,7 @@ class _ResidentCardState extends State<ResidentCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildInfoRow('Name:', widget.item.full_name ?? 'No name provided'),
-                      _buildInfoRow('Resident ID:', widget.item.res_id!=null? widget.item.res_id.toString():'No resident id'),
+                      _buildInfoRow('Resident ID:', widget.item.res_id != null ? widget.item.res_id.toString() : 'No resident id'),
                       _buildInfoRow('Date of Birth:', widget.item.date_of_birth ?? 'No date provided'),
                       _buildInfoRow('ID Number:', widget.item.id_number ?? 'No ID provided'),
                       _buildInfoRow('Age:', widget.item.age != null ? widget.item.age.toString() : 'No age provided'),
@@ -47,8 +47,12 @@ class _ResidentCardState extends State<ResidentCard> {
                 ),
                 actions: [
                   TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue, // Nền nút
+                      foregroundColor: Colors.white, // Màu chữ
+                    ),
                     child: const Center(
-                      child: Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+                      child: Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -170,20 +174,22 @@ class _ResidentCardState extends State<ResidentCard> {
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0), // Tăng khoảng cách giữa các hàng
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
+            flex: 2, // Tăng kích thước cho nhãn
             child: Text(
               label,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.black54),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
             ),
           ),
           Expanded(
+            flex: 3, // Tăng kích thước cho giá trị
             child: Text(
               value,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Colors.black54),
             ),
           ),
         ],

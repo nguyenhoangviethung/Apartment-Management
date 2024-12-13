@@ -216,6 +216,7 @@ class _AccountScreenState extends State<AccountScreen> {
       );
 
       if (response.statusCode == 200) {
+        await prefs.remove('tokenlogin');
         if (mounted) {
           ScaffoldMessenger.of(context).showMaterialBanner(
             MaterialBanner(

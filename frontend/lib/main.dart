@@ -6,9 +6,13 @@ import 'package:http/http.dart'as http;
 
 Future<bool> checkAutoLog() async{
      const String url='https://apartment-management-kjj9.onrender.com/auth/check_autolog';
+     SharedPreferences prefs= await SharedPreferences.getInstance();
+     String? tokenlogin=prefs.getString('tokenlogin');
+     if (tokenlogin == null || tokenlogin.isEmpty) {
+          // Token không tồn tại hoặc rỗng
+          return false;
+     }
      try{
-          SharedPreferences prefs= await SharedPreferences.getInstance();
-          String? tokenlogin=prefs.getString('tokenlogin');
           final response=await http.get(
                Uri.parse(url),
                headers: {

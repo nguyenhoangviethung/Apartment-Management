@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 import random
 from services import user_service
 
+user_service = user_service.UserService()
 
 load_dotenv()
 

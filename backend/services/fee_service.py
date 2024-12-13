@@ -12,7 +12,9 @@ class FeeService:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-
+    @handle_exceptions
+    def get_fee(self, household_id):
+        return db.session.query(Fees).filter(Fees.household_id == household_id).first()
     @handle_exceptions
     def add_fee(self, data, creator):
         required_fields = ['start_date', 'due_date', 'service_rate', 'manage_rate', 'description']
@@ -267,3 +269,22 @@ class FeeService:
             'name_fee' : fee_info.description
         }
         return (result), 200
+    @handle_exceptions
+    @handle_exceptions
+    def update_status(self, data, fee_id=None, house_id=None):
+        fee = self.get_fee(house_id)
+
+        if fee is None:
+            return 'Fee not found'
+        valid_statuses = ['Đã thanh toán', 'Chưa thanh toán']
+       
+        for key, value in data.items():
+            if key not in fee.__table__.columns:
+                continue  
+            if key == 'status' and value not in valid_statuses:
+                return f'Invalid status value: {value}'
+            setattr(fee, key, value)
+        db.session.commit()
+        db.session.refresh(fee)
+        return 'success'
+

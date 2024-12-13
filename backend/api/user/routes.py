@@ -8,20 +8,31 @@ from models.models import *
 from services import fee_service, cloudinary_service
 import cloudinary
 from services import fee_service
-
+import uuid
 fee_service = fee_service.FeeService()
 
+@user_bp.route('/')
+def index():
+    try:
+        # Dữ liệu để cập nhật
+        data = {'amount': 650000, 'status': 'Chưa thanh toán'}
+        result = fee_service.update_status(data, house_id=101)
+        
+        return result
+    except Exception as e:
+        return f'Lỗi: {str(e)}'
 @user_bp.route('/<int:household_id>/<int:amount>/pay')
 def pay(household_id, amount):
     vnp_Amount = amount*100
     vnp_IpAddr = getIP()
-    vnp_OrderInfo = f'Transaction for {household_id}'
+    vnp_OrderInfo = f'Transaction {amount} for {household_id}'
     CreateDate = datetime.now()
     ExpireDate = CreateDate + timedelta(minutes = 10)
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
     vnp_ExpireDate = ExpireDate.strftime('%Y%m%d%H%M%S')
-
-    return redirect(url_for('pay.payment', vnp_Amount=vnp_Amount, vnp_IpAddr=vnp_IpAddr, vnp_OrderInfo=vnp_OrderInfo, vnp_CreateDate=vnp_CreateDate, vnp_ExpireDate=vnp_ExpireDate))
+    vnp_TxnRef = str(uuid.uuid4())
+    fee_id = vnp_TxnRef
+    return redirect(url_for('pay.payment', vnp_Amount=vnp_Amount, vnp_IpAddr=vnp_IpAddr, vnp_OrderInfo=vnp_OrderInfo, vnp_CreateDate=vnp_CreateDate, vnp_ExpireDate=vnp_ExpireDate, vnp_TxnRef=vnp_TxnRef))
     
 @user_bp.get('/info')
 @token_required

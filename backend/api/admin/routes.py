@@ -40,7 +40,6 @@ def get_resident(household_id):
 def add_resident():
     # Lấy thông tin từ request form
     data = request.form.to_dict()
-    
     response, status_code = resident_service.add_resident(data)
     return jsonify(response), status_code
     

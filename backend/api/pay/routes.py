@@ -120,7 +120,6 @@ def payment_return():
             else:
                 return jsonify({'message':'thanh toan that bai'}), 406
         else:
-                # Invalid Signature
             return jsonify({'Message': 'sai checksum'}), 400
     else:
             return jsonify({'RspCode': '99', 'Message': 'Invalid request'}), 400

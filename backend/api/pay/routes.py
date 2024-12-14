@@ -109,14 +109,14 @@ def payment_return():
         if payment.validate_response(os.getenv('VNP_HASHSECRET')):
             if vnp_ResponseCode == '00':
                 desc = order_desc.split()
-                fee = fee_service.get_fee(household_id = desc[3])
+                fee = fee_service.get_fee_by_fee_id(fee_id = desc[1])
                 remain_amount = float(fee.amount) - amount
                 data = {'amount': remain_amount}
                 if remain_amount == 0 or remain_amount < 0:
                     data['status'] = 'Đã thanh toán'
-                fee_service.update_status(data, house_id=desc[3])    
+                fee_service.update_status(data, fee_id = desc[1])    
                     
-                return jsonify({'message':f'thanh toan thanh cong {amount} cho {desc[3]}'}), 302
+                return jsonify({'message':f'thanh toan thanh cong {amount} chi phí {desc[6]} cho {desc[4]}'}), 302
             else:
                 return jsonify({'message':'thanh toan that bai'}), 406
         else:

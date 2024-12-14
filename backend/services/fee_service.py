@@ -13,8 +13,11 @@ class FeeService:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
     @handle_exceptions
-    def get_fee(self, household_id):
+    def get_fee_by_household_id(self, household_id):
         return db.session.query(Fees).filter(Fees.household_id == household_id).first()
+    @handle_exceptions
+    def get_fee_by_fee_id(self, fee_id):
+        return db.session.query(Fees).filter(Fees.fee_id == fee_id).first()
     @handle_exceptions
     def add_fee(self, data, creator):
         required_fields = ['start_date', 'due_date', 'service_rate', 'manage_rate', 'description']
@@ -271,8 +274,8 @@ class FeeService:
         return (result), 200
     @handle_exceptions
     @handle_exceptions
-    def update_status(self, data, fee_id=None, house_id=None):
-        fee = self.get_fee(house_id)
+    def update_status(self, data, fee_id):
+        fee = self.get_fee_by_fee_id(fee_id)
 
         if fee is None:
             return 'Fee not found'
@@ -286,5 +289,5 @@ class FeeService:
             setattr(fee, key, value)
         db.session.commit()
         db.session.refresh(fee)
-        return 'success'
-
+        return ('message: transaction successfully'), 302
+    

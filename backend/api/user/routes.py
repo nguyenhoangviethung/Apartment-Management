@@ -15,17 +15,17 @@ fee_service = fee_service.FeeService()
 def index():
     try:
         # Dữ liệu để cập nhật
-        data = {'amount': 650000, 'status': 'Chưa thanh toán'}
-        result = fee_service.update_status(data, house_id=101)
+        data = {'amount': 660000, 'status': 'Chưa thanh toán'}
+        result = fee_service.update_status(data, fee_id = 111)
         
         return result
     except Exception as e:
         return f'Lỗi: {str(e)}'
-@user_bp.route('/<int:household_id>/<int:amount>/pay')
-def pay(household_id, amount):
+@user_bp.route('/<int:fee_id>/<int:household_id>/<int:amount>/pay/<string:description>')
+def pay(fee_id,household_id, amount, description):
     vnp_Amount = amount*100
     vnp_IpAddr = getIP()
-    vnp_OrderInfo = f'Transaction {amount} for {household_id}'
+    vnp_OrderInfo = f'Transaction {fee_id} {amount} for {household_id} of {description}'
     CreateDate = datetime.now()
     ExpireDate = CreateDate + timedelta(minutes = 10)
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')

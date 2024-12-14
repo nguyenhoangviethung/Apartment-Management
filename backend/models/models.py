@@ -92,7 +92,7 @@ class Vehicles(db.Model):
     license_plate = Column(String(10), default=None)
     vehicle_type = Column(Enum("car", "motor", "bicycle"), default="bicycle")
 
-class Transaction(db.Model):
+class Transactions(db.Model):
     __tablename__ = 'Transactions'
     transaction_id = Column(db.String(36), nullable=False, primary_key=True)
     fee_id = Column(db.Integer, ForeignKey('Fees.fee_id'))

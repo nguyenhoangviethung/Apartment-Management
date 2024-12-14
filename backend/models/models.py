@@ -66,6 +66,28 @@ class Contributions(db.Model):
     updated_by = Column(INTEGER, ForeignKey('Users.user_id'))
 
 class TokenBlacklist(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    token = db.Column(db.String(512), unique=True, nullable=False)
-    revoked = db.Column(db.Boolean, default=True)
+    id = Column(db.Integer, primary_key=True)
+    token = Column(db.String(512), unique=True, nullable=False)
+    revoked = Column(db.Boolean, default=True)
+
+class UtilityFees(db.Model):
+    __tablename__ = 'Utility'
+    utility_id = Column(INTEGER, primary_key=True)
+    description = Column(String(40), default=None, nullable=False)
+    amount = Column(DECIMAL(10, 2), default=None, nullable=False)
+    fee_types = Column(Enum("water", "electric", "park", "internet"), nullable=False)
+    status = Column(Enum('Đã thanh toán', 'Chưa thanh toán'), default='Chưa thanh toán')
+    due_date = Column(Date, default = None)
+    create_date = Column(Date, default = None)
+    created_by = Column(INTEGER, ForeignKey('Users.user_id'))
+    updated_by = Column(INTEGER, ForeignKey('Users.user_id'))
+    payer = Column(INTEGER, ForeignKey('Users.user_id'))
+    household_id = Column(INTEGER, ForeignKey('Households.household_id'))
+    vehicles_id = Column(INTEGER, ForeignKey('Vehicles.vehicles_id'))
+
+class Vehicles(db.Model):
+    __tablename__ = 'Vehicles'
+    vehicles_id = Column(INTEGER, primary_key=True)
+    household_id = Column(INTEGER, ForeignKey('Households.household_id'))
+    license_plate = Column(String(10), default=None)
+    vehicle_type = Column(Enum("car", "motor", "bicycle"), default="bicycle")

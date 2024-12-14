@@ -3,7 +3,7 @@ from api.extensions import db
 import logging
 from api.middlewares import handle_exceptions
 from decimal import Decimal, InvalidOperation
-from helpers import validate_date
+from helpers import validate_date, decimal_to_float
 from datetime import datetime
 
 class ContributionService:
@@ -22,8 +22,8 @@ class ContributionService:
             amount = Decimal(data['amount'])
         except (ValueError, InvalidOperation) as e:
             return {'error': str(e)}, 400
-        
-        existing_fee = Contributions.query.filter_by(contribution_type=data['description']).first()
+        # remind check the white space
+        existing_fee = Contributions.query.filter_by(contribution_type=data['description'].strip()).first()
 
         if existing_fee:
             return {'error': 'A contribution fee with this description already exists'}, 400
@@ -61,7 +61,7 @@ class ContributionService:
         if not description:
             return {'error': 'Description not provided'}, 400
         
-        contribution_fees = Contributions.query.filter(Contributions.contribution_type == description).all()
+        contribution_fees = Contributions.query.filter(Contributions.contribution_type == description.strip()).all()
         
         if not contribution_fees:
             return {'error': 'No contribution fees found with the given description'}, 404
@@ -108,46 +108,22 @@ class ContributionService:
         self.logger.info(f"Updated {updated_count} fees successfully.")
         return {'message': 'Update successful', 'updated_count': updated_count}, 200
 
+    @handle_exceptions
     def get_contributions(self):
         query_date = datetime.now().date()
 
-        fee = (
-            db.session.query(Contributions.contribution_type)
-            .filter(query_date <= Contributions.due_date)
-            .first()
-        )
+        result = []
 
-        fee_ids = (
-            db.session.query(Contributions.contribution_id)
-            .filter(query_date <= Contributions.due_date)
-            .all()
-        )
-
-        res = {"infor": {"description": [], "detail": []}}
-
-        if fee:
-            res["infor"]["description"].append(fee[0])
-
-        for fee_id in fee_ids:
-            f_id = fee_id[0]
-            contribution = (
-                    db.session.query(
-                        Contributions.contribution_amount,
-                        Contributions.household_id,
-                    )
-                    .filter(Contributions.contribution_id == f_id)
-                    .first()
+        contributions = (
+                db.session.query(
+                    Contributions.contribution_type,
+                    Contributions.contribution_amount,
                 )
-            if not contribution or not contribution[0]:
-                continue
-        
-        amount, household_id = contribution
-        
-        info = {
-            "contribution fee": f"{amount}",
-            "room": f"{household_id}",
-        }
-        res["infor"]["detail"].append(info)
+                .filter(query_date <= Contributions.due_date)
+                .distinct()
+                .all()
+            )
 
-        self.logger.info(f"Retrieved contributions with {len(res['infor']['detail'])} details.")
-        return res, 200
+        result = [{"description": contribution.contribution_type, "amount": contribution.contribution_amount} for contribution in contributions]
+        response = {"result": result}
+        return response, 200

@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from helpers import validate_date, decimal_to_float, get_payload
 from datetime import datetime, timedelta
 from api.extensions import db
-from services import fee_service, contribution_service, households_service, resident_service
+from services import fee_service, contribution_service, households_service, resident_service, utils_service
 from api.middlewares import admin_required, handle_exceptions
 from decimal import Decimal, InvalidOperation
 import logging
@@ -20,6 +20,7 @@ contribution_service = contribution_service.ContributionService()
 households_service = households_service.HouseholdsService()
 resident_service = resident_service.ResidentService()
 fee_service = fee_service.FeeService()
+utils_service = utils_service.UtilsService()
 
 @admin_bp.route('/')
 @admin_required
@@ -275,3 +276,24 @@ def delete_contribution_fee():
 def get_contributions():
     res, status_code = contribution_service.get_contributions()
     return jsonify(res), status_code
+
+@admin_bp.route("/park-fee/<household_id>", methods = ['POST'])
+@admin_required
+@handle_exceptions
+def get_park_fee(household_id):
+    # check white space
+    response, status_code = utils_service.get_park_fee_by_householdID(household_id)
+
+    return jsonify(response), status_code
+
+@admin_bp.route("/park-fee-room", methods = ['POST'])
+@admin_required
+@handle_exceptions
+def get_park_fee_v2():
+    # check white space
+    household_id = request.form["household_id"].strip()
+
+    response, status_code = utils_service.get_park_fee_by_householdID(household_id)
+
+    return jsonify(response), status_code
+    

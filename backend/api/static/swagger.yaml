@@ -951,6 +951,117 @@ paths:
                   error:
                     type: string           
 
+  /admin/add_vehicle:
+    post:
+      summary: Add vehicle
+      description: Add vehicles based on households
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - vehicles_id 
+                - household_id 
+                - license_plate 
+                - vehicle_type 
+              properties:
+                vehicles_id:
+                  type: integer
+                  example: 1
+                household_id:
+                  type: integer
+                  example: 101
+                license_plate:
+                  type: string
+                  example: "84-G172879"
+                vehicle_type:
+                  type: string
+                  example: "car"  
+    responses:
+      400: 
+        description: existing vehicle or license plate error
+      201:
+        description: add vehicle successfully
+      500:           
+        description: Internal server error    
+
+  /admin/all_vehicles:
+    get:
+      summary: List all vehicles
+      description: Retrieve a list of all vehicles in the system.
+      tags:
+        - Admin
+      responses:
+        200:
+          description: A JSON array of vehicle objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vehicles_id:
+                      type: integer
+                      description: Unique identifier for the vehicle.
+                      example: "2"
+                    household_id:
+                      type: integer
+                      description: The household ID associated with the vehicle.
+                      example: "101"
+                    license_plate:
+                      type: string
+                      description: The license plate number of the vehicle.
+                      example: "ABC-1234"
+                    vehicle_type:
+                      type: string
+                      description: Type of vehicle (e.g., car, motor, bicycle).
+                      example: "car"
+        500:
+          description: Internal server error                
+
+  /admin/remove_vehicle/{vehicle_id}:
+    post:
+        summary: Remove a vehicle
+        description: Delete a vehicle by its unique identifier.
+        tags:
+          - Admin
+        parameters:
+          - in: path
+            name: vehicle_id
+            required: true
+            schema:
+              type: int
+            description: The unique identifier of the vehicle to be removed.
+            example: 4
+        responses:
+          201:
+            description: Vehicle removed successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Vehicle removed successfully"
+          404:
+            description: Vehicle not found.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Vehicle does not exist"
+          500:
+            description: Internal server error.        
+
   /news/get-data:
     get:
       summary: "Crawl news data"

@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Column, Enum, INTEGER, JSON, String, Date, DECIMAL, FLOAT, NVARCHAR
+from sqlalchemy import ForeignKey, Column, Enum, INTEGER, JSON, String, Date, DECIMAL, FLOAT, NVARCHAR, DateTime
 
 from api.extensions import db
 
@@ -91,3 +91,14 @@ class Vehicles(db.Model):
     household_id = Column(INTEGER, ForeignKey('Households.household_id'))
     license_plate = Column(String(10), default=None)
     vehicle_type = Column(Enum("car", "motor", "bicycle"), default="bicycle")
+
+class Transaction(db.Model):
+    __tablename__ = 'Transactions'
+    transaction_id = Column(db.String(36), nullable=False, primary_key=True)
+    fee_id = Column(db.Integer, ForeignKey('Fees.fee_id'))
+    amount = Column(DECIMAL(10,2), nullable=False)
+    user_pay = Column(INTEGER, ForeignKey('Users.user_id'))
+    user_name = Column(db.String(40), nullable=False)
+    transaction_time = Column(DateTime, nullable=False)
+    bank_code = Column(db.String(3), nullable=False)
+    type = Column(db.String(10), nullable=False)

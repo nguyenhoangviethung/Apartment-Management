@@ -21,11 +21,11 @@ def index():
         return result
     except Exception as e:
         return f'Lỗi: {str(e)}'
-@user_bp.route('/<int:fee_id>/<int:household_id>/<int:amount>/pay/<string:description>')
-def pay(fee_id,household_id, amount, description):
+@user_bp.route('/<int:user_id>/<int:fee_id>/<int:household_id>/<int:amount>/<string:description>/pay')
+def pay(user_id,fee_id,household_id, amount, description):
     vnp_Amount = amount*100
     vnp_IpAddr = getIP()
-    vnp_OrderInfo = f'Transaction {fee_id} {amount} for {household_id} of {description}'
+    vnp_OrderInfo = f'Transaction {fee_id} {amount} for {household_id} of {description} by {user_id}'
     CreateDate = datetime.now()
     ExpireDate = CreateDate + timedelta(minutes = 10)
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')

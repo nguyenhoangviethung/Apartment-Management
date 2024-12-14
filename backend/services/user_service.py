@@ -1,5 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.models import Users
+from api.extensions import db
 import logging
 
 class UserService:
@@ -14,3 +15,7 @@ class UserService:
 
     def check_password(self, user: Users, password):
         return check_password_hash(user.password_hash, password)
+    
+    def get_username(self, user_id):
+        user = db.session.query(Users).filter(Users.user_id == user_id).first()
+        return user.username

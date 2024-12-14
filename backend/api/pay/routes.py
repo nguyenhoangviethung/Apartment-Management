@@ -5,10 +5,12 @@ from random import randint
 from vnpay import VNPAY
 from api.pay import pay_bp
 from datetime import datetime, timedelta
-from services import fee_service
+from services import fee_service, user_service,transaction_service
 load_dotenv()
 
 fee_service = fee_service.FeeService()
+user_service = user_service.UserService()
+transaction_service = transaction_service.TransactionService()
 @pay_bp.route('/payment')
 def payment():
     vnp_Amount = request.args.get('vnp_Amount', type = int)
@@ -115,7 +117,17 @@ def payment_return():
                 if remain_amount == 0 or remain_amount < 0:
                     data['status'] = 'Đã thanh toán'
                 fee_service.update_status(data, fee_id = desc[1])    
-                    
+                data = {
+                    "transaction_id": order_id,
+                    "fee_id": desc[1],
+                    "amount": amount, 
+                    "user_pay": desc[-1],
+                    "user_name": user_service.get_username(desc[-1]),
+                    "transaction_time": vnp_PayDate,
+                    "bank_code": vnp_BankCode,
+                    "type": vnp_CardType
+                }
+                transaction_service.add_transaction(data)
                 return jsonify({'message':f'thanh toan thanh cong {amount} chi phí {desc[6]} cho {desc[4]}'}), 302
             else:
                 return jsonify({'message':'thanh toan that bai'}), 406

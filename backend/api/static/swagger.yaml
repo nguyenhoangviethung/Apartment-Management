@@ -951,6 +951,11 @@ paths:
                   error:
                     type: string           
 
+  /admin/park-fee-room:
+    post:
+      summary: Retrieve park fee
+      description: 
+
   /news/get-data:
     get:
       summary: "Crawl news data"

@@ -296,4 +296,44 @@ def get_park_fee_v2():
     response, status_code = utils_service.get_park_fee_by_householdID(household_id)
 
     return jsonify(response), status_code
+
+@admin_bp.route('/add-park-fee', methods = ['POST'])
+@admin_required
+@handle_exceptions
+def add_park_fee():
+    data = request.form.to_dict()
+    payload = get_payload()
+    creator = payload.get('user_id')
+    response, status_code = utils_service.add_park_fee(data, creator)
+
+    return jsonify(response), status_code
+
+@admin_bp.route('/delete-park-fee', methods = ['POST'])
+@admin_required
+@handle_exceptions
+def delete_park_fee():
+    data = request.form.to_dict()
+
+    response, status_code = utils_service.delete_park_fee(data)
+
+    return jsonify(response), status_code
+
+@admin_bp.route('/get-unpaid-park-fee')
+@admin_required
+@handle_exceptions
+def get_unpaid_park_fee():
+    response, status_code = utils_service.get_unpay_park_fee()
+
+    return jsonify(response), status_code
+
+@admin_bp.route('/get-unpaid-park-fee', methods = ['POST'])
+@admin_required
+@handle_exceptions
+def get_unpaid_park_fee_by_specific_data():
+    data = request.form.to_dict()
+    query_date = data["query_date"]
+    
+    response, status_code = utils_service.unpaid_specific_date(query_date)
+
+    return jsonify(response), status_code
     

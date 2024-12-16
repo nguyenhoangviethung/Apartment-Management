@@ -21,7 +21,7 @@ def index():
         return result
     except Exception as e:
         return f'Lỗi: {str(e)}'
-@user_bp.route('/<int:user_id>/<int:fee_id>/<int:household_id>/<int:amount>/pay')
+@user_bp.get('/<int:user_id>/<int:fee_id>/<int:household_id>/<int:amount>/pay')
 def pay(user_id,fee_id,household_id, amount):
     vnp_Amount = amount*100
     vnp_IpAddr = getIP()

@@ -102,3 +102,4 @@ class Transactions(db.Model):
     transaction_time = Column(DateTime, nullable=False)
     bank_code = Column(db.String(10))
     type = Column(db.String(10), nullable=False)
+    description = Column(NVARCHAR(150), nullable=False)

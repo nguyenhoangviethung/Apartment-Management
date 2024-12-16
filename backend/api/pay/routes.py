@@ -43,53 +43,6 @@ def payment():
 
     return jsonify(vnpay_payment_url), 200
 
-@pay_bp.route('/ipn')
-def ipn():
-    inputData = request.args
-    if inputData:
-        payment = VNPAY()
-        payment.responseData = inputData.to_dict()
-
-        order_id = inputData['vnp_TxnRef']
-        amount = inputData['vnp_Amount']
-        order_desc = inputData['vnp_OrderInfo']
-        vnp_TransactionNo = inputData['vnp_TransactionNo']
-        vnp_ResponseCode = inputData['vnp_ResponseCode']
-        vnp_TmnCode = inputData['vnp_TmnCode']
-        vnp_PayDate = inputData['vnp_PayDate']
-        vnp_BankCode = inputData['vnp_BankCode']
-        vnp_CardType = inputData['vnp_CardType']
-
-        if payment.validate_response(os.getenv('VNP_HASHSECRET')):
-            # Check & Update Order Status in your Database
-            # Your code here
-            firstTimeUpdate = True
-            totalamount = True
-            if totalamount:
-                if firstTimeUpdate:
-                    if vnp_ResponseCode == '00':
-                        print('Payment Success. Your code implement here')
-                        # transations = order_desc.split()
-
-                    else:
-                        print('Payment Error. Your code implement here')
-
-                    # Return VNPAY: Merchant update success
-                    result = jsonify({'RspCode': '00', 'Message': 'Confirm Success'})
-                else:
-                        # Already Update
-                    result = jsonify({'RspCode': '02', 'Message': 'Order Already Update'})
-            else:
-                    # invalid amount
-                result = jsonify({'RspCode': '04', 'Message': 'invalid amount'})
-        else:
-                # Invalid Signature
-            result = jsonify({'RspCode': '97', 'Message': 'Invalid Signature'})
-    else:
-            result = jsonify({'RspCode': '99', 'Message': 'Invalid request'})
-
-    return result
-
 @pay_bp.route('/payment-return')
 def payment_return():
     inputData = request.args
@@ -121,11 +74,12 @@ def payment_return():
                     "transaction_id": order_id,
                     "fee_id": desc[1],
                     "amount": amount, 
-                    "user_pay": desc[-1],
-                    "user_name": user_service.get_username(desc[-1]),
+                    "user_pay": desc[-2],
+                    "user_name": user_service.get_username(desc[-2]),
                     "transaction_time": vnp_PayDate,
                     "bank_code": vnp_BankCode,
-                    "type": vnp_CardType
+                    "type": vnp_CardType,
+                    "description": desc[-1]
                 }
                 transaction_service.add_transaction(data)
                 return jsonify({'message':f'thanh toan thanh cong {amount} chi phí cho {desc[4]}'}), 302

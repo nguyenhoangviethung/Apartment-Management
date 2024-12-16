@@ -14,7 +14,7 @@ class FeeService:
         self.logger = logging.getLogger(__name__)
     @handle_exceptions
     def get_fee_by_household_id(self, household_id):
-        return db.session.query(Fees).filter(Fees.household_id == household_id).first()
+        return db.session.query(Fees).filter(Fees.household_id == household_id).all()
     @handle_exceptions
     def get_fee_by_fee_id(self, fee_id):
         return db.session.query(Fees).filter(Fees.fee_id == fee_id).first()
@@ -290,4 +290,5 @@ class FeeService:
         db.session.commit()
         db.session.refresh(fee)
         return ('message: transaction successfully'), 302
+    
     

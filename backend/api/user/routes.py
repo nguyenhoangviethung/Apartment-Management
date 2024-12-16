@@ -21,18 +21,30 @@ def index():
         return result
     except Exception as e:
         return f'Lỗi: {str(e)}'
-@user_bp.route('/<int:user_id>/<int:fee_id>/<int:household_id>/<int:amount>/<string:description>/pay')
-def pay(user_id,fee_id,household_id, amount, description):
+@user_bp.get('/<int:user_id>/<int:fee_id>/<int:household_id>/<int:amount>/pay')
+def pay(user_id,fee_id,household_id, amount):
     vnp_Amount = amount*100
     vnp_IpAddr = getIP()
-    vnp_OrderInfo = f'Transaction {fee_id} {amount} for {household_id} of {description} by {user_id}'
+    vnp_OrderInfo = f'Transaction {fee_id} {amount} for {household_id} by {user_id}'
     CreateDate = datetime.now()
     ExpireDate = CreateDate + timedelta(minutes = 10)
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
     vnp_ExpireDate = ExpireDate.strftime('%Y%m%d%H%M%S')
     vnp_TxnRef = str(uuid.uuid4())
-    fee_id = vnp_TxnRef
     return redirect(url_for('pay.payment', vnp_Amount=vnp_Amount, vnp_IpAddr=vnp_IpAddr, vnp_OrderInfo=vnp_OrderInfo, vnp_CreateDate=vnp_CreateDate, vnp_ExpireDate=vnp_ExpireDate, vnp_TxnRef=vnp_TxnRef))
+
+@token_required
+@handle_exceptions
+@user_bp.get('/check-status/<int:household_id>')
+def check_status(household_id):
+    fees = fee_service.get_fee_by_household_id(household_id)
+    data = []
+    for fee in fees:
+        info = {
+            'status': fee.status
+        }
+        data.append(info)
+    return data, 200
     
 @user_bp.get('/info')
 @token_required

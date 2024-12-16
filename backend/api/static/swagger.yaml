@@ -1227,3 +1227,78 @@ paths:
                     details:
                       type: string
                       example: Image format not supported
+                      
+  /user/{user_id}/{fee_id}/{household_id}/{amount}/pay:
+    get:
+      summary: "Initiate Payment"
+      description: "Create a payment request for a fee and redirect to the payment gateway."
+      tags:
+        - Payment
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user making the payment."
+          schema:
+            type: integer
+            example: 1
+        - name: fee_id
+          in: path
+          required: true
+          description: "ID of the fee being paid."
+          schema:
+            type: integer
+            example: 101
+        - name: household_id
+          in: path
+          required: true
+          description: "ID of the household making the payment."
+          schema:
+            type: integer
+            example: 10
+        - name: amount
+          in: path
+          required: true
+          description: "Amount to be paid (in base unit, e.g., VND)."
+          schema:
+            type: integer
+            example: 500000
+      responses:
+        '302':
+          description: "Redirect to payment gateway with payment information."
+          headers:
+            Location:
+              description: "The URL to the payment gateway with payment query parameters."
+              schema:
+                type: string
+                example: "https://payment-gateway.com/payment?vnp_Amount=50000000&vnp_IpAddr=127.0.0.1&vnp_OrderInfo=Transaction 101 500000 for 10 by 1&vnp_CreateDate=20241109123000&vnp_ExpireDate=20241109124000&vnp_TxnRef=550e8400-e29b-41d4-a716-446655440000"
+        '400':
+          description: "Invalid request parameters"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid user_id, fee_id, household_id, or amount."
+        '500':
+          description: "Server error while processing the payment request"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Internal server error while processing payment."
+        '406':
+          description: "Payment failed due to an issue with the transaction."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "thanh toan that bai"

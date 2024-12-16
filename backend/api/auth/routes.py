@@ -126,7 +126,7 @@ def login_post():
         key = current_app.config['SECRET_KEY'],
         algorithm='HS256'
         )
-        return role, jsonify({"message": "login successful", 'token': token}), 200
+        return jsonify({"message": "login successful", 'token': token, 'role': role}), 200
     return jsonify({"message": "Login page loaded"}), 200
     
 @auth_bp.route('/forgot-password', methods=['GET', 'POST'])

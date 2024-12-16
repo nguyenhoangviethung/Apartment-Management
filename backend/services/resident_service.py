@@ -55,8 +55,12 @@ class ResidentService:
     def update_resident(self, resident_id, resident_data):
         resident = self.get_resident(resident_id)
         if resident:
+            if resident_data is None:
+                return 'warning: please provide at least one field', 401
             for key, value in resident_data.items():
-                if hasattr(resident, key):  # Kiểm tra xem resident có thuộc tính đó không
+                if key == 'resident_id':
+                    continue
+                if hasattr(resident, key): 
                     setattr(resident, key, value)
             db.session.commit()
             db.session.refresh(resident)

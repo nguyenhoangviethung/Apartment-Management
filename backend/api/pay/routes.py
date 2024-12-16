@@ -128,7 +128,7 @@ def payment_return():
                     "type": vnp_CardType
                 }
                 transaction_service.add_transaction(data)
-                return jsonify({'message':f'thanh toan thanh cong {amount} chi phí {desc[6]} cho {desc[4]}'}), 302
+                return jsonify({'message':f'thanh toan thanh cong {amount} chi phí cho {desc[4]}'}), 302
             else:
                 return jsonify({'message':'thanh toan that bai'}), 406
         else:

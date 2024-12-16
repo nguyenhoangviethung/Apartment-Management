@@ -100,5 +100,5 @@ class Transactions(db.Model):
     user_pay = Column(INTEGER, ForeignKey('Users.user_id'))
     user_name = Column(db.String(40), nullable=False)
     transaction_time = Column(DateTime, nullable=False)
-    bank_code = Column(db.String(3))
+    bank_code = Column(db.String(10))
     type = Column(db.String(10), nullable=False)

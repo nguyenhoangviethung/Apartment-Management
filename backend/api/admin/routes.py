@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from helpers import validate_date, decimal_to_float, get_payload
 from datetime import datetime, timedelta
 from api.extensions import db
-from services import fee_service, contribution_service, households_service, resident_service, utils_service, vehicle_service
+from services import fee_service, contribution_service, households_service, resident_service, utils_service, vehicle_service, user_service
 from api.middlewares import admin_required, handle_exceptions
 from decimal import Decimal, InvalidOperation
 import logging
@@ -22,6 +22,7 @@ resident_service = resident_service.ResidentService()
 fee_service = fee_service.FeeService()
 utils_service = utils_service.UtilsService()
 vehicle_service = vehicle_service.VehicleService()
+user_service = user_service.UserService()
 
 @admin_bp.route('/')
 @admin_required
@@ -101,6 +102,23 @@ def show_all_residents():
         return jsonify({'resident_info': resident_list}),200
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
+    
+@admin_bp.get('/all-users')
+@admin_required
+@handle_exceptions
+def show_all_users():
+    try:
+        user_list = user_service.show_all_users()
+        return jsonify({'resident_info': user_list}),200
+    except Exception as e:
+        return jsonify({'error': f'Unexpected error: {e}'}), 500    
+    
+@admin_bp.post('/give-admin-authority/<int:user_id>')
+@admin_required
+@handle_exceptions
+def update_to_admin(user_id):
+    response, status_code = user_service.update_role(user_id)
+    return response, status_code    
 
 @admin_bp.get('/house')
 @admin_required

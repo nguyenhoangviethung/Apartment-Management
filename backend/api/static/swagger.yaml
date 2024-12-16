@@ -525,6 +525,24 @@ paths:
           description: Household or residents not found
         '500':
           description: Internal server error
+
+  /admin/give-admin-authority/{int:user_id}:
+    post:
+      summary: Give an user admin authority
+      tags: Admin       
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID of the user.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Server error         
           
   /admin/not-pay:
     get:

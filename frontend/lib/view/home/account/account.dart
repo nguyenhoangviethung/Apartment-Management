@@ -26,7 +26,7 @@ class _AccountScreenState extends State<AccountScreen> {
   void initState() {
     super.initState();
     fetchUserData();
-    _loadSavedImage();
+    // _loadSavedImage();
   }
 
   Future<void> fetchUserData() async {
@@ -76,26 +76,95 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   // Phương thức tải ảnh đã lưu
-  Future<void> _loadSavedImage() async {
-    final prefs = await SharedPreferences.getInstance();
+  // Future<void> _loadSavedImage() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //
+  //   if (kIsWeb) {
+  //     final savedImageBase64 = prefs.getString('profile_image_base64');
+  //     if (savedImageBase64 != null) {
+  //       setState(() {
+  //         _selectedImage = savedImageBase64;
+  //       });
+  //     }
+  //   } else {
+  //     final savedImagePath = prefs.getString('saved_profile_image_path');
+  //     if (savedImagePath != null && File(savedImagePath).existsSync()) {
+  //       setState(() {
+  //         _selectedImage = File(savedImagePath);
+  //       });
+  //     }
+  //   }
+  // }
 
-    if (kIsWeb) {
-      final savedImageBase64 = prefs.getString('profile_image_base64');
-      if (savedImageBase64 != null) {
-        setState(() {
-          _selectedImage = savedImageBase64;
-        });
-      }
-    } else {
-      final savedImagePath = prefs.getString('saved_profile_image_path');
-      if (savedImagePath != null && File(savedImagePath).existsSync()) {
-        setState(() {
-          _selectedImage = File(savedImagePath);
-        });
-      }
-    }
-  }
 
+  // Future<void> _uploadImage() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('tokenlogin') ?? '';
+  //
+  //   try {
+  //     final ImagePicker picker = ImagePicker();
+  //     print('dwedwdw');
+  //     final XFile? image = await picker.pickImage(
+  //       source: ImageSource.gallery,
+  //       maxWidth: 1800,
+  //       maxHeight: 1800,
+  //       imageQuality: 85,
+  //     );
+  //     print('cajcbaud');
+  //     if (image != null) {
+  //       final bytes = await image.readAsBytes();
+  //       final uri = Uri.parse(apiUrl);
+  //
+  //       // Tạo request POST
+  //       final request = http.MultipartRequest('POST', uri)
+  //         ..headers['Authorization'] = 'Bearer $token'
+  //         ..fields['path_to_image'] = image.path
+  //         ..files.add(
+  //           http.MultipartFile.fromBytes(
+  //             'path_to_image',
+  //             bytes,
+  //             filename: path.basename(image.path),
+  //           ),
+  //         );
+  //
+  //       final response = await request.send();
+  //       print('scscsd');
+  //       print(response.statusCode);
+  //       if (response.statusCode == 200) {
+  //         final responseBody = await response.stream.bytesToString();
+  //         final jsonResponse = json.decode(responseBody);
+  //
+  //         // Lấy giá trị `image_url` từ phản hồi
+  //         if (jsonResponse['image_url'] is String) {
+  //           final imageUrl = jsonResponse['image_url'];
+  //
+  //           // Lưu ảnh vào SharedPreferences (web hoặc local)
+  //           if (kIsWeb) {
+  //             await prefs.setString('profile_image_base64', base64Encode(bytes));
+  //           } else {
+  //             final appDir = await getApplicationDocumentsDirectory();
+  //             final fileName = path.basename(image.path);
+  //             final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
+  //             await prefs.setString('saved_profile_image_path', savedImage.path);
+  //           }
+  //
+  //           setState(() {
+  //             _selectedImage = kIsWeb ? base64Encode(bytes) : File(image.path);
+  //           });
+  //         } else {
+  //           throw Exception('Invalid response: image_url not found.');
+  //         }
+  //       } else {
+  //         throw Exception('Failed to upload image: ${response.statusCode}');
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('Error uploading image: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Error uploading image: $e')),
+  //     );
+  //   }
+  // }
 
   Future<void> _uploadImage() async {
     final prefs = await SharedPreferences.getInstance();
@@ -103,51 +172,43 @@ class _AccountScreenState extends State<AccountScreen> {
 
     try {
       final ImagePicker picker = ImagePicker();
+      print('dwedwdw');
       final XFile? image = await picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 1800,
         maxHeight: 1800,
         imageQuality: 85,
       );
-
+      print('cajcbaud');
       if (image != null) {
+
         final bytes = await image.readAsBytes();
         final uri = Uri.parse(apiUrl);
-
-        // Tạo request POST
-        final request = http.MultipartRequest('POST', uri)
-          ..headers['Authorization'] = 'Bearer $token'
-          ..fields['path_to_image'] = image.path
-          ..files.add(
-            http.MultipartFile.fromBytes(
-              'path_to_image',
-              bytes,
-              filename: path.basename(image.path),
-            ),
-          );
-
-        final response = await request.send();
-
+        final response=await http.post(
+          uri,
+          headers: {
+            'Authorization': 'Bearer ${token}',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: {
+            'path_to_image': bytes
+          }
+        );
+        print('scscsd');
+        print(response.body);
         if (response.statusCode == 200) {
-          final responseBody = await response.stream.bytesToString();
-          final jsonResponse = json.decode(responseBody);
+          final jsonResponse = json.decode(response.body);
 
           // Lấy giá trị `image_url` từ phản hồi
           if (jsonResponse['image_url'] is String) {
             final imageUrl = jsonResponse['image_url'];
 
             // Lưu ảnh vào SharedPreferences (web hoặc local)
-            if (kIsWeb) {
-              await prefs.setString('profile_image_base64', base64Encode(bytes));
-            } else {
-              final appDir = await getApplicationDocumentsDirectory();
-              final fileName = path.basename(image.path);
-              final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
-              await prefs.setString('saved_profile_image_path', savedImage.path);
-            }
+            //await prefs.setString('link_image', imageUrl);
+
 
             setState(() {
-              _selectedImage = kIsWeb ? base64Encode(bytes) : File(image.path);
+              _selectedImage = Image.network(imageUrl);
             });
           } else {
             throw Exception('Invalid response: image_url not found.');

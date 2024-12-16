@@ -165,6 +165,27 @@ class _AccountScreenState extends State<AccountScreen> {
   //     );
   //   }
   // }
+  ImageProvider? _buildImageProvider() {
+    // Nếu không có ảnh nào được chọn, trả về null (ảnh mặc định sẽ hiển thị)
+    if (_selectedImage == null) return null;
+
+    // Kiểm tra nếu ảnh là NetworkImage (URL)
+    if (_selectedImage is NetworkImage) {
+      return _selectedImage;
+    }
+
+    // Nếu đang là web, sử dụng base64
+    if (kIsWeb) {
+      return _selectedImage is String
+          ? MemoryImage(base64Decode(_selectedImage))
+          : null;
+    }
+
+    // Nếu đang là mobile, sử dụng FileImage
+    return _selectedImage is File
+        ? FileImage(_selectedImage)
+        : null;
+  }
 
   Future<void> _uploadImage() async {
     final prefs = await SharedPreferences.getInstance();
@@ -172,55 +193,61 @@ class _AccountScreenState extends State<AccountScreen> {
 
     try {
       final ImagePicker picker = ImagePicker();
-      print('dwedwdw');
       final XFile? image = await picker.pickImage(
         source: ImageSource.gallery,
         maxWidth: 1800,
         maxHeight: 1800,
         imageQuality: 85,
       );
-      print('cajcbaud');
+
       if (image != null) {
+        print('Image Path: ${image.path}');
+        print('Image Name: ${path.basename(image.path)}');
 
         final bytes = await image.readAsBytes();
+        print('Image Size: ${bytes.length} bytes');
+
         final uri = Uri.parse(apiUrl);
-        final response=await http.post(
-          uri,
-          headers: {
-            'Authorization': 'Bearer ${token}',
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: {
-            'path_to_image': bytes
-          }
+        final request = http.MultipartRequest('POST', uri)
+          ..headers['Authorization'] = 'Bearer $token';
+
+        String fileName = path.basename(image.path);
+        if (path.extension(fileName).isEmpty) {
+          fileName += '.jpg'; // Thêm đuôi mặc định nếu thiếu
+        }
+
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'path_to_image',
+            bytes,
+            filename: fileName,
+          ),
         );
-        print('scscsd');
-        print(response.body);
+
+        final response = await request.send();
+        final responseBody = await response.stream.bytesToString();
+
+        print('Response Status Code: ${response.statusCode}');
+        print('Response Body: $responseBody');
+
         if (response.statusCode == 200) {
-          final jsonResponse = json.decode(response.body);
+          final imageUrl = responseBody.trim(); // Loại bỏ khoảng trắng
 
-          // Lấy giá trị `image_url` từ phản hồi
-          if (jsonResponse['image_url'] is String) {
-            final imageUrl = jsonResponse['image_url'];
-
-            // Lưu ảnh vào SharedPreferences (web hoặc local)
-            //await prefs.setString('link_image', imageUrl);
-
-
+          if (imageUrl.isNotEmpty && imageUrl != "https://res.cloudinary.com/dxjwzkk8j/image/upload/v1734357669/avatar/26.png") {
             setState(() {
-              _selectedImage = Image.network(imageUrl);
+              _selectedImage = NetworkImage(imageUrl); // Cập nhật ảnh từ URL
             });
           } else {
-            throw Exception('Invalid response: image_url not found.');
+            throw Exception('Lỗi tải ảnh, URL trả về không hợp lệ.');
           }
         } else {
-          throw Exception('Failed to upload image: ${response.statusCode}');
+          throw Exception('Tải lên thất bại: ${response.statusCode}');
         }
       }
     } catch (e) {
-      print('Error uploading image: $e');
+      print('Error Details: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error uploading image: $e')),
+        SnackBar(content: Text('Lỗi tải ảnh: $e')),
       );
     }
   }
@@ -447,21 +474,7 @@ class _AccountScreenState extends State<AccountScreen> {
   //         : null;
   //   }
   // }
-  ImageProvider? _buildImageProvider() {
-    if (_selectedImage == null) return null;
 
-    if (kIsWeb) {
-      // Cho web - sử dụng base64
-      return _selectedImage is String
-          ? MemoryImage(base64Decode(_selectedImage))
-          : null;
-    } else {
-      // Cho mobile
-      return _selectedImage is File
-          ? FileImage(_selectedImage)
-          : null;
-    }
-  }
 
   Widget _buildInfoItem(IconData icon, String label, String value) {
     return Container(

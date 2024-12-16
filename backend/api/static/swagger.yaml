@@ -529,7 +529,8 @@ paths:
   /admin/give-admin-authority/{int:user_id}:
     post:
       summary: Give an user admin authority
-      tags: Admin       
+      tags: 
+        - Admin       
       parameters:
         - name: user_id
           in: path
@@ -1079,6 +1080,317 @@ paths:
                       example: "Vehicle does not exist"
           500:
             description: Internal server error.        
+
+  /admin/park-fee/{household_id}:
+    get:
+      summary: Get parking fee by household ID
+      description: Retrieve the parking fee based on the vehicles associated with a specific household ID.
+      tags:
+      - Admin
+      parameters:
+        - name: household_id
+          in: path
+          required: true
+          description: The ID of the household.
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully retrieved parking fee details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: integer
+                    description: Total parking fee amount in VND.
+                    example: 1270000
+                  room:
+                    type: string
+                    description: The household ID provided in the request.
+                    example: "123"
+                  num_car:
+                    type: string
+                    description: Number of cars associated with the household.
+                    example: "1"
+                  num_motors:
+                    type: string
+                    description: Number of motorcycles associated with the household.
+                    example: "1"
+        400:
+          description: Invalid household ID or request format.
+        404:
+          description: Household ID not found.
+        500:
+          description: Internal server error.
+
+  /admin/park-fee-room:
+    post:
+      summary: Get parking fee by household ID (v2)
+      description: Retrieve the parking fee based on the vehicles associated with a specific household ID. This is the second version of the endpoint.
+      tags:
+        - Admin
+      parameters:
+        - name: household_id
+          in: query
+          required: true
+          description: household_id.
+          schema:
+            type: string
+            example: "101"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                household_id:
+                  type: string
+                  description: The ID of the household.
+                  example: "123"
+      responses:
+        200:
+          description: Successfully retrieved parking fee details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: integer
+                    description: Total parking fee amount in VND.
+                    example: 1270000
+                  room:
+                    type: string
+                    description: The household ID provided in the request.
+                    example: "123"
+                  num_car:
+                    type: string
+                    description: Number of cars associated with the household.
+                    example: "1"
+                  num_motors:
+                    type: string
+                    description: Number of motorcycles associated with the household.
+                    example: "1"
+        400:
+          description: Missing or invalid household ID.
+        404:
+          description: Household ID not found.
+        500:
+          description: Internal server error.
+
+  /admin/add-park-fee:
+    post:
+      summary: Add a new parking fee
+      description: Add a new parking fee for all households, ensuring no duplicate fees are created for the same month.
+      tags:
+        - Admin
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          description: The start date for the parking fee.
+          schema:
+            type: string
+            format: date
+            example: "2024-01-01"
+        - name: due_date
+          in: query
+          required: true
+          description: The due date for the parking fee.
+          schema:
+            type: string
+            format: date
+            example: "2024-01-31"
+        - name: description
+          in: query
+          required: true
+          description: A description of the parking fee.
+          schema:
+            type: string
+            example: "January parking fee"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start_date:
+                  type: string
+                  format: date
+                  description: The start date for the parking fee.
+                  example: "2024-01-01"
+                due_date:
+                  type: string
+                  format: date
+                  description: The due date for the parking fee.
+                  example: "2024-01-31"
+                description:
+                  type: string
+                  description: A description of the parking fee.
+                  example: "January parking fee"
+      responses:
+        200:
+          description: Parking fee added successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: string
+                    description: Success message.
+                    example: "add park fee successful"
+        400:
+          description: Missing required fields or invalid data.
+        500:
+          description: Internal server error.
+
+  /admin/delete-park-fee:
+    delete:
+      summary: Delete parking fees by description
+      description: Delete all parking fees that match the given description.
+      tags:
+        - Admin
+      parameters:
+        - name: description
+          in: query
+          required: true
+          description: The description of the parking fees to be deleted.
+          schema:
+            type: string
+            example: "January parking fee"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: The description of the parking fees to be deleted.
+                  example: "January parking fee"
+      responses:
+        200:
+          description: Parking fees deleted successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message.
+                    example: "Delete successful"
+        400:
+          description: Missing required fields or invalid data.
+        404:
+          description: No fees found with the given description.
+        500:
+          description: Internal server error.
+
+  /admin/get-unpaid-park-fee:
+    get:
+      summary: Get unpaid parking fees for the current date
+      description: Retrieve a list of unpaid parking fees for the current date.
+      tags:
+        - Admin
+      responses:
+        200:
+          description: Successfully retrieved unpaid parking fee details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  infor:
+                    type: array
+                    description: List of unpaid parking fees.
+                    items:
+                      type: object
+                      properties:
+                        room:
+                          type: string
+                          description: Household ID associated with the unpaid fee.
+                          example: "101"
+                        amount:
+                          type: number
+                          format: float
+                          description: Amount of the unpaid fee in VND.
+                          example: 1200000
+                        fee_type:
+                          type: string
+                          description: Description of the fee type.
+                          example: "January parking fee"
+        404:
+          description: No unpaid fees found.
+        500:
+          description: Internal server error.
+
+    post:
+      summary: Get unpaid parking fees by specific date
+      description: Retrieve a list of unpaid parking fees for a specific query date.
+      tags:
+        - Admin
+      parameters:
+        - name: query_date
+          in: query
+          required: true
+          description: get park fee by query date.
+          schema:
+            type: string
+            format: date
+            example: "2025-01-12"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query_date:
+                  type: string
+                  format: date
+                  description: The specific query date to retrieve unpaid parking fees.
+                  example: "2024-02-01"
+      responses:
+        200:
+          description: Successfully retrieved unpaid parking fee details for the specific date.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  infor:
+                    type: array
+                    description: List of unpaid parking fees.
+                    items:
+                      type: object
+                      properties:
+                        room:
+                          type: string
+                          description: Household ID associated with the unpaid fee.
+                          example: "101"
+                        amount:
+                          type: number
+                          format: float
+                          description: Amount of the unpaid fee in VND.
+                          example: 1200000
+                        fee_type:
+                          type: string
+                          description: Description of the fee type.
+                          example: "February parking fee"
+        400:
+          description: Invalid query date provided.
+        404:
+          description: No unpaid fees found for the specified date.
+        500:
+          description: Internal server error.
+
 
   /news/get-data:
     get:

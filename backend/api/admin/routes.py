@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from helpers import validate_date, decimal_to_float, get_payload
 from datetime import datetime, timedelta
 from api.extensions import db
-from services import fee_service, contribution_service, households_service, resident_service
+from services import fee_service, contribution_service, households_service, resident_service, utils_service, vehicle_service, user_service
 from api.middlewares import admin_required, handle_exceptions
 from decimal import Decimal, InvalidOperation
 import logging
@@ -20,6 +20,9 @@ contribution_service = contribution_service.ContributionService()
 households_service = households_service.HouseholdsService()
 resident_service = resident_service.ResidentService()
 fee_service = fee_service.FeeService()
+utils_service = utils_service.UtilsService()
+vehicle_service = vehicle_service.VehicleService()
+user_service = user_service.UserService()
 
 @admin_bp.route('/')
 @admin_required
@@ -99,6 +102,23 @@ def show_all_residents():
         return jsonify({'resident_info': resident_list}),200
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {e}'}), 500
+    
+@admin_bp.get('/all-users')
+@admin_required
+@handle_exceptions
+def show_all_users():
+    try:
+        user_list = user_service.show_all_users()
+        return jsonify({'resident_info': user_list}),200
+    except Exception as e:
+        return jsonify({'error': f'Unexpected error: {e}'}), 500    
+    
+@admin_bp.post('/give-admin-authority/<int:user_id>')
+@admin_required
+@handle_exceptions
+def update_to_admin(user_id):
+    response, status_code = user_service.update_role(user_id)
+    return response, status_code    
 
 @admin_bp.get('/house')
 @admin_required
@@ -139,26 +159,6 @@ def update_info(house_id):
     phone_number = request.form.get('phone_number')
     message, code = households_service.update_info(house_id, id, phone_number)
     return jsonify(message), code
-    # apartment = Households.query.filter_by(household_id = house_id).first()
-    # if not apartment:
-    #     return jsonify({'message': 'Household not found'}), 404
-    # id = request.form.get('id_num')
-    # resident = Residents.query.filter_by(id_number = id).first()
-    # if not resident:
-    #     return jsonify({'message': 'No resident with this id'}), 404
-    # data = {
-    #     'managed_by' : resident.user_id,
-    #     'num_residents' : request.form.get('num_residents'),    
-    # }
-    # for field, value in data.items():
-    #     if value is not None:
-    #         setattr(apartment, field, value)
-    # try:
-    #     db.session.commit()
-    #     return jsonify({'message': 'Household updated successfully'}), 200
-    # except Exception as e:
-    #     db.session.rollback()
-    #     return jsonify({'message': f'An error occurred: {str(e)}'}), 500
     
 @admin_bp.post('/update-res/<int:res_id>')#có thể bỏ
 @admin_required
@@ -275,3 +275,85 @@ def delete_contribution_fee():
 def get_contributions():
     res, status_code = contribution_service.get_contributions()
     return jsonify(res), status_code
+
+@admin_bp.route("/park-fee/<household_id>", methods = ['POST'])
+@admin_required
+@handle_exceptions
+def get_park_fee(household_id):
+    # check white space
+    response, status_code = utils_service.get_park_fee_by_householdID(household_id)
+
+    return jsonify(response), status_code
+
+@admin_bp.route("/park-fee-room", methods = ['POST'])
+@admin_required
+@handle_exceptions
+def get_park_fee_v2():
+    # check white space
+    household_id = request.form["household_id"].strip()
+
+    response, status_code = utils_service.get_park_fee_by_householdID(household_id)
+
+    return jsonify(response), status_code
+
+@admin_bp.route('/add-park-fee', methods = ['POST'])
+@admin_required
+@handle_exceptions
+def add_park_fee():
+    data = request.form.to_dict()
+    payload = get_payload()
+    creator = payload.get('user_id')
+    response, status_code = utils_service.add_park_fee(data, creator)
+
+    return jsonify(response), status_code
+
+@admin_bp.route('/delete-park-fee', methods = ['POST'])
+@admin_required
+@handle_exceptions
+def delete_park_fee():
+    data = request.form.to_dict()
+
+    response, status_code = utils_service.delete_park_fee(data)
+
+    return jsonify(response), status_code
+
+@admin_bp.route('/get-unpaid-park-fee')
+@admin_required
+@handle_exceptions
+def get_unpaid_park_fee():
+    response, status_code = utils_service.get_unpay_park_fee()
+
+    return jsonify(response), status_code
+
+@admin_bp.route('/get-unpaid-park-fee', methods = ['POST'])
+@admin_required
+@handle_exceptions
+def get_unpaid_park_fee_by_specific_data():
+    data = request.form.to_dict()
+    query_date = data["query_date"]
+    
+    response, status_code = utils_service.unpaid_specific_date(query_date)
+
+    return jsonify(response), status_code
+    
+@admin_bp.post("/add_vehicle")
+@admin_required
+@handle_exceptions
+def add_new_vehicle():
+    vehicle_data = request.form.to_dict()   
+    response, status_code = vehicle_service.add_vehicle(vehicle_data)
+    return jsonify(response), status_code 
+
+@admin_bp.get("/all_vehicles")
+@admin_required
+@handle_exceptions
+def get_all_vehicles():
+    vehicle_list = vehicle_service.list_vehicles()
+    return jsonify(vehicle_list), 200
+
+@admin_bp.post("/remove_vehicle/<int:vehicle_id>")
+@admin_required
+@handle_exceptions
+def remove_vehicle(vehicle_id):
+    response, status_code = vehicle_service.remove_vehicle(vehicle_id)
+    return jsonify(response), status_code

@@ -77,19 +77,23 @@ class _ResidentCardState extends State<ResidentCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.person_pin_outlined, color: Colors.blue[500]!, size: 45,),
-                      const SizedBox(width: 8),
-                      Text(
-                        widget.item.full_name!,
-                        style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ],
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Icon(Icons.person_pin_outlined, color: Colors.blue[500]!, size: 45,),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            widget.item.full_name!,
+                            style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-
+              
                   Row(
                     children: [
                       GestureDetector(

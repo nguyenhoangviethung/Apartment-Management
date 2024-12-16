@@ -64,20 +64,19 @@ class _AddResidentsState extends State<AddResidents> {
 
   void handleDeleteActivity(int resId) {
     setState(() {
-      items.removeWhere((item) => item.res_id! == resId);
-      Navigator.of(context).pop();
+      items.removeWhere((item) => item.res_id == resId);
     });
   }
 
   void handleEditResident(int id, String newName, String newDob, String newStatus, String newPhoneNumber) {
     setState(() {
       for (var item in items) {
-        if (item.id_number == id.toString()) {
+        if (item.res_id == id) { // Sử dụng res_id để so sánh
           item.full_name = newName;
           item.date_of_birth = newDob;
           item.status = newStatus;
           item.phone_number = newPhoneNumber;
-          break;
+          break; // Thoát khỏi vòng lặp sau khi tìm thấy resident
         }
       }
     });

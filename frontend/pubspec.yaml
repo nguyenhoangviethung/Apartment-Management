@@ -74,6 +74,8 @@ flutter:
      - assets/images/update.jpg
      - assets/images/pay.jpg
      - assets/images/login_backgound.jpg
+     - assets/images/vehicles.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

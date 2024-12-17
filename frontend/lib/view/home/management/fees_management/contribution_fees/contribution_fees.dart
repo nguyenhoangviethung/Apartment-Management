@@ -32,7 +32,7 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
 
   }
 
-  final List<FeeInfo> items = [];
+  final List<ParkingFeeInfo> items = [];
   // void handleAddNewFee(int room_id, String service_charge, String manage_charge, String fee) {
   //   final newItem = FeeInfo(room_id: room_id, service_charge: service_charge, manage_charge: manage_charge,
   //       fee: fee);

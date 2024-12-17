@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/fee_required_info.dart';
+import '../../../../../models/unpaid_parking_fee_info.dart';
 
-class FeeCard extends StatefulWidget {
-  final FeeResponse feeResponse;
-  final ParkingFeeInfo item;
+class UnpaidParkingFeeCard extends StatefulWidget {
+  final UnpaidParkingFeeInfo item;
 
-  const FeeCard({super.key, required this.item, required this.feeResponse});
+  const UnpaidParkingFeeCard({super.key, required this.item});
 
   @override
-  State<FeeCard> createState() => _FeeCardState();
+  State<UnpaidParkingFeeCard> createState() => _UnpaidParkingFeeCardState();
 }
 
-class _FeeCardState extends State<FeeCard> {
+class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -32,9 +31,9 @@ class _FeeCardState extends State<FeeCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Description:',widget.feeResponse.description?.join(', ') ?? 'N/A'),
-                      _buildInfoRow('Room id:', widget.item.room ?? 'N/A'),
-                      _buildInfoRow('Fee:', widget.item.fee ?? 'N/A'),
+                      _buildInfoRow('Room id:', widget.item.room ?? 'Unknown'),
+                      _buildInfoRow('Amount:', widget.item.amount?.toString() ?? '0'),
+                      _buildInfoRow('Fee type:', widget.item.fee_type ?? 'Unknown'),
                     ],
                   ),
                 ),
@@ -63,38 +62,32 @@ class _FeeCardState extends State<FeeCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: Row(
-                      children: [
-                        Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            widget.item.room ?? 'Unknown room',
-                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      widget.item.room ?? 'Unknown',
+                      style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ),
                 ],
               ),
+
               Padding(
-                padding: const EdgeInsets.only(left: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 11.0),
                 child: Row(
                   children: [
                     Flexible(
                       child: Row(
                         children: [
-                          Icon(Icons.description, color: Colors.grey[600]!, size: 25),
+                          Icon(Icons.monetization_on_outlined, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.feeResponse.description!.join(', '),
+                              widget.item.amount.toString(),
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
@@ -103,14 +96,15 @@ class _FeeCardState extends State<FeeCard> {
                         ],
                       ),
                     ),
+                    const SizedBox(width: 10),
                     Flexible(
                       child: Row(
                         children: [
-                          Icon(Icons.money, color: Colors.grey[600]!, size: 25),
+                          Icon(Icons.date_range_outlined, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.item.fee!,
+                              widget.item.fee_type ?? 'no fee_type',
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,

@@ -81,7 +81,7 @@ class NotificationScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'eHUST',
+                        'ADMIN',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.red,

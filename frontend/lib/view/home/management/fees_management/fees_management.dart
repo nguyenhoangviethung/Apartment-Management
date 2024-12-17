@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/management/fees_management/contribution_fees/contribution_fees.dart';
+import 'package:frontend/view/home/management/fees_management/parking_fee/parking_fee.dart';
 import 'package:frontend/view/home/management/fees_management/required_fees/required_fee.dart';
 import 'package:intl/intl.dart';
 
@@ -53,6 +54,8 @@ class _FeesManagementState extends State<FeesManagement> {
               FeesManagementCard(imagelink: 'assets/images/fee.jpg', title: 'Required Fees',),
               SizedBox(height: 20,),
               FeesManagementCard(imagelink: 'assets/images/charity_activities.png', title: 'Contribution Fees',),
+              SizedBox(height: 20,),
+              FeesManagementCard(imagelink: 'assets/images/park_fee.jpg', title: 'Parking Fees',),
             ],
           ),
         ),
@@ -113,6 +116,9 @@ class FeesManagementCard extends StatelessWidget {
         }
         if(title=='Contribution Fees'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ContributionFees()));
+        }
+        if(title=='Parking Fees'){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const ParkingFee()));
         }
       },
     );

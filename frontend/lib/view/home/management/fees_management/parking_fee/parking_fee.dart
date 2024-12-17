@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/fee_required_info.dart';
 import 'package:frontend/view/home/management/fees_management/fees_management.dart';
+import 'package:frontend/view/home/management/fees_management/parking_fee/change_details/change_details.dart';
+import 'package:frontend/view/home/management/fees_management/parking_fee/unpaid_parking_fee.dart';
 import 'package:frontend/view/home/management/fees_management/required_fees/all_rooms.dart';
-import 'package:frontend/view/home/management/fees_management/required_fees/change_details/change_details.dart';
-import 'package:frontend/view/home/management/fees_management/required_fees/not-paid_rooms.dart';
 import 'package:intl/intl.dart';
 
 import '../fee_management_component/date_filter.dart';
 
-class RequiredFees extends StatefulWidget {
-  const RequiredFees({super.key});
+class ParkingFee extends StatefulWidget {
+  const ParkingFee({super.key});
 
   @override
-  State<RequiredFees> createState() => _RequiredFeesState();
+  State<ParkingFee> createState() => _ParkingFeeState();
 }
 
-class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMixin {
+class _ParkingFeeState extends State<ParkingFee> with TickerProviderStateMixin {
   final DateFilterPopup _dateFilterPopup = DateFilterPopup(
     onDateRangeSelected: (startDate, endDate) {
       // Xử lý khi người dùng chọn khoảng thời gian
@@ -34,13 +34,6 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
   }
 
   final List<ParkingFeeInfo> items = [];
-  // void handleAddNewFee(int room_id, String service_charge, String manage_charge, String fee) {
-  //   final newItem = FeeInfo(room_id: room_id, service_charge: service_charge, manage_charge: manage_charge,
-  //       fee: fee);
-  //   setState(() {
-  //     items.add(newItem);
-  //   });
-  // }
 
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
@@ -65,7 +58,7 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
             style: const TextStyle(color: Colors.white, fontSize: 20),
           )
               : const Text(
-            'Required Fees',
+            'Parking Fee',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -91,21 +84,6 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
           ),
 
           actions: [
-            // IconButton(
-            //   icon: Icon(
-            //     _isSearching ? Icons.close : Icons.search,
-            //     size: 30,
-            //     color: Colors.white,
-            //   ),
-            //   onPressed: () {
-            //     setState(() {
-            //       _isSearching = !_isSearching; // Chuyển đổi trạng thái tìm kiếm
-            //       if (!_isSearching) {
-            //         _searchController.clear(); // Xóa nội dung khi thoát tìm kiếm
-            //       }
-            //     });
-            //   },
-            // ),
             IconButton(
               icon: const Icon(
                 Icons.filter_alt_outlined,
@@ -133,7 +111,7 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
                 child: Text('All Rooms', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
-                child: Text('Not-paid Rooms', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('Unpaid', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
                 child: Text('Change Details', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
@@ -146,7 +124,7 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
           controller: _tabController,
           children: const <Widget>[
             AllRooms(),
-            NotPaidRooms(),
+            UnpaidParkingFee(),
             ChangeDetails(),
           ],
         ),

@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:http_parser/http_parser.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -19,15 +20,14 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   bool isLoading = true;
   Map<String, dynamic> userData = {};
-  final String apiUrl =
-      "https://apartment-management-kjj9.onrender.com/user/info";
-  dynamic _selectedImage; // Thay đổi kiểu để hỗ trợ đa nền tảng
+  final String apiUrl = "https://apartment-management-kjj9.onrender.com/user/upload-image";
+  dynamic _selectedImage;
 
   @override
   void initState() {
     super.initState();
     fetchUserData();
-    _loadSavedImage();
+    // _loadSavedImage();
   }
 
   Future<void> fetchUserData() async {
@@ -36,7 +36,7 @@ class _AccountScreenState extends State<AccountScreen> {
       final token = prefs.getString('tokenlogin') ?? '';
 
       final response = await http.get(
-        Uri.parse(apiUrl),
+        Uri.parse("https://apartment-management-kjj9.onrender.com/user/info"),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -44,26 +44,22 @@ class _AccountScreenState extends State<AccountScreen> {
       );
 
       if (response.statusCode == 200) {
-        if (response.body.isNotEmpty) {
-          Map<String, dynamic> jsonResponse = json.decode(response.body);
-          Map<String, dynamic> userInfo = jsonResponse['info'];
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        Map<String, dynamic> userInfo = jsonResponse['info'];
 
-          setState(() {
-            userData = {
-              'full_name': userInfo['username'] ?? 'Not provided',
-              'phone_number': userInfo['phone_number'] ?? 'Not provided',
-              'role': userInfo['user_role'] ?? 'Not provided',
-              'date_of_birth': userInfo['date_of_birth'] ?? 'Not provided',
-              'age': userInfo['age'] ?? 'Not provided',
-              'id_number': userInfo['id_number'] ?? 'Not provided',
-              'room': userInfo['room'] ?? 'Not provided',
-              'email': userInfo['user_email'] ?? 'Not provided',
-            };
-            isLoading = false;
-          });
-        } else {
-          throw Exception('Empty response from API');
-        }
+        setState(() {
+          userData = {
+            'full_name': userInfo['username'] ?? 'Not provided',
+            'phone_number': userInfo['phone_number'] ?? 'Not provided',
+            'role': userInfo['user_role'] ?? 'Not provided',
+            'date_of_birth': userInfo['date_of_birth'] ?? 'Not provided',
+            'age': userInfo['age'] ?? 'Not provided',
+            'id_number': userInfo['id_number'] ?? 'Not provided',
+            'room': userInfo['room'] ?? 'Not provided',
+            'email': userInfo['user_email'] ?? 'Not provided',
+          };
+          isLoading = false;
+        });
       } else {
         throw Exception('Failed to load user data: ${response.statusCode}');
       }
@@ -81,123 +77,164 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   // Phương thức tải ảnh đã lưu
-  Future<void> _loadSavedImage() async {
-    final prefs = await SharedPreferences.getInstance();
+  // Future<void> _loadSavedImage() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //
+  //   if (kIsWeb) {
+  //     final savedImageBase64 = prefs.getString('profile_image_base64');
+  //     if (savedImageBase64 != null) {
+  //       setState(() {
+  //         _selectedImage = savedImageBase64;
+  //       });
+  //     }
+  //   } else {
+  //     final savedImagePath = prefs.getString('saved_profile_image_path');
+  //     if (savedImagePath != null && File(savedImagePath).existsSync()) {
+  //       setState(() {
+  //         _selectedImage = File(savedImagePath);
+  //       });
+  //     }
+  //   }
+  // }
 
-    if (kIsWeb) {
-      // Xử lý cho web - lấy base64
-      final savedImageBase64 = prefs.getString('profile_image_base64');
-      if (savedImageBase64 != null) {
-        setState(() {
-          _selectedImage = savedImageBase64;
-        });
-      }
-    } else {
-      // Xử lý cho mobile
-      final savedImagePath = prefs.getString('saved_profile_image_path');
-      if (savedImagePath != null && File(savedImagePath).existsSync()) {
-        setState(() {
-          _selectedImage = File(savedImagePath);
-        });
-      }
+
+  // Future<void> _uploadImage() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('tokenlogin') ?? '';
+  //
+  //   try {
+  //     final ImagePicker picker = ImagePicker();
+  //     print('dwedwdw');
+  //     final XFile? image = await picker.pickImage(
+  //       source: ImageSource.gallery,
+  //       maxWidth: 1800,
+  //       maxHeight: 1800,
+  //       imageQuality: 85,
+  //     );
+  //     print('cajcbaud');
+  //     if (image != null) {
+  //       final bytes = await image.readAsBytes();
+  //       final uri = Uri.parse(apiUrl);
+  //
+  //       // Tạo request POST
+  //       final request = http.MultipartRequest('POST', uri)
+  //         ..headers['Authorization'] = 'Bearer $token'
+  //         ..fields['path_to_image'] = image.path
+  //         ..files.add(
+  //           http.MultipartFile.fromBytes(
+  //             'path_to_image',
+  //             bytes,
+  //             filename: path.basename(image.path),
+  //           ),
+  //         );
+  //
+  //       final response = await request.send();
+  //       print('scscsd');
+  //       print(response.statusCode);
+  //       if (response.statusCode == 200) {
+  //         final responseBody = await response.stream.bytesToString();
+  //         final jsonResponse = json.decode(responseBody);
+  //
+  //         // Lấy giá trị `image_url` từ phản hồi
+  //         if (jsonResponse['image_url'] is String) {
+  //           final imageUrl = jsonResponse['image_url'];
+  //
+  //           // Lưu ảnh vào SharedPreferences (web hoặc local)
+  //           if (kIsWeb) {
+  //             await prefs.setString('profile_image_base64', base64Encode(bytes));
+  //           } else {
+  //             final appDir = await getApplicationDocumentsDirectory();
+  //             final fileName = path.basename(image.path);
+  //             final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
+  //             await prefs.setString('saved_profile_image_path', savedImage.path);
+  //           }
+  //
+  //           setState(() {
+  //             _selectedImage = kIsWeb ? base64Encode(bytes) : File(image.path);
+  //           });
+  //         } else {
+  //           throw Exception('Invalid response: image_url not found.');
+  //         }
+  //       } else {
+  //         throw Exception('Failed to upload image: ${response.statusCode}');
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('Error uploading image: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Error uploading image: $e')),
+  //     );
+  //   }
+  // }
+  ImageProvider? _buildImageProvider() {
+    // Nếu không có ảnh nào được chọn, trả về null (ảnh mặc định sẽ hiển thị)
+    if (_selectedImage == null) return null;
+
+    // Kiểm tra nếu ảnh là NetworkImage (URL)
+    if (_selectedImage is NetworkImage) {
+      return _selectedImage;
     }
+
+    // Nếu đang là web, sử dụng base64
+    if (kIsWeb) {
+      return _selectedImage is String
+          ? MemoryImage(base64Decode(_selectedImage))
+          : null;
+    }
+
+    // Nếu đang là mobile, sử dụng FileImage
+    return _selectedImage is File
+        ? FileImage(_selectedImage)
+        : null;
   }
 
-  // Phương thức chọn và lưu ảnh
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
+  Future<void> _uploadImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('tokenlogin') ?? '';
+
     try {
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Chọn ảnh đại diện'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.photo_library),
-                  title: Text('Chọn từ thư viện'),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-                    final XFile? image = await ImagePicker().pickImage(
-                      source: ImageSource.gallery,
-                      maxWidth: 1800,
-                      maxHeight: 1800,
-                      imageQuality: 85,
-                    );
-
-                    if (image != null) {
-                      final prefs = await SharedPreferences.getInstance();
-
-                      if (kIsWeb) {
-                        // Xử lý cho web - lưu base64
-                        final bytes = await image.readAsBytes();
-                        final base64Image = base64Encode(bytes);
-
-                        await prefs.setString('profile_image_base64', base64Image);
-
-                        setState(() {
-                          _selectedImage = base64Image;
-                        });
-                      } else {
-                        // Xử lý cho mobile
-                        final appDir = await getApplicationDocumentsDirectory();
-                        final fileName = path.basename(image.path);
-                        final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
-
-                        await prefs.setString('saved_profile_image_path', savedImage.path);
-
-                        setState(() {
-                          _selectedImage = savedImage;
-                        });
-                      }
-                    }
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.camera_alt),
-                  title: Text('Chụp ảnh mới'),
-                  onTap: () async {
-                    Navigator.of(context).pop();
-
-                    // Chỉ cho phép chụp ảnh trên mobile
-                    if (!kIsWeb) {
-                      final XFile? image = await picker.pickImage(
-                        source: ImageSource.camera,
-                        maxWidth: 1800,
-                        maxHeight: 1800,
-                        imageQuality: 85,
-                      );
-
-                      if (image != null) {
-                        final appDir = await getApplicationDocumentsDirectory();
-                        final fileName = path.basename(image.path);
-                        final savedImage = await File(image.path).copy('${appDir.path}/$fileName');
-
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setString('saved_profile_image_path', savedImage.path);
-
-                        setState(() {
-                          _selectedImage = savedImage;
-                        });
-                      }
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Chức năng chụp ảnh không khả dụng trên web')),
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
-          );
-        },
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1800,
+        maxHeight: 1800,
+        imageQuality: 85,
       );
+
+      if (image != null) {
+        // Đọc dữ liệu ảnh thành bytes
+        final bytes = await image.readAsBytes();
+        final base64Image = base64Encode(bytes);
+
+        // Gửi dữ liệu ảnh dưới dạng base64
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: json.encode({
+            'path_to_image': 'data:image/jpeg;base64,$base64Image'
+          }),
+        );
+
+        print('Response Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+
+        if (response.statusCode == 200) {
+          final imageUrl = json.decode(response.body);
+
+          if (imageUrl is String && imageUrl.isNotEmpty) {
+            setState(() {
+              _selectedImage = NetworkImage(imageUrl);
+            });
+          }
+        }
+      }
     } catch (e) {
-      print('Lỗi chọn ảnh: $e');
+      print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không thể chọn ảnh: $e')),
+        SnackBar(content: Text('Error uploading image: $e')),
       );
     }
   }
@@ -317,7 +354,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               color: Colors.white,
                               size: 20,
                             ),
-                            onPressed: _pickImage,
+                            onPressed: _uploadImage,
                             padding: EdgeInsets.all(4),
                             constraints: BoxConstraints(),
                           ),
@@ -412,21 +449,20 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
     );
   }
-  ImageProvider? _buildImageProvider() {
-    if (_selectedImage == null) return null;
+  // Widget _buildImageProvider() {
+  //   if (_selectedImage == null) return null;
+  //
+  //   if (kIsWeb) {
+  //     return _selectedImage is String
+  //         ? MemoryImage(base64Decode(_selectedImage))
+  //         : null;
+  //   } else {
+  //     return _selectedImage is File
+  //         ? FileImage(_selectedImage)
+  //         : null;
+  //   }
+  // }
 
-    if (kIsWeb) {
-      // Cho web - sử dụng base64
-      return _selectedImage is String
-          ? MemoryImage(base64Decode(_selectedImage))
-          : null;
-    } else {
-      // Cho mobile
-      return _selectedImage is File
-          ? FileImage(_selectedImage)
-          : null;
-    }
-  }
 
   Widget _buildInfoItem(IconData icon, String label, String value) {
     return Container(

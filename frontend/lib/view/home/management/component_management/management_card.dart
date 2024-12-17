@@ -3,6 +3,8 @@ import 'package:frontend/view/home/management/residents_management/residents_man
 import 'package:frontend/view/home/management/update_role/update_role.dart';
 import '../fees_management/fees_management.dart';
 import '../rooms_management/rooms_management.dart';
+import '../vehicles_management/vehicles_management.dart';
+
 
 class ManagementCard extends StatelessWidget {
   final String imagelink;
@@ -61,6 +63,9 @@ class ManagementCard extends StatelessWidget {
         }
         if(title=='Update Account Role'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const UpdateRole()));
+        }
+        if(title=='Vehicles Management'){
+           Navigator.push(context, MaterialPageRoute(builder: (context)=>const VehiclesManagement()));
         }
       },
     );

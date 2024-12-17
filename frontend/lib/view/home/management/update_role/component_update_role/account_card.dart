@@ -1,19 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/models/account_info.dart';
+import 'package:frontend/services/fetch_accounts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
 import '../../../../../common/show_dialog.dart';
-import '../../../../../models/resident_info.dart';
-import 'edit_footer.dart';
-class ResidentCard extends StatefulWidget {
-  final ResidentInfo item;
-  final Function(int) onDelete;
-  final Function(int, String, String, String, String) onEdit;
+class AccountCard extends StatefulWidget {
+  final AccountInfo item;
 
-  const ResidentCard({super.key, required this.item, required this.onDelete, required this.onEdit});
 
+  const AccountCard({super.key, required this.item,});
   @override
-  State<ResidentCard> createState() => _ResidentCardState();
+  State<AccountCard> createState() => _AccountCardState();
 }
 
-class _ResidentCardState extends State<ResidentCard> {
+class _AccountCardState extends State<AccountCard> {
+  bool _isloading = false;
+  Future<void> updateResidentToAdmin() async{
+    setState(() {
+      _isloading=true;
+    });
+    final url = 'https://apartment-management-kjj9.onrender.com/admin/give-admin-authority/${widget.item.user_id}';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String ?tokenlogin = prefs.getString('tokenlogin');
+    try{
+      final response = await http.post(
+          Uri.parse(url),
+          headers: {
+            'Authorization':'Bearer ${tokenlogin}'
+          }
+      );
+      print(response.body);
+      if(response.statusCode==200){
+        showinform(context, 'Success', 'Updated this resident to admin');
+        setState(() {
+          widget.item.user_role = 'admin'; // Cập nhật trạng thái của user
+        });
+      }
+    }catch(e){
+      print('Error');
+      showinform(context, 'Failed', 'Cannot update this resident to admin');
+    }finally{
+      _isloading=false;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -24,7 +54,7 @@ class _ResidentCardState extends State<ResidentCard> {
               return AlertDialog(
                 title: const Center(
                   child: Text(
-                    'Information',
+                    'Update Account to',
                     style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500, color: Colors.blue),
                   ),
                 ),
@@ -34,25 +64,37 @@ class _ResidentCardState extends State<ResidentCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Name:', widget.item.full_name ?? 'No name provided'),
-                      _buildInfoRow('Resident ID:', widget.item.res_id!=null? widget.item.res_id.toString():'No resident id'),
-                      _buildInfoRow('Date of Birth:', widget.item.date_of_birth ?? 'No date provided'),
-                      _buildInfoRow('ID Number:', widget.item.id_number ?? 'No ID provided'),
-                      _buildInfoRow('Age:', widget.item.age != null ? widget.item.age.toString() : 'No age provided'),
-                      _buildInfoRow('Status:', widget.item.status ?? 'No status provided'),
-                      _buildInfoRow('Room:', widget.item.room != null ? widget.item.room.toString() : 'No room provided'),
-                      _buildInfoRow('Phone:', widget.item.phone_number ?? 'No phone number provided'),
+                      _buildInfoRow('Name:', widget.item.username?? 'No name provided'),
+                      _buildInfoRow('Email:', widget.item.user_email?? 'No name provided'),
+                      _buildInfoRow('UserId:', widget.item.user_id.toString()?? 'No date provided'),
+                      _buildInfoRow('Phone number:', widget.item.phone_number ?? 'No ID provided'),
+                      _buildInfoRow('Role:', widget.item.user_role ?? 'No status provided'),
                     ],
                   ),
                 ),
                 actions: [
-                  TextButton(
-                    child: const Center(
-                      child: Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TextButton(
+                        child: const Center(
+                          child: Text("Resident", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: _isloading? const CircularProgressIndicator(color: Colors.white,) :
+                        const Center(
+                          child: Text("Admin", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                        ),
+                        onPressed: () async{
+                          Navigator.of(context).pop();
+                          await updateResidentToAdmin();
+                        },
+                      ),
+                    ],
                   ),
                 ],
               );
@@ -78,49 +120,13 @@ class _ResidentCardState extends State<ResidentCard> {
                       Icon(Icons.person_pin_outlined, color: Colors.blue[500]!, size: 45,),
                       const SizedBox(width: 8),
                       Text(
-                        widget.item.full_name!,
+                        widget.item.username!,
                         style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
                     ],
                   ),
-
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          showModalBottomSheet(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return EditFooter(
-                                  id: widget.item.res_id!,
-                                  editResidentInfo: (id, newName, newDob, newStatus, newPhoneNumber) {
-                                    widget.onEdit(id, newName, newDob, newStatus, newPhoneNumber);
-                                  },
-                                );
-                              }
-                          );
-                        },
-                        child: const Icon(
-                          Icons.edit,
-                          size: 30,
-                          color: Color.fromRGBO(0, 0, 0, 0.6),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      GestureDetector(
-                        onTap: () {
-                          showdeleteform(context, 'Warning', 'Are you sure to delete this resident?');
-                        },
-                        child: const Icon (
-                          Icons.delete,
-                          size: 30,
-                          color: Color.fromRGBO(0, 0, 0, 0.6),
-                        ),
-                      ),
-                    ],
-                  )
                 ],
               ),
               Padding(
@@ -130,10 +136,10 @@ class _ResidentCardState extends State<ResidentCard> {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.home_outlined, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
+                          Icon(Icons.verified_user, color: Colors.grey[600]!, size: 25,), // Biểu tượng 2
                           const SizedBox(width: 10),
                           Text(
-                            widget.item.room.toString(),
+                            widget.item.user_role.toString(),
                             style: const TextStyle(fontSize: 17, color: Colors.black87),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
@@ -167,7 +173,6 @@ class _ResidentCardState extends State<ResidentCard> {
       ),
     );
   }
-
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -208,13 +213,13 @@ class _ResidentCardState extends State<ResidentCard> {
                     child: Text("OK", style: TextStyle(fontSize: 18),),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pop(); // Đóng hộp thoại
-                    if (widget.item.res_id != null) {
-                      widget.onDelete( widget.item.res_id!);
-                    } else {
-                      Navigator.of(context).pop();
-                      showinform(context, 'Error', 'Resident ID is missing.');
-                    }
+                    // Navigator.of(context).pop(); // Đóng hộp thoại
+                    // if (widget.item.res_id != null) {
+                    //   widget.onDelete( widget.item.res_id!);
+                    // } else {
+                    //   Navigator.of(context).pop();
+                    //   showinform(context, 'Error', 'Resident ID is missing.');
+                    // }
                   },
                 ),
                 TextButton(
@@ -233,7 +238,3 @@ class _ResidentCardState extends State<ResidentCard> {
     );
   }
 }
-
-
-
-

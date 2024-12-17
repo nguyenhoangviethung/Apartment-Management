@@ -16,6 +16,8 @@ class Management extends StatelessWidget {
             ManagementCard(imagelink: 'assets/images/fee.jpg', title: 'Fees Management',),
             SizedBox(height: 20,),
             ManagementCard(imagelink: 'assets/images/room.jpg', title: 'Rooms Management',),
+            SizedBox(height: 20,),
+            ManagementCard(imagelink: 'assets/images/update_role.jpg', title: 'Update Account Role',),
           ],
         ),
       ),

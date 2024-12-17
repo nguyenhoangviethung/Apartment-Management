@@ -34,13 +34,6 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
   }
 
   final List<FeeInfo> items = [];
-  // void handleAddNewFee(int room_id, String service_charge, String manage_charge, String fee) {
-  //   final newItem = FeeInfo(room_id: room_id, service_charge: service_charge, manage_charge: manage_charge,
-  //       fee: fee);
-  //   setState(() {
-  //     items.add(newItem);
-  //   });
-  // }
 
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
@@ -91,21 +84,6 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
           ),
 
           actions: [
-            // IconButton(
-            //   icon: Icon(
-            //     _isSearching ? Icons.close : Icons.search,
-            //     size: 30,
-            //     color: Colors.white,
-            //   ),
-            //   onPressed: () {
-            //     setState(() {
-            //       _isSearching = !_isSearching; // Chuyển đổi trạng thái tìm kiếm
-            //       if (!_isSearching) {
-            //         _searchController.clear(); // Xóa nội dung khi thoát tìm kiếm
-            //       }
-            //     });
-            //   },
-            // ),
             IconButton(
               icon: const Icon(
                 Icons.filter_alt_outlined,

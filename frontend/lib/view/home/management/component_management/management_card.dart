@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/management/residents_management/residents_management.dart';
+import 'package:frontend/view/home/management/update_role/update_role.dart';
 import '../fees_management/fees_management.dart';
 import '../rooms_management/rooms_management.dart';
 
@@ -57,6 +58,9 @@ class ManagementCard extends StatelessWidget {
         }
         if(title=='Rooms Management'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const RoomsManagement()));
+        }
+        if(title=='Update Account Role'){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const UpdateRole()));
         }
       },
     );

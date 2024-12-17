@@ -214,4 +214,4 @@ def logout():
 @auth_bp.get('/check-autolog')
 @token_required
 def check_autolog(data):
-    pass
+    return jsonify({"message": "token is valid"}), 200

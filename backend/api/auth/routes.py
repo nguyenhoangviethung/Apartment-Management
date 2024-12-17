@@ -211,7 +211,7 @@ def logout():
 
     return jsonify({"message": "logout"}), 200
 
-@auth_bp.get('check-autolog')
+@auth_bp.get('/check-autolog')
 @token_required
 def check_autolog(data):
     pass

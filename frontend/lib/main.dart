@@ -31,17 +31,18 @@ Future<bool> checkAutoLog() async{
 
 }
 void main() async{
-     WidgetsFlutterBinding.ensureInitialized(); // Đảm bảo Flutter được khởi tạo trước
-     if(await checkAutoLog()){
-          runApp(const MainHome(currentIndex: 0,));
-     }else{
-          runApp(
-              const MaterialApp(
-                   debugShowCheckedModeBanner: false,
-                   home: Login(),
-              )
-          );
-     }
+     // WidgetsFlutterBinding.ensureInitialized(); // Đảm bảo Flutter được khởi tạo trước
+     // if(await checkAutoLog()){
+     //      runApp(const MainHome(currentIndex: 0,));
+     // }else{
+     //      runApp(
+     //          const MaterialApp(
+     //               debugShowCheckedModeBanner: false,
+     //               home: Login(),
+     //          )
+     //      );
+     // }
+     runApp(MainHome(currentIndex: 2,));
 }
 
 

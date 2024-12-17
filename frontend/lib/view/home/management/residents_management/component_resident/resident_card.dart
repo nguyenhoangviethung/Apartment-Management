@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../common/show_dialog.dart';
 import '../../../../../models/resident_info.dart';
 import 'edit_footer.dart';
+import 'package:http/http.dart' as http;
 class ResidentCard extends StatefulWidget {
   final ResidentInfo item;
   final Function(int) onDelete;
@@ -14,6 +16,32 @@ class ResidentCard extends StatefulWidget {
 }
 
 class _ResidentCardState extends State<ResidentCard> {
+  bool _isloading=false;
+  Future<void> updateResidentToAdmin() async{
+    setState(() {
+      _isloading=true;
+    });
+    final url = 'https://apartment-management-kjj9.onrender.com/admin/give-admin-authority/${widget.item.res_id}';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String ?tokenlogin = prefs.getString('tokenlogin');
+    try{
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Authorization':'Bearer ${tokenlogin}'
+        }
+      );
+      print(response.body);
+      if(response.statusCode==200){
+        showinform(context, 'Success', 'Updated this resident to admin');
+      }
+    }catch(e){
+      print('Error');
+      showinform(context, 'Failed', 'Cannot update this resident to admin');
+    }finally{
+      _isloading=false;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -46,13 +74,28 @@ class _ResidentCardState extends State<ResidentCard> {
                   ),
                 ),
                 actions: [
-                  TextButton(
-                    child: const Center(
-                      child: Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TextButton(
+                        child: const Center(
+                          child: Text("OK", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: _isloading? const CircularProgressIndicator(color: Colors.white,):
+                        const Center(
+                          child: Text("Update this resident to admin", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+                        ),
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          await updateResidentToAdmin();
+                        },
+                      ),
+                    ],
                   ),
                 ],
               );

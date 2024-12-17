@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:http_parser/http_parser.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -201,53 +202,39 @@ class _AccountScreenState extends State<AccountScreen> {
       );
 
       if (image != null) {
-        print('Image Path: ${image.path}');
-        print('Image Name: ${path.basename(image.path)}');
-
+        // Đọc dữ liệu ảnh thành bytes
         final bytes = await image.readAsBytes();
-        print('Image Size: ${bytes.length} bytes');
+        final base64Image = base64Encode(bytes);
 
-        final uri = Uri.parse(apiUrl);
-        final request = http.MultipartRequest('POST', uri)
-          ..headers['Authorization'] = 'Bearer $token';
-
-        String fileName = path.basename(image.path);
-        if (path.extension(fileName).isEmpty) {
-          fileName += '.jpg'; // Thêm đuôi mặc định nếu thiếu
-        }
-
-        request.files.add(
-          http.MultipartFile.fromBytes(
-            'path_to_image',
-            bytes,
-            filename: fileName,
-          ),
+        // Gửi dữ liệu ảnh dưới dạng base64
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: json.encode({
+            'path_to_image': 'data:image/jpeg;base64,$base64Image'
+          }),
         );
 
-        final response = await request.send();
-        final responseBody = await response.stream.bytesToString();
-
         print('Response Status Code: ${response.statusCode}');
-        print('Response Body: $responseBody');
+        print('Response Body: ${response.body}');
 
         if (response.statusCode == 200) {
-          final imageUrl = responseBody.trim(); // Loại bỏ khoảng trắng
+          final imageUrl = json.decode(response.body);
 
-          if (imageUrl.isNotEmpty && imageUrl != "https://res.cloudinary.com/dxjwzkk8j/image/upload/v1734357669/avatar/26.png") {
+          if (imageUrl is String && imageUrl.isNotEmpty) {
             setState(() {
-              _selectedImage = NetworkImage(imageUrl); // Cập nhật ảnh từ URL
+              _selectedImage = NetworkImage(imageUrl);
             });
-          } else {
-            throw Exception('Lỗi tải ảnh, URL trả về không hợp lệ.');
           }
-        } else {
-          throw Exception('Tải lên thất bại: ${response.statusCode}');
         }
       }
     } catch (e) {
-      print('Error Details: $e');
+      print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi tải ảnh: $e')),
+        SnackBar(content: Text('Error uploading image: $e')),
       );
     }
   }

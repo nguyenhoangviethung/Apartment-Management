@@ -1,8 +1,44 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:frontend/view/home/user/vnpay.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
-class Pay extends StatelessWidget {
-  const Pay({Key? key}) : super(key: key);
+import '../main_home.dart';
+class Pay extends StatefulWidget {
+  const Pay({super.key});
 
+  @override
+  State<Pay> createState() => _PayState();
+}
+
+class _PayState extends State<Pay> {
+  Future<void> getUrlPay(int userId, int feeId, int householdId,int amount) async {
+    final url= 'https://apartment-management-kjj9.onrender.com/$userId/$feeId/$householdId/$amount';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? tokenlogin = prefs.getString('tokenlogin');
+    try{
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $tokenlogin'
+        }
+      );
+      print(response.body);
+      if(response.statusCode==302){
+        final urlResponse = jsonDecode(response.body);
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => VNPayPaymentScreen(paymentUrl: urlResponse)),
+          );
+        }
+      }
+    }catch(e){
+      print('Error $e');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,7 +46,14 @@ class Pay extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Payment Information',
-          style: TextStyle(color: Colors.black87),
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> const MainHome(currentIndex: 1,)));
+            //Navigator.pop(context);
+          },
         ),
         backgroundColor: Colors.blue,
         elevation: 0,
@@ -24,20 +67,21 @@ class Pay extends StatelessWidget {
               nameFee: 'Room Fee',
               dueDate: '20/11/2024',
               status: 'Pending',
+              context: context,
             ),
             const SizedBox(height: 16),
             _buildPaymentCard(
               amount: '200,000 VND',
               nameFee: 'Electric Fee',
               dueDate: '25/11/2024',
-              status: 'Paid',
+              status: 'Paid', context: context,
             ),
             const SizedBox(height: 16),
             _buildPaymentCard(
               amount: '100,000 VND',
               nameFee: 'Water Fee',
               dueDate: '25/11/2024',
-              status: 'Overdue',
+              status: 'Overdue', context: context,
             ),
           ],
         ),
@@ -50,6 +94,7 @@ class Pay extends StatelessWidget {
     required String nameFee,
     required String dueDate,
     required String status,
+    required BuildContext context
   }) {
     Color statusColor;
     Color cardColor;
@@ -180,6 +225,7 @@ class Pay extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Chưa cần logic, sẽ bổ sung sau
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>VNPayPaymentScreen(paymentUrl: 'https://nguyenhaiminh.id.vn/')));
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(

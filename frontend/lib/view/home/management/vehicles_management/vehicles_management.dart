@@ -14,47 +14,72 @@ class VehiclesManagement extends StatefulWidget {
 }
 
 class _VehiclesManagementState extends State<VehiclesManagement> {
-
   final TextEditingController IdController = TextEditingController();
   final TextEditingController roomController = TextEditingController();
   final TextEditingController licenseController = TextEditingController();
 
   String selectedVehicleType = 'car';
-  List<Vehicle> allVehicles =[];
+  List<Vehicle> allVehicles = [];
   List<Vehicle> filteredVehicles = [];
+
+  // Thêm các biến cho phân trang
+  int _currentPage = 1;
+  final int _itemsPerPage = 7;
+
   @override
   void initState() {
     super.initState();
     fetchVehicles().then((value) {
       setState(() {
-        allVehicles=value??[];
-        filteredVehicles=value??[];
+        allVehicles = value ?? [];
+        filteredVehicles = value ?? [];
       });
     });
   }
 
-  Future<void> addVehicle() async{
+  // Phương thức để lấy danh sách xe cho trang hiện tại
+  List<Vehicle> getPaginatedVehicles() {
+    final startIndex = (_currentPage - 1) * _itemsPerPage;
+    final endIndex = startIndex + _itemsPerPage;
+    return filteredVehicles.length > endIndex
+        ? filteredVehicles.sublist(startIndex, endIndex)
+        : filteredVehicles.sublist(startIndex);
+  }
+
+  // Phương thức tính tổng số trang
+  int get totalPages {
+    return (filteredVehicles.length / _itemsPerPage).ceil();
+  }
+
+  // Phương thức chuyển trang
+  void changePage(int pageNumber) {
+    setState(() {
+      _currentPage = pageNumber;
+    });
+  }
+
+  Future<void> addVehicle() async {
     if (IdController.text.isNotEmpty &&
         roomController.text.isNotEmpty &&
         licenseController.text.isNotEmpty) {
       const String url = 'https://apartment-management-kjj9.onrender.com/admin/add_vehicle';
-      SharedPreferences prefs=await SharedPreferences.getInstance();
-      String ? tokenlogin= prefs.getString('tokenlogin');
-      try{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? tokenlogin = prefs.getString('tokenlogin');
+      try {
         final response = await http.post(
-          Uri.parse(url),
-          headers: {
-            'Authorization': 'Bearer ${tokenlogin}',
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: {
-            'vehicles_id':IdController.text,
-            'household_id': roomController.text,
-            'license_plate': licenseController.text,
-            'vehicle_type': selectedVehicleType
-          }
+            Uri.parse(url),
+            headers: {
+              'Authorization': 'Bearer ${tokenlogin}',
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: {
+              'vehicles_id': IdController.text,
+              'household_id': roomController.text,
+              'license_plate': licenseController.text,
+              'vehicle_type': selectedVehicleType
+            }
         );
-        if(response.statusCode==201){
+        if (response.statusCode == 201) {
           showinform(context, 'Success', 'Added new vehicles');
           setState(() {
             Vehicle newVehicle = Vehicle(
@@ -67,7 +92,7 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
             filteredVehicles.add(newVehicle);
           });
         }
-      }catch(e){
+      } catch (e) {
         print('Error');
       }
     } else {
@@ -77,27 +102,28 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
     }
   }
 
-  Future<void> deleteVehicle (int vehicleId) async{
+  Future<void> deleteVehicle(int vehicleId) async {
     final String url = 'https://apartment-management-kjj9.onrender.com/admin/remove_vehicle/${vehicleId}';
-    SharedPreferences prefs=await SharedPreferences.getInstance();
-    String ? tokenlogin= prefs.getString('tokenlogin');
-    try{
-      final response = await http.post(Uri.parse(url),
-        headers: {
-          'Authorization': 'Bearer ${tokenlogin}',
-        }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? tokenlogin = prefs.getString('tokenlogin');
+    try {
+      final response = await http.post(
+          Uri.parse(url),
+          headers: {
+            'Authorization': 'Bearer ${tokenlogin}',
+          }
       );
 
-      if(response.statusCode==201){
+      if (response.statusCode == 201) {
         setState(() {
           allVehicles.removeWhere((vehicle) => vehicle.vehicles_id == vehicleId);
           filteredVehicles.removeWhere((vehicle) => vehicle.vehicles_id == vehicleId);
         });
         showinform(context, 'Success', 'Completely Deleted vehicle');
-      }else{
+      } else {
         showinform(context, 'Failed', 'Try again');
       }
-    }catch(e){
+    } catch (e) {
       print('Error');
     }
   }
@@ -118,13 +144,15 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> const MainHome(currentIndex: 2,)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MainHome(currentIndex: 2))
+            );
           },
         ),
       ),
       body: Column(
         children: [
-          // Search bar with icon search
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -133,22 +161,23 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: "Search by phone",
-                      suffixIcon: const Icon(
-                        Icons.search
-                      ),
+                      suffixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
-                    onChanged: (text){
+                    onChanged: (text) {
                       setState(() {
-                        text=text.toLowerCase();
-                        filteredVehicles=allVehicles.where((vehicle){
-                          var room = vehicle.household_id?.toString()??'';
-                          var type = vehicle.vehicle_type??'';
-                          var license = vehicle.license_plate??'';
-                          return room.contains(text)|| type.contains(text)|| license.contains(text);
+                        text = text.toLowerCase();
+                        filteredVehicles = allVehicles.where((vehicle) {
+                          var room = vehicle.household_id?.toString() ?? '';
+                          var type = vehicle.vehicle_type ?? '';
+                          var license = vehicle.license_plate ?? '';
+                          return room.contains(text) ||
+                              type.contains(text) ||
+                              license.contains(text);
                         }).toList();
+                        _currentPage = 1; // Reset to first page when searching
                       });
                     },
                   ),
@@ -159,11 +188,10 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
                   child: IconButton(
                     icon: const Icon(Icons.add, color: Colors.white),
                     onPressed: () {
-
                       showDialog(
                         context: context,
-                        builder: (context) => StatefulBuilder( // Thêm StatefulBuilder
-                          builder: (context, setState) { // Thêm setState riêng trong dialog
+                        builder: (context) => StatefulBuilder(
+                          builder: (context, setState) {
                             return AlertDialog(
                               title: const Text('Add New Vehicle'),
                               content: Column(
@@ -204,7 +232,7 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
                                       ),
                                     ],
                                     onChanged: (value) {
-                                      setState(() { // Gọi setState của StatefulBuilder
+                                      setState(() {
                                         selectedVehicleType = value!;
                                       });
                                     },
@@ -230,27 +258,51 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
                           },
                         ),
                       );
-
                     },
                   ),
                 ),
               ],
             ),
           ),
-          // Vehicle list
+
           Expanded(
             child: ListView.builder(
-              itemCount: filteredVehicles.length,
+              itemCount: getPaginatedVehicles().length,
               itemBuilder: (context, index) {
-                final vehicle = filteredVehicles[index];
+                final vehicle = getPaginatedVehicles()[index];
                 return VehicleCard(
-                  id: vehicle.vehicles_id?.toString()??"unidentified",
-                  room: vehicle.household_id?.toString()?? "unidentified",
-                  license: vehicle.license_plate??"unidentified",
-                  type: vehicle.vehicle_type??"unidentified",
+                  id: vehicle.vehicles_id?.toString() ?? "unidentified",
+                  room: vehicle.household_id?.toString() ?? "unidentified",
+                  license: vehicle.license_plate ?? "unidentified",
+                  type: vehicle.vehicle_type ?? "unidentified",
                   onDelete: () => deleteVehicle(vehicle.vehicles_id!),
                 );
               },
+            ),
+          ),
+
+          // Pagination dots
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                totalPages,
+                    (index) => GestureDetector(
+                  onTap: () => changePage(index + 1),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _currentPage == (index + 1)
+                          ? Colors.blue
+                          : Colors.grey.shade300,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],

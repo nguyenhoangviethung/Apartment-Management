@@ -53,8 +53,10 @@ class _LoginState extends State<Login> {
       if (response.statusCode == 200) {
         var responseData = jsonDecode(response.body);
         final tokenlogin = responseData['token'];
+        final role = responseData['role'];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('tokenlogin', tokenlogin);
+        await prefs.setString('role', role);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const MainHome()),

@@ -1,4 +1,4 @@
-from models.models import Contributions, Households
+from models.models import Contributions, Households, Residents
 from api.extensions import db
 import logging
 from api.middlewares import handle_exceptions
@@ -127,3 +127,71 @@ class ContributionService:
         result = [{"description": contribution.contribution_type, "amount": contribution.contribution_amount} for contribution in contributions]
         response = {"result": result}
         return response, 200
+    
+    @handle_exceptions
+    def get_contributions_v2(self):
+        query_date = datetime.now().date()
+        
+        result = []
+
+        contributions = (
+                db.session.query(
+                    Contributions.contribution_type,
+                    Contributions.contribution_amount,
+                )
+                .filter(query_date <= Contributions.due_date)
+                .distinct()
+                .all()
+            )
+        
+        for contribution in contributions:
+            info  = {"description": contribution.contribution_type, "detail": []}
+            households = db.session.query(Contributions.household_id).filter(Contributions.contribution_type == contribution.contribution_type).all()
+            for household in households:
+                id = household.household_id
+                info['detail'].append({"amount": contribution.contribution_amount, "room": id})
+            
+            result.append(info)
+
+        return result, 200
+    
+    @handle_exceptions
+    def get_current_household_fee(self, household_id):
+        now = datetime.now().date()
+        fees = db.session.query(Contributions).filter(Contributions.household_id == household_id, now <= Contributions.due_date).all()
+        
+        return fees
+    
+    @handle_exceptions
+    def user_get_current_fee(self, resident_id):
+        households_id = db.session.query(Residents.household_id).filter(Residents.resident_id == resident_id).scalar()
+        # get fee by household
+        return self.get_current_household_fee(households_id)
+    
+    @handle_exceptions
+    def get_fee_by_userID(self, data):
+        
+        required_fields = ["user_id"]
+
+        if not all(field in data for field in required_fields):
+            return {'error': 'Missing required fields'}, 400
+
+        user_id = data["user_id"]
+        resident_id = db.session.query(Residents.resident_id).filter(Residents.user_id == user_id).scalar()
+
+        if not resident_id:
+            return ({'message': 'you do not have permission'}), 403
+        
+        household_id = db.session.query(Residents.household_id).filter(Residents.resident_id == resident_id).scalar()
+        fees = db.session.query(Contributions).filter(Contributions.household_id == household_id).all()
+        response = []
+
+        for fee in fees:
+            info = {
+                "amount": fee.contribution_amount,
+                "due_date": datetime.strftime(fee.due_date, "%Y-%m-%d"),
+                "description": fee.contribution_type
+            }
+            response.append(info)
+
+        return (response), 200

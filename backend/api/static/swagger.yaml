@@ -1181,6 +1181,31 @@ paths:
         500:
           description: Internal server error.
 
+  /admin/park-fee:
+      get:
+        summary: Retrieve park fees
+        description: Get the description of the park fees due as of today.
+        tags:
+          - Admin
+        responses:
+          '200':
+            description: Fees retrieved successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    infor:
+                      type: array
+                      items:
+                        type: string
+                    detail:
+                      type: array
+                      items:
+                        type: string
+          '400':
+            description: Error in retrieving fees
+
   /admin/add-park-fee:
     post:
       summary: Add a new parking fee
@@ -1557,98 +1582,52 @@ paths:
                     details:
                       type: string
                       example: Image format not supported
-                      
-  /user/{user_id}/{fee_id}/{household_id}/{amount}/pay:
+        
+  /user/fees:
     get:
-      summary: "Initiate Payment"
-      description: "Create a payment request for a fee and redirect to the payment gateway."
+      summary: User retrieve fees
+      description: Get the description of the fees due as of today.
       tags:
-        - Payment
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: "ID of the user making the payment."
-          schema:
-            type: integer
-            example: 1
-        - name: fee_id
-          in: path
-          required: true
-          description: "ID of the fee being paid."
-          schema:
-            type: integer
-            example: 101
-        - name: household_id
-          in: path
-          required: true
-          description: "ID of the household making the payment."
-          schema:
-            type: integer
-            example: 10
-        - name: amount
-          in: path
-          required: true
-          description: "Amount to be paid (in base unit, e.g., VND)."
-          schema:
-            type: integer
-            example: 500000
-      responses:
-        '302':
-          description: "Redirect to payment gateway with payment information."
-          headers:
-            Location:
-              description: "The URL to the payment gateway with payment query parameters."
-              schema:
-                type: string
-                example: "https://payment-gateway.com/payment?vnp_Amount=50000000&vnp_IpAddr=127.0.0.1&vnp_OrderInfo=Transaction 101 500000 for 10 by 1&vnp_CreateDate=20241109123000&vnp_ExpireDate=20241109124000&vnp_TxnRef=550e8400-e29b-41d4-a716-446655440000"
-        '400':
-          description: "Invalid request parameters"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid user_id, fee_id, household_id, or amount."
-        '500':
-          description: "Server error while processing the payment request"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Internal server error while processing payment."
-        '406':
-          description: "Payment failed due to an issue with the transaction."
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "thanh toan that bai"
-
-  /user/become-resident/{res_id}:
-    post:
-      summary: Convert a user to a resident by updating their role
-      description: Updates the `user_id` of a resident with the given `id`.
-      tags: 
         - User
-      parameters:
-        - name: res_id
-          in: path
-          required: true
-          description: The ID of the resident to update.
-          schema:
-            type: string
       responses:
         '200':
-          description: Role updated successfully
+          description: Fee details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    format: float
+                    description: The amount of the fee.
+                    example: 100000.00
+                  due_date:
+                    type: string
+                    format: date
+                    description: The due date of the fee in YYYY-MM-DD format.
+                    example: 2024-12-31
+                  status:
+                    type: string
+                    description: The payment status of the fee (e.g., "Paid", "Unpaid").
+                    example: "Unpaid"
+                  name_fee:
+                    type: string
+                    description: The description or name of the fee.
+                    example: "Maintenance Fee"
+        '400':
+          description: Missing required fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message for missing fields.
+                    example: "Missing required fields"
+        '403':
+          description: User does not have permission.
           content:
             application/json:
               schema:
@@ -1656,9 +1635,99 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "role updated successfully !!"
+                    description: Error message for permission issues.
+                    example: "you do not have permission"
+            
+  /user/park-fees:
+    get:
+      summary: User retrieve parking fees
+      description: Get the description of the fees due as of today.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Fee details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    format: float
+                    description: The amount of the fee.
+                    example: 100000.00
+                  due_date:
+                    type: string
+                    format: date
+                    description: The due date of the fee in YYYY-MM-DD format.
+                    example: 2024-12-31
+                  status:
+                    type: string
+                    description: The payment status of the fee (e.g., "Paid", "Unpaid").
+                    example: "Unpaid"
+                  name_fee:
+                    type: string
+                    description: The description or name of the fee.
+                    example: "Maintenance Fee"
+        '400':
+          description: Missing required fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message for missing fields.
+                    example: "Missing required fields"
         '403':
-          description: Bad Request
+          description: User does not have permission.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message for permission issues.
+                    example: "you do not have permission"
+
+  /user/contributions:
+    get:
+      summary: User retrieve contribution fees
+      description: Get the description of the fees due as of today.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Fee details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      description: Description of the fee (e.g., month or type of contribution).
+                      example: "Khuyến tật tháng 11"
+                    detail:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          amount:
+                            type: string
+                            description: The amount of the fee.
+                            example: "100000.00"
+                          room:
+                            type: integer
+                            description: The room number associated with the fee.
+                            example: 101
+        '400':
+          description: Missing required fields.
           content:
             application/json:
               schema:
@@ -1666,24 +1735,16 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: "Invalid input data"
-        '404':
-          description: Resident not found
+                    description: Error message for missing fields.
+                    example: "Missing required fields"
+        '403':
+          description: User does not have permission.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  message:
                     type: string
-                    example: "Resident not found"
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Unexpected error: <error details>"                  
+                    description: Error message for permission issues.
+                    example: "you do not have permission"

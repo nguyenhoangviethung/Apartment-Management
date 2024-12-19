@@ -5,11 +5,13 @@ from datetime import datetime, timedelta
 from api.middlewares import token_required, handle_exceptions
 from api.extensions import db
 from models.models import *
-from services import fee_service, cloudinary_service, user_service
+from services import fee_service, cloudinary_service, contribution_service, utils_service, user_service
 import cloudinary
-from services import fee_service
 import uuid
+
 fee_service = fee_service.FeeService()
+contribution_service = contribution_service.ContributionService()
+utils_service = utils_service.UtilsService()
 user_service = user_service.UserService()
 
 @user_bp.route('/')
@@ -87,6 +89,19 @@ def fees(request_data):
     response, status_code = fee_service.get_fee_by_userID(request_data)
     return jsonify(response), status_code
     
+@user_bp.route('/contributions')
+@token_required
+def contributions(request_data):
+    response, status_code = contribution_service.get_fee_by_userID(request_data)
+
+    return jsonify(response), status_code
+    
+@user_bp.route('/park-fees')
+@token_required
+def park_fees(request_data):
+    response, status_code = utils_service.get_fee_by_userID(request_data)
+
+    return jsonify(response), status_code
 
 @user_bp.route('/upload-image', methods = ["POST"])
 @token_required

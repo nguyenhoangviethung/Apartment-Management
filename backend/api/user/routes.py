@@ -5,11 +5,12 @@ from datetime import datetime, timedelta
 from api.middlewares import token_required, handle_exceptions
 from api.extensions import db
 from models.models import *
-from services import fee_service, cloudinary_service
+from services import fee_service, cloudinary_service, user_service
 import cloudinary
 from services import fee_service
 import uuid
 fee_service = fee_service.FeeService()
+user_service = user_service.UserService()
 
 @user_bp.route('/')
 def index():
@@ -119,3 +120,10 @@ def upload_image(data):
 
     except Exception as e:
         return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
+    
+@user_bp.post('/become-resident/<int:res_id>')
+@token_required
+@handle_exceptions
+def to_resident(data, res_id):
+    response, status_code = user_service.convert_to_resident(data, res_id)
+    return jsonify(response), status_code

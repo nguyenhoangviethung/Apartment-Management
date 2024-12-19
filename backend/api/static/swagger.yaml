@@ -1548,6 +1548,10 @@ paths:
                     type: string
                     description: Path to the image file (URL or local path). Defaults to a predefined URL if not provided.
                     example: https://example.com/sample.jpg
+                  file:
+                    type: file
+                    description: Image file
+                    example: cứ gửi một cái ảnh
         responses:
           '200':
             description: Successfully uploaded image.

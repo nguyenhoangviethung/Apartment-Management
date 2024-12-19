@@ -103,14 +103,15 @@ def park_fees(request_data):
 
     return jsonify(response), status_code
 
-@user_bp.route('/upload-image', methods = ["POST"])
+@user_bp.route('/upload-image', methods=["POST"])
 @token_required
 @handle_exceptions
 def upload_image(data):
+    
     default_img: str = "https://res.cloudinary.com/dxjwzkk8j/image/upload/v1733854843/default.png"
 
-    # if dont have path_to_image, use default instead
     path_to_image = request.form.get("path_to_image", default_img)
+    uploaded_file = request.files.get("file")  
 
     try:
         user_id = data.get('user_id')
@@ -119,13 +120,23 @@ def upload_image(data):
 
         img_name = f"avatar/{str(user_id)}"
 
-        res = cloudinary_service.upload_image_to_cloudinary(path_to_image, public_id=img_name)
+        if uploaded_file:
+            res = cloudinary_service.save_and_upload_image(
+                file=uploaded_file,
+                public_id=img_name,
+                upload_folder="temp_uploads"
+            )
+        else:
+            res = cloudinary_service.upload_image_to_cloudinary(
+                path_to_img=path_to_image,
+                public_id=img_name
+            )
 
         img_url = res.get("secure_url")
         if not img_url:
             return jsonify({"error": "Image URL not found"}), 500
 
-        return jsonify(img_url), 200
+        return jsonify({"img_url": img_url}), 200
 
     except cloudinary.exceptions.Error as e:
         return jsonify({"error": "Failed to upload image", "details": str(e)}), 500
@@ -135,7 +146,7 @@ def upload_image(data):
 
     except Exception as e:
         return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
-    
+
 @user_bp.post('/become-resident/<int:res_id>')
 @token_required
 @handle_exceptions

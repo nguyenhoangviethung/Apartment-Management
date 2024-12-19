@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/fee_required_info.dart';
 
+import '../../../../../models/parking_fee_info.dart';
+
 class FeeCard extends StatefulWidget {
   final FeeResponse feeResponse;
   final ParkingFeeInfo item;
@@ -34,7 +36,7 @@ class _FeeCardState extends State<FeeCard> {
                     children: [
                       _buildInfoRow('Description:',widget.feeResponse.description?.join(', ') ?? 'N/A'),
                       _buildInfoRow('Room id:', widget.item.room ?? 'N/A'),
-                      _buildInfoRow('Fee:', widget.item.fee ?? 'N/A'),
+                      _buildInfoRow('Fee:', widget.item.numCar ?? 'N/A'),
                     ],
                   ),
                 ),
@@ -110,7 +112,7 @@ class _FeeCardState extends State<FeeCard> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.item.fee!,
+                              widget.item.numCar!,
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,

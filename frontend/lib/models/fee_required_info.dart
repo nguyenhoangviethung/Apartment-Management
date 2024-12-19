@@ -1,6 +1,6 @@
 class FeeResponse {
   List<String>? description;
-  List<ParkingFeeInfo>? fees;
+  List<FeeInfo>? fees;
 
   FeeResponse({this.description, this.fees});
 
@@ -11,21 +11,21 @@ class FeeResponse {
           : null,
       fees: json['infor']['detail'] != null
           ? (json['infor']['detail'] as List)
-          .map((fee) => ParkingFeeInfo.fromJson(fee))
+          .map((fee) => FeeInfo.fromJson(fee))
           .toList()
           : null,
     );
   }
 }
 
-class ParkingFeeInfo {
+class FeeInfo {
   String? room;
   String? fee;
 
-  ParkingFeeInfo({this.room, this.fee});
+  FeeInfo({this.room, this.fee});
 
-  factory ParkingFeeInfo.fromJson(Map<String, dynamic> json) {
-    return ParkingFeeInfo(
+  factory FeeInfo.fromJson(Map<String, dynamic> json) {
+    return FeeInfo(
       room: json['room'] as String?,
       fee: json['fee'] as String?,
     );

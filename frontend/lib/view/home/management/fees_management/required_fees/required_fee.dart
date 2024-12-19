@@ -33,7 +33,7 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
 
   }
 
-  final List<ParkingFeeInfo> items = [];
+  final List<FeeInfo> items = [];
   // void handleAddNewFee(int room_id, String service_charge, String manage_charge, String fee) {
   //   final newItem = FeeInfo(room_id: room_id, service_charge: service_charge, manage_charge: manage_charge,
   //       fee: fee);

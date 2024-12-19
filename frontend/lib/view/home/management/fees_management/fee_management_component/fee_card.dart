@@ -3,7 +3,7 @@ import 'package:frontend/models/fee_required_info.dart';
 
 class FeeCard extends StatefulWidget {
   final FeeResponse feeResponse;
-  final ParkingFeeInfo item;
+  final FeeInfo item;
 
   const FeeCard({super.key, required this.item, required this.feeResponse});
 

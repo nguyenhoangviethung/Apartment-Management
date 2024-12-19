@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/fee_required_info.dart';
 import 'package:frontend/view/home/management/fees_management/contribution_fees/all_contribution_fees.dart';
 import 'package:frontend/view/home/management/fees_management/contribution_fees/change_details/change_details.dart';
 import 'package:frontend/view/home/management/fees_management/fees_management.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../models/contribution_fee_info.dart';
 import '../fee_management_component/date_filter.dart';
 
 class ContributionFees extends StatefulWidget {
@@ -32,7 +32,7 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
 
   }
 
-  final List<ParkingFeeInfo> items = [];
+  final List<ContributionFeeInfo> items = [];
   // void handleAddNewFee(int room_id, String service_charge, String manage_charge, String fee) {
   //   final newItem = FeeInfo(room_id: room_id, service_charge: service_charge, manage_charge: manage_charge,
   //       fee: fee);

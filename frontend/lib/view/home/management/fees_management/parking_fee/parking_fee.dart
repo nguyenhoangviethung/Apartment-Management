@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/fee_required_info.dart';
 import 'package:frontend/view/home/management/fees_management/fees_management.dart';
 import 'package:frontend/view/home/management/fees_management/parking_fee/change_details/change_details.dart';
 import 'package:frontend/view/home/management/fees_management/parking_fee/unpaid_parking_fee.dart';
 import 'package:frontend/view/home/management/fees_management/required_fees/all_rooms.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../models/parking_fee_info.dart';
 import '../fee_management_component/date_filter.dart';
 
 class ParkingFee extends StatefulWidget {

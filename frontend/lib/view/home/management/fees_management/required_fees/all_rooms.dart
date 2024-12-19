@@ -14,8 +14,8 @@ class AllRooms extends StatefulWidget {
 class _AllRoomsState extends State<AllRooms> {
   late Future<FeeResponse?> futureFees;
 
-  List<ParkingFeeInfo> _originalFees = []; // Danh sách gốc
-  List<ParkingFeeInfo> _displayedFees = []; // Danh sách hiển thị
+  List<FeeInfo> _originalFees = []; // Danh sách gốc
+  List<FeeInfo> _displayedFees = []; // Danh sách hiển thị
   final PageController _pageController = PageController();
   int _currentPage = 0;
   final int totalDots = 5;

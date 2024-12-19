@@ -267,12 +267,12 @@ class FeeService:
 
         result = {
             'amount' : fee_info.amount,
-            'due_date' : fee_info.due_date,
+            'due_date' : datetime.strftime(fee_info.due_date, "%Y-%m-%d"),
             'status' : fee_info.status,
             'name_fee' : fee_info.description
         }
         return (result), 200
-    @handle_exceptions
+    
     @handle_exceptions
     def update_status(self, data, fee_id):
         fee = self.get_fee_by_fee_id(fee_id)

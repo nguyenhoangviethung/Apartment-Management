@@ -273,7 +273,7 @@ def delete_contribution_fee():
 @admin_required
 @handle_exceptions
 def get_contributions():
-    res, status_code = contribution_service.get_contributions()
+    res, status_code = contribution_service.get_contributions_v2()
     return jsonify(res), status_code
 
 @admin_bp.route("/park-fee/<household_id>", methods = ['POST'])
@@ -336,6 +336,14 @@ def get_unpaid_park_fee_by_specific_data():
 
     return jsonify(response), status_code
     
+@admin_bp.route('/park-fee')
+@admin_required
+@handle_exceptions
+def get_all_park_fee():
+    response, status_code = utils_service.get_all_park_fee()
+
+    return jsonify(response), status_code
+
 @admin_bp.post("/add_vehicle")
 @admin_required
 @handle_exceptions

@@ -18,6 +18,7 @@ class Pay extends StatefulWidget {
 class _PayState extends State<Pay> {
   late UserFee? userHouseholdFee;
   late UserFee? userParkFee;
+  late List<UserContributionFee> ? userContributionFee;
   bool isLoading = true;
 
   Future<void> getUrlPay(int userId, int feeId, int householdId,int amount) async {
@@ -48,8 +49,8 @@ class _PayState extends State<Pay> {
   Future<void> fetchData() async {
     try {
       userHouseholdFee = await fetchUserFee('user/fees');
-      print(userHouseholdFee);
       userParkFee = await fetchUserFee('user/park-fees');
+      userContributionFee = await fetchUserContributionFee();
       if (mounted) {
         setState(() {
           isLoading = false;
@@ -94,18 +95,38 @@ class _PayState extends State<Pay> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
+                  const Text('Required Fee'),
                   _buildPaymentCard(
                     amount: userHouseholdFee?.amount.toString() ?? 'N/A',
                     nameFee: userHouseholdFee?.name_fee ?? 'N/A',
                     dueDate: userHouseholdFee?.due_date ?? 'N/A',
                     status: userHouseholdFee?.status ?? 'N/A',
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
+                  const Text('Park Fee'),
                   _buildPaymentCard(
                     amount: userParkFee?.amount.toString() ?? 'N/A',
                     nameFee: userParkFee?.name_fee ?? 'N/A',
                     dueDate: userParkFee?.due_date ?? 'N/A',
                     status: userParkFee?.status ?? 'N/A',
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Contribution Fee'),
+                  ListView.builder(
+                      shrinkWrap: true, // Thêm shrinkWrap để tối ưu hóa
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: userContributionFee?.length,
+                      itemBuilder: (BuildContext context, int index){
+                        return Column(
+                          children: [
+                            _buildPaymentCard(amount: userContributionFee?[index].amount??'N/A',
+                                nameFee: userContributionFee?[index].description??'N/A',
+                                dueDate: userContributionFee?[index].due_date??'N/A',
+                                status: 'N/A'),
+                            const SizedBox(height: 10,)
+                          ],
+                        );
+                      }
                   ),
                 ],
               ),

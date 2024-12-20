@@ -12,3 +12,15 @@ class UserFee{
     name_fee=json['name_fee'];
   }
 }
+class UserContributionFee{
+  String? amount;
+  String? description;
+  String? due_date;
+
+  UserContributionFee(this.amount, this.description, this.due_date);
+  UserContributionFee.fromJson(Map<String,dynamic> json){
+    amount=json['amount'];
+    description=json['description'];
+    due_date=json['due_date'];
+  }
+}

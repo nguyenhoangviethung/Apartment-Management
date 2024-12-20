@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/view/home/account/account.dart';
 import 'package:frontend/view/home/home_page/home_page.dart';
 import 'package:frontend/view/home/user/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'management/management.dart';
 
@@ -16,28 +17,46 @@ class MainHome extends StatefulWidget {
 
 class _MainHomeState extends State<MainHome> {
   late int _currentIndex;
-
+  late String _role;
+  late List<Widget> _screens = [];
   @override
   void initState() {
     super.initState();
     // TODO: implement initState
     _currentIndex = widget.currentIndex;
+    isAdminOrNot();
   }
+  Future<void> isAdminOrNot()async{
+    SharedPreferences prefs =await SharedPreferences.getInstance();
+    String? role=prefs.getString('role');
 
-  final List<Widget> _screens = [
-    HomePage(),
-    const User(),
-    const Management(),
-    const AccountScreen(),
-  ];
+    setState(() {
+      _role=role!;
+    });
+    if(role=='admin'){
+      setState(() {
+        _screens=[
+          const HomePage(),
+          const Management(),
+          const AccountScreen(),
+        ];
+      });
+    }else{
+      setState(() {
+        _screens=[
+          const HomePage(),
+          const User(),
+          const AccountScreen(),
+        ];
+      });
+    }
+  }
 
   String _getAppBarTitle() {
     switch (_currentIndex) {
       case 1:
-        return 'User';
+        return _role =='admin'? 'User':'Management';
       case 2:
-        return 'Management';
-      case 3:
         return 'Account';
       default:
         return 'Welcome back';
@@ -65,14 +84,14 @@ class _MainHomeState extends State<MainHome> {
           centerTitle: true,
           leading: _shouldShowBackButton()
               ? IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            // Thay đổi màu nút back
-            onPressed: () {
-              setState(() {
-                _currentIndex = 0;
-              });
-            },
-          )
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  // Thay đổi màu nút back
+                  onPressed: () {
+                    setState(() {
+                      _currentIndex = 0;
+                    });
+                  },
+                )
               : null,
           actions: [
             IconButton(
@@ -87,20 +106,16 @@ class _MainHomeState extends State<MainHome> {
           backgroundColor: Colors.lightBlue,
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.white60,
-          items: const [
-            BottomNavigationBarItem(
+          items: [
+            const BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.rule),
-              label: 'User',
+              icon: const Icon(Icons.rule),
+              label: _role =='admin'? 'Management':'User',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.people),
-              label: 'Management',
-            ),
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               icon: Icon(Icons.account_circle),
               label: 'Account',
             ),

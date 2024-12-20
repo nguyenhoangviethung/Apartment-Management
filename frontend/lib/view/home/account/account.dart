@@ -120,7 +120,7 @@ class _AccountScreenState extends State<AccountScreen> {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: {
-            'path_to_image': imagePath
+            'path_to_image': "C://UsersDell//Pictures//图片4-3.png"
           },
         );
 
@@ -159,6 +159,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
       if (response.statusCode == 200) {
         await prefs.remove('tokenlogin');
+        await prefs.remove('role');
         if (mounted) {
           ScaffoldMessenger.of(context).showMaterialBanner(
             MaterialBanner(

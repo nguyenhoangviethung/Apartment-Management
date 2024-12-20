@@ -126,7 +126,7 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
         body: TabBarView(
           controller: _tabController,
           children: const <Widget>[
-            AllContributionFees(),
+            ContributionFeeListScreen(),
             ChangeDetails(),
           ],
         ),

@@ -1,30 +1,28 @@
 class ContributionFeeInfo {
-  String? contributionFee;
-  String? room;
+  String? amount;
+  int? room;
 
-  ContributionFeeInfo({this.contributionFee, this.room});
+  ContributionFeeInfo({this.amount, this.room});
 
   factory ContributionFeeInfo.fromJson(Map<String, dynamic> json) {
     return ContributionFeeInfo(
-      contributionFee: json['contribution fee'] as String?,
-      room: json['room'] as String?,
+      amount: json['amount'] as String?,
+      room: json['room'] as int?,
     );
   }
 }
 
 class ContributionFeeResponse {
-  List<String>? description;
-  List<ContributionFeeInfo>? fees;
+  String? description;
+  List<ContributionFeeInfo>? detail;
 
-  ContributionFeeResponse({this.description, this.fees});
+  ContributionFeeResponse({this.description, this.detail});
 
   factory ContributionFeeResponse.fromJson(Map<String, dynamic> json) {
     return ContributionFeeResponse(
-      description: json['infor']['description'] != null
-          ? List<String>.from(json['infor']['description'])
-          : null,
-      fees: json['infor']['detail'] != null
-          ? (json['infor']['detail'] as List)
+      description: json['description'] as String?,
+      detail: json['detail'] != null
+          ? (json['detail'] as List)
           .map((fee) => ContributionFeeInfo.fromJson(fee))
           .toList()
           : null,

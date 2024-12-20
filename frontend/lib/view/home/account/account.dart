@@ -6,8 +6,6 @@ import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 
-
-
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
@@ -21,6 +19,7 @@ class _AccountScreenState extends State<AccountScreen> {
   final String apiUrl = "https://apartment-management-kjj9.onrender.com/user/upload-image";
   dynamic _selectedImage;
   String? _imageUrl;
+  String? _userId;
 
   @override
   void initState() {
@@ -46,6 +45,7 @@ class _AccountScreenState extends State<AccountScreen> {
         Map<String, dynamic> userInfo = jsonResponse['info'];
 
         setState(() {
+          _userId = userInfo['user_id']?.toString();
           userData = {
             'full_name': userInfo['username'] ?? 'Not provided',
             'phone_number': userInfo['phone_number'] ?? 'Not provided',
@@ -58,6 +58,7 @@ class _AccountScreenState extends State<AccountScreen> {
           };
           isLoading = false;
         });
+        await loadSavedImageUrl();
       } else {
         throw Exception('Failed to load user data: ${response.statusCode}');
       }
@@ -74,6 +75,12 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
+  Future<void> saveImageUrlForUser(String imageUrl) async {
+    if (_userId == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_image_${_userId}', imageUrl);
+  }
+
   ImageProvider? _buildImageProvider() {
     if (_selectedImage != null) {
       return MemoryImage(_selectedImage);
@@ -82,7 +89,19 @@ class _AccountScreenState extends State<AccountScreen> {
     }
     return null;
   }
-
+  
+  Future<void> loadSavedImageUrl() async {
+    if (_userId == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    final savedImageUrl = prefs.getString('user_image_${_userId}');
+    if (savedImageUrl != null) {
+      setState(() {
+        _imageUrl = savedImageUrl;
+        // _selectedImage = Image.network(_imageUrl!);
+      });
+    }
+    print('ccece $_imageUrl');
+  }
   Future<void> uploadImage(XFile image) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -113,8 +132,11 @@ class _AccountScreenState extends State<AccountScreen> {
       var jsonResponse = json.decode(responseData);
 
       if (response.statusCode == 200) {
+        final imageUrl = jsonResponse['img_url'];
+        await saveImageUrlForUser(imageUrl);  // Lưu URL ảnh theo user ID
+
         setState(() {
-          _imageUrl = jsonResponse['img_url'];
+          _imageUrl = imageUrl;
           _selectedImage = bytes;
         });
 
@@ -231,7 +253,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               radius: 50,
                               backgroundColor: Colors.white,
                               backgroundImage: _buildImageProvider(),
-                              child: _selectedImage == null
+                              child: _imageUrl == null
                                   ? Text(
                                       (userData['full_name'] ?? 'U')[0]
                                           .toUpperCase(),
@@ -241,7 +263,10 @@ class _AccountScreenState extends State<AccountScreen> {
                                         color: Colors.blue,
                                       ),
                                     )
-                                  : null,
+                                  : ClipRRect(
+                                  child: Image.network(_imageUrl!),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
                             ),
                             Positioned(
                               bottom: 0,

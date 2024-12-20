@@ -82,8 +82,8 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
     }
   }
 
-  Future<void> handleEditActivity(int res_id, String newName, String newDob, String newStatus, String newPhoneNumber) async {
-    final String url='https://apartment-management-kjj9.onrender.com/admin/update-res/${res_id}';
+  Future<void> handleEditActivity(int res_id, String newName, String newDob, String newStatus, String newPhoneNumber,String newHousehold) async {
+    final String url='https://apartment-management-kjj9.onrender.com/admin/update-resident/${res_id}';
     SharedPreferences prefs=await SharedPreferences.getInstance();
     String? tokenlogin=prefs.getString('tokenlogin');
     try{
@@ -95,13 +95,14 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
         },
         body: {
           'phone_number':newPhoneNumber,
-          'full_name':newName,
+          'resident_name':newName,
           'status':newStatus,
-          'date_of_birth':newDob
+          'date_of_birth':newDob,
+          'household_registration':newHousehold
         }
       );
       print(response.statusCode);
-      if(response.statusCode==200){
+      if(response.statusCode==201){
         showinform(context, 'Success', 'Resident updated successfully');
         setState(() {
           for (var item in _residents) {
@@ -114,6 +115,8 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
             }
           }
         });
+      }else{
+        showinform(context, 'Failed', 'Can not update this resident');
       }
     }catch(e){
       print('Error : $e');

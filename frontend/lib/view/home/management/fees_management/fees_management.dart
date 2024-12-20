@@ -38,7 +38,7 @@ class _FeesManagementState extends State<FeesManagement> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const MainHome(currentIndex: 2,)),
+                    MaterialPageRoute(builder: (context) => const MainHome(currentIndex: 1,)),
                   );
                 },
               );

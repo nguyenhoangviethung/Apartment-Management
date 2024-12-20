@@ -85,7 +85,7 @@ class _RoomsManagementState extends State<RoomsManagement> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> const MainHome(currentIndex: 2,)));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> const MainHome(currentIndex: 1,)));
             },
           ),
         ),

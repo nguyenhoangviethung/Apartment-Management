@@ -5,7 +5,7 @@ import 'edit_footer.dart';
 class ResidentCard extends StatefulWidget {
   final ResidentInfo item;
   final Function(int) onDelete;
-  final Function(int, String, String, String, String) onEdit;
+  final Function(int, String, String, String, String,String) onEdit;
 
   const ResidentCard({super.key, required this.item, required this.onDelete, required this.onEdit});
 
@@ -95,8 +95,8 @@ class _ResidentCardState extends State<ResidentCard> {
                               builder: (BuildContext context) {
                                 return EditFooter(
                                   id: widget.item.res_id!,
-                                  editResidentInfo: (id, newName, newDob, newStatus, newPhoneNumber) {
-                                    widget.onEdit(id, newName, newDob, newStatus, newPhoneNumber);
+                                  editResidentInfo: (id, newName, newDob, newStatus, newPhoneNumber,newHousehold) {
+                                    widget.onEdit(id, newName, newDob, newStatus, newPhoneNumber,newHousehold);
                                   },
                                 );
                               }

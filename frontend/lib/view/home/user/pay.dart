@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/models/user_fee.dart';
+import 'package:frontend/services/fetch_user_fee.dart';
 import 'package:frontend/view/home/user/vnpay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +16,10 @@ class Pay extends StatefulWidget {
 }
 
 class _PayState extends State<Pay> {
+  late UserFee? userHouseholdFee;
+  late UserFee? userParkFee;
+  bool isLoading = true;
+
   Future<void> getUrlPay(int userId, int feeId, int householdId,int amount) async {
     final url= 'https://apartment-management-kjj9.onrender.com/$userId/$feeId/$householdId/$amount';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -39,6 +45,26 @@ class _PayState extends State<Pay> {
       print('Error $e');
     }
   }
+  Future<void> fetchData() async {
+    try {
+      userHouseholdFee = await fetchUserFee('user/fees');
+      print(userHouseholdFee);
+      userParkFee = await fetchUserFee('user/park-fees');
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchData();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,34 +84,32 @@ class _PayState extends State<Pay> {
         backgroundColor: Colors.blue,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildPaymentCard(
-              amount: '1,200,000 VND',
-              nameFee: 'Room Fee',
-              dueDate: '20/11/2024',
-              status: 'Pending',
-              context: context,
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _buildPaymentCard(
+                    amount: userHouseholdFee?.amount.toString() ?? 'N/A',
+                    nameFee: userHouseholdFee?.name_fee ?? 'N/A',
+                    dueDate: userHouseholdFee?.due_date ?? 'N/A',
+                    status: userHouseholdFee?.status ?? 'N/A',
+                  ),
+                  const SizedBox(height: 16),
+                  _buildPaymentCard(
+                    amount: userParkFee?.amount.toString() ?? 'N/A',
+                    nameFee: userParkFee?.name_fee ?? 'N/A',
+                    dueDate: userParkFee?.due_date ?? 'N/A',
+                    status: userParkFee?.status ?? 'N/A',
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-            _buildPaymentCard(
-              amount: '200,000 VND',
-              nameFee: 'Electric Fee',
-              dueDate: '25/11/2024',
-              status: 'Paid', context: context,
-            ),
-            const SizedBox(height: 16),
-            _buildPaymentCard(
-              amount: '100,000 VND',
-              nameFee: 'Water Fee',
-              dueDate: '25/11/2024',
-              status: 'Overdue', context: context,
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -94,7 +118,6 @@ class _PayState extends State<Pay> {
     required String nameFee,
     required String dueDate,
     required String status,
-    required BuildContext context
   }) {
     Color statusColor;
     Color cardColor;
@@ -225,7 +248,7 @@ class _PayState extends State<Pay> {
                 child: ElevatedButton(
                   onPressed: () {
                     // Chưa cần logic, sẽ bổ sung sau
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>VNPayPaymentScreen(paymentUrl: 'https://nguyenhaiminh.id.vn/')));
+                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>VNPayPaymentScreen(paymentUrl: 'https://nguyenhaiminh.id.vn/')));
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(

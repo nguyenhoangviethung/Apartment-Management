@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/services/fetch_news.dart';
 import 'package:frontend/view/home/home_page/home_page_component/detailed_new.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../common/pagination.dart';
 import '../../../models/news.dart';
 
 class HomePage extends StatefulWidget {
@@ -242,27 +243,11 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),
-                // Pagination Controls
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: _currentPage > 1 ? _goToPreviousPage : null,
-                      ),
-                      Text(
-                        'Page $_currentPage of $_totalPages',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_forward),
-                        onPressed:
-                            _currentPage < _totalPages ? _goToNextPage : null,
-                      ),
-                    ],
-                  ),
+                CustomPagination(
+                  currentPage: _currentPage,
+                  totalPages: _totalPages,
+                  onPrevious: _goToPreviousPage,
+                  onNext: _goToNextPage,
                 ),
               ],
             ),

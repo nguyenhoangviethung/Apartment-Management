@@ -37,6 +37,7 @@ class _MainHomeState extends State<MainHome> {
       setState(() {
         _screens=[
           const HomePage(),
+          const User(),
           const Management(),
           const AccountScreen(),
         ];
@@ -53,13 +54,26 @@ class _MainHomeState extends State<MainHome> {
   }
 
   String _getAppBarTitle() {
-    switch (_currentIndex) {
-      case 1:
-        return _role =='admin'? 'User':'Management';
-      case 2:
-        return 'Account';
-      default:
-        return 'Welcome back';
+    if(_role=='admin'){
+      switch (_currentIndex) {
+        case 1:
+          return 'User Services';
+        case 2:
+          return 'Management';
+        case 3:
+          return 'Account';
+        default:
+          return 'Welcome back';
+      }
+    }else{
+      switch (_currentIndex) {
+        case 1:
+          return 'User Services';
+        case 2:
+          return 'Account';
+        default:
+          return 'Welcome back';
+      }
     }
   }
 
@@ -106,14 +120,31 @@ class _MainHomeState extends State<MainHome> {
           backgroundColor: Colors.lightBlue,
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.white60,
-          items: [
+          items: _role=='admin'? [
             const BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
             ),
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.rule),
-              label: _role =='admin'? 'Management':'User',
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.rule),
+              label:'User Services',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.manage_accounts),
+              label:'Management',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              label: 'Account',
+            ),
+          ]: [
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.rule),
+              label: 'User Services',
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.account_circle),

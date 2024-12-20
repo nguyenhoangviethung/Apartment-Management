@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../../models/parking_fee_info.dart';
 import '../fee_management_component/date_filter.dart';
+import 'all.dart';
 
 class ParkingFee extends StatefulWidget {
   const ParkingFee({super.key});
@@ -123,7 +124,7 @@ class _ParkingFeeState extends State<ParkingFee> with TickerProviderStateMixin {
         body: TabBarView(
           controller: _tabController,
           children: const <Widget>[
-            AllRooms(),
+            All(),
             UnpaidParkingFee(),
             ChangeDetails(),
           ],

@@ -3,17 +3,17 @@ import 'package:frontend/models/fee_required_info.dart';
 
 import '../../../../../models/parking_fee_info.dart';
 
-class FeeCard extends StatefulWidget {
-  final FeeResponse feeResponse;
+class ParkingFeeCard extends StatefulWidget {
+  final ParkingFeeResponse parkingFeeResponse;
   final ParkingFeeInfo item;
 
-  const FeeCard({super.key, required this.item, required this.feeResponse});
+  const ParkingFeeCard({super.key, required this.item, required this.parkingFeeResponse});
 
   @override
-  State<FeeCard> createState() => _FeeCardState();
+  State<ParkingFeeCard> createState() => _ParkingFeeCardState();
 }
 
-class _FeeCardState extends State<FeeCard> {
+class _ParkingFeeCardState extends State<ParkingFeeCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -34,9 +34,9 @@ class _FeeCardState extends State<FeeCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Description:',widget.feeResponse.description?.join(', ') ?? 'N/A'),
+                      _buildInfoRow('Description:',widget.parkingFeeResponse.description?.join(', ') ?? 'N/A'),
                       _buildInfoRow('Room id:', widget.item.room ?? 'N/A'),
-                      _buildInfoRow('Fee:', widget.item.numCar ?? 'N/A'),
+                      _buildInfoRow('Fee:', widget.item.fee ?? 'N/A'),
                     ],
                   ),
                 ),
@@ -96,7 +96,7 @@ class _FeeCardState extends State<FeeCard> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.feeResponse.description!.join(', '),
+                              widget.parkingFeeResponse.description!.join(', '),
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
@@ -112,7 +112,7 @@ class _FeeCardState extends State<FeeCard> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.item.numCar!,
+                              widget.item.fee!,
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,

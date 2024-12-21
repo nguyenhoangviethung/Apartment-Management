@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/not-paid_room_info.dart';
+import 'package:frontend/models/fee_required_info.dart';
 
-class NotPaidRoomCard extends StatefulWidget {
-  final NotPaidRoomInfo item;
+import '../../../../../models/parking_fee_info.dart';
 
-  const NotPaidRoomCard({super.key, required this.item});
+class ParkingFeeCard extends StatefulWidget {
+  final ParkingFeeResponse parkingFeeResponse;
+  final ParkingFeeInfo item;
+
+  const ParkingFeeCard({super.key, required this.item, required this.parkingFeeResponse});
 
   @override
-  State<NotPaidRoomCard> createState() => _NotPaidRoomCardState();
+  State<ParkingFeeCard> createState() => _ParkingFeeCardState();
 }
 
-class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
+class _ParkingFeeCardState extends State<ParkingFeeCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -31,13 +34,9 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Room id:', widget.item.room ?? 'Unknown'),
-                      _buildInfoRow('Amount:', widget.item.amount?.toString() ?? '0'),
-                      _buildInfoRow('Due date:', widget.item.due_date ?? 'N/A'),
-                      _buildInfoRow('Service fee:', widget.item.service_fee?.toString() ?? '0'),
-                      _buildInfoRow('Manage fee:', widget.item.manage_fee?.toString() ?? '0'),
-                      _buildInfoRow('Fee type:', widget.item.fee_type ?? 'Unknown'),
-
+                      _buildInfoRow('Description:',widget.parkingFeeResponse.description?.join(', ') ?? 'N/A'),
+                      _buildInfoRow('Room id:', widget.item.room ?? 'N/A'),
+                      _buildInfoRow('Fee:', widget.item.fee ?? 'N/A'),
                     ],
                   ),
                 ),
@@ -66,32 +65,38 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
-                  const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      widget.item.room ?? 'Unknown',
-                      style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                    child: Row(
+                      children: [
+                        Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            widget.item.room ?? 'Unknown room',
+                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 11.0),
+                padding: const EdgeInsets.only(left: 10),
                 child: Row(
                   children: [
                     Flexible(
                       child: Row(
                         children: [
-                          Icon(Icons.monetization_on_outlined, color: Colors.grey[600]!, size: 25),
+                          Icon(Icons.description, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.item.amount.toString(),
+                              widget.parkingFeeResponse.description!.join(', '),
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
@@ -100,15 +105,14 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 10),
                     Flexible(
                       child: Row(
                         children: [
-                          Icon(Icons.date_range_outlined, color: Colors.grey[600]!, size: 25),
+                          Icon(Icons.money, color: Colors.grey[600]!, size: 25),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.item.due_date ?? 'no due_date',
+                              widget.item.fee!,
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,

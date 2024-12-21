@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/account/account.dart';
 import 'package:frontend/view/home/home_page/home_page.dart';
+import 'package:frontend/view/home/notification/notification_screen.dart';
 import 'package:frontend/view/home/user/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -110,7 +111,9 @@ class _MainHomeState extends State<MainHome> {
           actions: [
             IconButton(
               icon: const Icon(Icons.notifications, color: Colors.white),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const NotificationScreen()));
+              },
             ),
           ],
         ),

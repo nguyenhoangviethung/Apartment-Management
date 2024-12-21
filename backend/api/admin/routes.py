@@ -365,3 +365,11 @@ def get_all_vehicles():
 def remove_vehicle(vehicle_id):
     response, status_code = vehicle_service.remove_vehicle(vehicle_id)
     return jsonify(response), status_code
+
+@admin_bp.post("/user-to-res/<int:res_id>")
+@admin_required
+@handle_exceptions
+def to_resident(res_id):
+    data = request.form.to_dict()
+    response, status_code = user_service.convert_to_resident(data, res_id)
+    return jsonify(response), status_code

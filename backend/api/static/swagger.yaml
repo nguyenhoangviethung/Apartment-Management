@@ -1806,3 +1806,69 @@ paths:
                   error:
                     type: string
                     example: "Unexpected error: <error details>"
+  /admin//user-to-res/<int:res_id>:
+    post:
+      summary: Convert a user to a resident by updating their role
+      description: Updates the `user_id` of a resident with the given `id`.
+      tags: 
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - user_id
+              properties:
+                user_id:
+                  type: integer
+                  example: 1  
+      parameters:
+        - name: res_id
+          in: path
+          required: true
+          description: The ID of the resident to update.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Role updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "role updated successfully !!"
+        '403':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid input data"
+        '404':
+          description: Resident not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Resident not found"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unexpected error: <error details>"                  

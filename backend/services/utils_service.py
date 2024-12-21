@@ -3,7 +3,7 @@ import logging
 from helpers import validate_date, decimal_to_float
 from decimal import Decimal, InvalidOperation
 from api.middlewares import handle_exceptions
-from models.models import Vehicles, Households, ParkingFees
+from models.models import Vehicles, Households, ParkingFees, Residents
 from datetime import datetime, timedelta, date
 
 class UtilsService:
@@ -58,8 +58,8 @@ class UtilsService:
     def get_all_park_fee(self):
         query_date = datetime.now().date()
 
-        fee = db.session.query(ParkFees.description).filter(query_date <= ParkFees.due_date).first()
-        fee_ids = db.session.query(ParkFees.park_id).filter(query_date <= ParkFees.due_date).all()
+        fee = db.session.query(ParkingFees.description).filter(query_date <= ParkingFees.due_date).first()
+        fee_ids = db.session.query(ParkingFees.park_id).filter(query_date <= ParkingFees.due_date).all()
 
         res = {"infor": {"description": [],
                         "detail": []
@@ -69,8 +69,8 @@ class UtilsService:
 
         for fee_id in fee_ids:
             f_id = fee_id[0]
-            amount = db.session.query(ParkFees.amount).filter(ParkFees.park_id == f_id).scalar() or None
-            household_id = db.session.query(ParkFees.household_id).filter(ParkFees.park_id == f_id).scalar() or None
+            amount = db.session.query(ParkingFees.amount).filter(ParkingFees.park_id == f_id).scalar() or None
+            household_id = db.session.query(ParkingFees.household_id).filter(ParkingFees.park_id == f_id).scalar() or None
 
             if not amount:
                 continue
@@ -223,7 +223,7 @@ class UtilsService:
     @handle_exceptions
     def get_current_household_fee(self, household_id):
         now = datetime.now().date()
-        return db.session.query(ParkFees).filter(ParkFees.household_id == household_id, now <= ParkFees.due_date).first()
+        return db.session.query(ParkingFees).filter(ParkingFees.household_id == household_id, now <= ParkingFees.due_date).first()
 
     @handle_exceptions
     def user_get_current_fee(self, resident_id):

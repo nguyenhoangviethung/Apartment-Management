@@ -23,11 +23,11 @@ def index():
         return f'Lỗi: {str(e)}'
 @token_required
 @handle_exceptions
-@user_bp.get('/<int:user_id>/<int:fee_id>/<int:household_id>/<int:amount>/<string:description>/pay-fee')
-def pay_fee(user_id,fee_id,household_id, amount, description):
+@user_bp.get('/<int:user_id>/<int:fee_id>/<int:amount>/<string:description>/pay-fee')
+def pay_fee(user_id,fee_id, amount, description):
     vnp_Amount = amount*100
     vnp_IpAddr = getIP()
-    vnp_OrderInfo = f'Transaction {fee_id} {amount} for {household_id} by {user_id} {description}'
+    vnp_OrderInfo = f'Transaction {fee_id} {amount} for by {user_id} {description}'
     CreateDate = datetime.now()
     ExpireDate = CreateDate + timedelta(minutes = 10)
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
@@ -37,11 +37,11 @@ def pay_fee(user_id,fee_id,household_id, amount, description):
 
 @token_required
 @handle_exceptions
-@user_bp.get('/<int:user_id>/<int:park_id>/<int:household_id>/<int:amount>/<string:description>/pay-park-fee')
-def pay_park_fee(user_id,park_id,household_id, amount, description):
+@user_bp.get('/<int:user_id>/<int:park_id>/<int:amount>/<string:description>/pay-park-fee')
+def pay_park_fee(user_id,park_id, amount, description):
     vnp_Amount = amount*100
     vnp_IpAddr = getIP()
-    vnp_OrderInfo = f'Transaction {park_id} {amount} for {household_id} by {user_id} {description}'
+    vnp_OrderInfo = f'Transaction-Parking {park_id} {amount} for by {user_id} {description}'
     CreateDate = datetime.now()
     ExpireDate = CreateDate + timedelta(minutes = 10)
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')

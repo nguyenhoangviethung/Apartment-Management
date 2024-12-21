@@ -5,12 +5,13 @@ from random import randint
 from vnpay import VNPAY
 from api.pay import pay_bp
 from datetime import datetime, timedelta
-from services import fee_service, user_service,transaction_service
+from services import fee_service, user_service,transaction_service, utils_service
 load_dotenv()
 
 fee_service = fee_service.FeeService()
 user_service = user_service.UserService()
 transaction_service = transaction_service.TransactionService()
+utils_service = utils_service.UtilsService()
 @pay_bp.route('/payment')
 def payment():
     vnp_Amount = request.args.get('vnp_Amount', type = int)
@@ -46,6 +47,7 @@ def payment():
 @pay_bp.route('/payment-return')
 def payment_return():
     inputData = request.args
+    print(inputData)
     if inputData:
         payment = VNPAY()
         payment.responseData = inputData.to_dict()
@@ -63,26 +65,54 @@ def payment_return():
 
         if payment.validate_response(os.getenv('VNP_HASHSECRET')):
             if vnp_ResponseCode == '00':
-                desc = order_desc.split()
-                fee = fee_service.get_fee_by_fee_id(fee_id = desc[1])
-                remain_amount = float(fee.amount) - amount
-                data = {'amount': remain_amount}
-                if remain_amount == 0 or remain_amount < 0:
-                    data['status'] = 'Đã thanh toán'
-                fee_service.update_status(data, fee_id = desc[1])    
-                data = {
-                    "transaction_id": order_id,
-                    "fee_id": desc[1],
-                    "amount": amount, 
-                    "user_pay": desc[-2],
-                    "user_name": user_service.get_username(desc[-2]),
-                    "transaction_time": vnp_PayDate,
-                    "bank_code": vnp_BankCode,
-                    "type": vnp_CardType,
-                    "description": desc[-1]
-                }
-                transaction_service.add_transaction(data)
-                return jsonify({'message':f'thanh toan thanh cong {amount} chi phí cho {desc[4]}'}), 302
+                desc = order_desc.strip().split()
+                if desc[0] == 'Transaction':
+                    fee = fee_service.get_fee_by_fee_id(fee_id = desc[1])
+                    remain_amount = float(fee.amount) - amount
+                    print(desc)
+                    data_= {}
+                    print(type(data_))
+                    if remain_amount == 0 or remain_amount < 0:
+                        data_['status'] = 'Đã thanh toán'
+                    fee_service.update_status(data_, fee_id = desc[1])    
+                    data = dict()
+                    data = {
+                        "description": desc[-1],
+                        "amount": amount,
+                        "transaction_id": order_id,
+                        "fee_id": desc[1],
+                        "park_id": None,
+                        "user_pay": desc[-2],
+                        "user_name": user_service.get_username(desc[-2]),
+                        "transaction_time": vnp_PayDate,
+                        "bank_code": vnp_BankCode,
+                        "type": vnp_CardType,
+                    }
+                    transaction_service.add_transaction(data)
+                    return jsonify({'message':f'thanh toan thanh cong'}), 302
+                if desc[0] == 'Transaction-Parking':
+                    park_fee = utils_service.get_park_fee_by_park_id(park_id = desc[1])
+                    remain_amount = float(park_fee.amount) - amount
+                    data_ = {}
+                    if remain_amount == 0 or remain_amount < 0:
+                        data_['status'] = 'Đã thanh toán'
+                    utils_service.update_status(data_, park_id = desc[1])   
+                    data = dict() 
+                    data = {
+                        "amount": amount,
+                        "transaction_id": order_id,
+                        "park_id": int(desc[1]),
+                        "fee_id": None,
+                        "user_pay": desc[-2],
+                        "user_name": user_service.get_username(desc[-2]),
+                        "transaction_time": vnp_PayDate,
+                        "bank_code": vnp_BankCode,
+                        "type": vnp_CardType,
+                        "description": desc[-1]
+                    }
+                    print(jsonify(data))
+                    transaction_service.add_transaction(data)
+                    return jsonify({'message':f'thanh toan thanh cong'}), 302
             else:
                 return jsonify({'message':'thanh toan that bai'}), 406
         else:

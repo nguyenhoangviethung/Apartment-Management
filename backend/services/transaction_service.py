@@ -29,12 +29,14 @@ class TransactionService:
             transaction_data = {
                 "transaction_id": transaction.transaction_id,
                 "fee_id": transaction.fee_id,
+                "park_id": transaction.park_id,
                 "amount": transaction.amount, 
                 "user_pay": transaction.user_pay,
                 "user_name": transaction.user_name,
                 "transaction_time": transaction.transaction_time,
                 "bank_code": transaction.bank_code,
-                "type": transaction.type
+                "type": transaction.type,
+                'description': transaction.description
             }
             data.append(transaction_data)
         
@@ -44,14 +46,22 @@ class TransactionService:
         # Tạo đối tượng mới từ class Transactions
         new_transaction = Transactions(
             transaction_id=data['transaction_id'],
-            fee_id=data['fee_id'],
             amount=data['amount'], 
+            fee_id=data['fee_id'],
+            park_id=data['park_id'],
             user_pay=data['user_pay'],
             user_name=data['user_name'],
             transaction_time=self.convert_datetime(data['transaction_time']),
             bank_code=data['bank_code'],
-            type=data['type']
+            type=data['type'],
+            description=data['description']
         )
+        # if data['fee_id']:
+        #     new_transaction.fee_id = data['fee_id']
+        # else:
+        #     new_transaction.fee_id = 0
+        # if data['park_id']:
+        #     new_transaction.park_id = data['park_id']
         db.session.add(new_transaction)
         db.session.commit()
         return {'message': 'Add transaction successfully'}

@@ -70,8 +70,8 @@ class TokenBlacklist(db.Model):
     token = Column(db.String(512), unique=True, nullable=False)
     revoked = Column(db.Boolean, default=True)
 
-class ParkFees(db.Model):
-    __tablename__ = 'Parks'
+class ParkingFees(db.Model):
+    __tablename__ = 'ParkingFees'
     park_id = Column(INTEGER, primary_key=True)
     description = Column(String(40), default=None, nullable=False)
     amount = Column(DECIMAL(10, 2), default=None, nullable=False)
@@ -80,7 +80,6 @@ class ParkFees(db.Model):
     create_date = Column(Date, default = None)
     created_by = Column(INTEGER, ForeignKey('Users.user_id'))
     updated_by = Column(INTEGER, ForeignKey('Users.user_id'))
-    payer = Column(INTEGER, ForeignKey('Users.user_id'))
     household_id = Column(INTEGER, ForeignKey('Households.household_id'))
 
 class Vehicles(db.Model):
@@ -94,6 +93,7 @@ class Transactions(db.Model):
     __tablename__ = 'Transactions'
     transaction_id = Column(db.String(36), nullable=False, primary_key=True)
     fee_id = Column(db.Integer, ForeignKey('Fees.fee_id'))
+    park_id = Column(INTEGER, ForeignKey('ParkingFees.park_id'))
     amount = Column(DECIMAL(10,2), nullable=False)
     user_pay = Column(INTEGER, ForeignKey('Users.user_id'))
     user_name = Column(db.String(40), nullable=False)

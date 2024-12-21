@@ -3,7 +3,7 @@ import logging
 from helpers import validate_date, decimal_to_float
 from decimal import Decimal, InvalidOperation
 from api.middlewares import handle_exceptions
-from models.models import Vehicles, Households, ParkFees
+from models.models import Vehicles, Households, ParkingFees
 from datetime import datetime, timedelta, date
 
 class UtilsService:
@@ -12,17 +12,17 @@ class UtilsService:
 
     @handle_exceptions
     def get_park_fee_by_park_id(self,park_id):
-        return db.session.query(ParkFees).filter(ParkFees.park_id == park_id).first()
+        return db.session.query(ParkingFees).filter(ParkingFees.park_id == park_id).first()
     @handle_exceptions
     def get_park_fee_by_household_id(self, household_id):
-        return db.session.query(ParkFees).filter(ParkFees.household_id == household_id).all()
+        return db.session.query(ParkingFees).filter(ParkingFees.household_id == household_id).all()
     
     @handle_exceptions
     def update_status(self, data, park_id):
         fee = self.get_park_fee_by_park_id(park_id)
 
         if fee is None:
-            return 'Fee not found'
+            return 'ParkingFee not found'
         valid_statuses = ['Đã thanh toán', 'Chưa thanh toán']
        
         for key, value in data.items():
@@ -74,9 +74,9 @@ class UtilsService:
         # Kiểm tra xem đã có fee nào được tạo trong cùng tháng và năm chưa
         current_month = start_date.replace(day=1)
         next_month = (current_month + timedelta(days=32)).replace(day=1)
-        existing_fee_same_month = ParkFees.query.filter(
-            ParkFees.create_date >= current_month,
-            ParkFees.create_date < next_month
+        existing_fee_same_month = ParkingFees.query.filter(
+            ParkingFees.create_date >= current_month,
+            ParkingFees.create_date < next_month
         ).first()
         if existing_fee_same_month:
             return ({'error': 'A fee has already been created for this month and year'}), 400    
@@ -93,7 +93,7 @@ class UtilsService:
             amount = res["amount"]    
             
             status = "Đã thanh toán" if amount == 0 else "Chưa thanh toán"
-            fee = ParkFees(
+            fee = ParkingFees(
                 amount = amount,
                 create_date = start_date,
                 due_date = due_date,
@@ -115,7 +115,7 @@ class UtilsService:
             return {'error': 'Missing required fields'}, 400
 
         description = data["description"].strip()
-        fees = ParkFees.query.filter(ParkFees.description == description).all()
+        fees = ParkingFees.query.filter(ParkingFees.description == description).all()
         
         if not fees:
             return ({'error': 'No fees found with the given description'}), 404
@@ -129,18 +129,18 @@ class UtilsService:
 
     def get_unpaid_park_fee(self, query_date):
             return db.session.query(
-                ParkFees.park_id, 
-                ParkFees.household_id, 
-                ParkFees.due_date,
-                ParkFees.description,
-                ParkFees.amount
+                ParkingFees.park_id, 
+                ParkingFees.household_id, 
+                ParkingFees.due_date,
+                ParkingFees.description,
+                ParkingFees.amount
             ).join(
                 Households, 
-                ParkFees.household_id == Households.household_id
+                ParkingFees.household_id == Households.household_id
             ).filter(
-                ParkFees.status == 'Chưa thanh toán', 
-                ParkFees.due_date >= query_date,
-                ParkFees.create_date <= query_date
+                ParkingFees.status == 'Chưa thanh toán', 
+                ParkingFees.due_date >= query_date,
+                ParkingFees.create_date <= query_date
             ).all()
 
     

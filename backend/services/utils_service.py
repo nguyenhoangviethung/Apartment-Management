@@ -55,6 +55,36 @@ class UtilsService:
         return {"amount": amount, "room": f"{household_id}", "num_car": f"{num_cars}", "num_motors": f"{num_motors}"}, 200
         
     @handle_exceptions
+    def get_all_park_fee(self):
+        query_date = datetime.now().date()
+
+        fee = db.session.query(ParkFees.description).filter(query_date <= ParkFees.due_date).first()
+        fee_ids = db.session.query(ParkFees.park_id).filter(query_date <= ParkFees.due_date).all()
+
+        res = {"infor": {"description": [],
+                        "detail": []
+                        }}
+        if fee:
+            res['infor']["description"].append(fee[0])
+
+        for fee_id in fee_ids:
+            f_id = fee_id[0]
+            amount = db.session.query(ParkFees.amount).filter(ParkFees.park_id == f_id).scalar() or None
+            household_id = db.session.query(ParkFees.household_id).filter(ParkFees.park_id == f_id).scalar() or None
+
+            if not amount:
+                continue
+
+            info = { 
+                    'fee' : f'{amount}',
+                    'room': f'{household_id}'
+            }
+
+            res['infor']['detail'].append(info)
+
+        return (res), 200
+
+    @handle_exceptions
     def add_park_fee(self, data, creator):
         required_fields = ['start_date', 'due_date', 'description']
 
@@ -190,6 +220,39 @@ class UtilsService:
         self.logger.info(f"Retrieved {len(res['infor'])} unpaid fees")
         return (res), 200
 
+    @handle_exceptions
+    def get_current_household_fee(self, household_id):
+        now = datetime.now().date()
+        return db.session.query(ParkFees).filter(ParkFees.household_id == household_id, now <= ParkFees.due_date).first()
+
+    @handle_exceptions
+    def user_get_current_fee(self, resident_id):
+        households_id = db.session.query(Residents.household_id).filter(Residents.resident_id == resident_id).scalar()
+        return self.get_current_household_fee(households_id)
+
+    @handle_exceptions
+    def get_fee_by_userID(self, data):
+
+        required_fields = ["user_id"]
+
+        if not all(field in data for field in required_fields):
+            return {'error': 'Missing required fields'}, 400
+
+        user_id = data["user_id"]
+        resident_id = db.session.query(Residents.resident_id).filter(Residents.user_id == user_id).scalar()
+
+        if not resident_id:
+            return ({'message': 'you do not have permission'}), 403
+        
+        fee_info = self.user_get_current_fee(resident_id)
+
+        result = {
+            'amount' : fee_info.amount,
+            'due_date' : datetime.strftime(fee_info.due_date, "%Y-%m-%d"),
+            'status' : fee_info.status,
+            'name_fee' : fee_info.description
+        }
+        return (result), 200
 
     def get_electric_fee_by_householdID(self, household_id):
         pass

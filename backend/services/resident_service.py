@@ -85,7 +85,8 @@ class ResidentService:
                 'phone_number' : resident.phone_number,
                 'status' : resident.status,
                 'household_registration' : resident.household_registration,
-                'res_id' : resident.resident_id
+                'res_id' : resident.resident_id,
+                'user_id' : resident.user_id
             }
             resident_list.append(resident_data)
         return resident_list

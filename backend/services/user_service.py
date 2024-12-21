@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from models.models import Users
+from models.models import Users, Residents
 from api.extensions import db
 import logging
 
@@ -43,4 +43,16 @@ class UserService:
             user_list.append(user_data)
         return user_list    
 
-        
+    def convert_to_resident(self, data, id):    
+        try:
+            resident = db.session.query(Residents).filter_by(resident_id = id).first()
+            if not resident:
+                return("message: resident not found"), 404
+            if resident.user_id != None:
+                return ("message: 'this resident is already an user"), 403
+            setattr(resident, 'user_id', data.get('user_id'))
+            db.session.commit()
+            return ("message': 'role updated successfully !!"), 200
+        except Exception as e:
+            db.session.rollback()
+            return ({'error': f'Unexpected error: {e}'}), 500

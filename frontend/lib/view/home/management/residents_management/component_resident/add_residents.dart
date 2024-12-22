@@ -69,7 +69,7 @@ class _AddResidentsState extends State<AddResidents> {
     });
   }
 
-  void handleEditResident(int id, String newName, String newDob, String newStatus, String newPhoneNumber) {
+  void handleEditResident(int id, String newName, String newDob, String newStatus, String newPhoneNumber,String newHousehold) {
     setState(() {
       for (var item in items) {
         if (item.id_number == id.toString()) {
@@ -77,6 +77,7 @@ class _AddResidentsState extends State<AddResidents> {
           item.date_of_birth = newDob;
           item.status = newStatus;
           item.phone_number = newPhoneNumber;
+          item.room = int.parse(newHousehold);
           break;
         }
       }

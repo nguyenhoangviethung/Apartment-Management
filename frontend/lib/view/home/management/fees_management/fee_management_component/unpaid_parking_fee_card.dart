@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/not-paid_room_info.dart';
+import '../../../../../models/unpaid_parking_fee_info.dart';
 
-class NotPaidRoomCard extends StatefulWidget {
-  final NotPaidRoomInfo item;
+class UnpaidParkingFeeCard extends StatefulWidget {
+  final UnpaidParkingFeeInfo item;
 
-  const NotPaidRoomCard({super.key, required this.item});
+  const UnpaidParkingFeeCard({super.key, required this.item});
 
   @override
-  State<NotPaidRoomCard> createState() => _NotPaidRoomCardState();
+  State<UnpaidParkingFeeCard> createState() => _UnpaidParkingFeeCardState();
 }
 
-class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
+class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -33,11 +33,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                     children: [
                       _buildInfoRow('Room id:', widget.item.room ?? 'Unknown'),
                       _buildInfoRow('Amount:', widget.item.amount?.toString() ?? '0'),
-                      _buildInfoRow('Due date:', widget.item.due_date ?? 'N/A'),
-                      _buildInfoRow('Service fee:', widget.item.service_fee?.toString() ?? '0'),
-                      _buildInfoRow('Manage fee:', widget.item.manage_fee?.toString() ?? '0'),
                       _buildInfoRow('Fee type:', widget.item.fee_type ?? 'Unknown'),
-
                     ],
                   ),
                 ),
@@ -108,7 +104,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.item.due_date ?? 'no due_date',
+                              widget.item.fee_type ?? 'no fee_type',
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,

@@ -1,171 +1,211 @@
+// import 'package:flutter/material.dart';
+// import '../../../../../models/contribution_fee_info.dart';
+// import '../../../../../services/fetch_contribution_fees.dart';
+// import '../fee_management_component/contribution_fee_card.dart';
+//
+// class ContributionFeeListScreen extends StatefulWidget {
+//   const ContributionFeeListScreen({super.key});
+//
+//   @override
+//   State<ContributionFeeListScreen> createState() => _ContributionFeeListScreenState();
+// }
+//
+// class _ContributionFeeListScreenState extends State<ContributionFeeListScreen> {
+//   late Future<List<ContributionFeeResponse>?> futureContributionFees;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     futureContributionFees = fetchContributionFees();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: FutureBuilder<List<ContributionFeeResponse>?>(
+//         future: futureContributionFees,
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return const Center(child: CircularProgressIndicator());
+//           } else if (snapshot.hasError) {
+//             return Center(
+//               child: Text(
+//                 'Error: ${snapshot.error}',
+//                 style: const TextStyle(fontSize: 18, color: Colors.red),
+//               ),
+//             );
+//           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+//             final contributionFees = snapshot.data!;
+//             return _buildContributionFeeList(contributionFees);
+//           } else {
+//             return const Center(child: Text('No data available'));
+//           }
+//         },
+//       ),
+//     );
+//   }
+//
+//   Widget _buildContributionFeeList(List<ContributionFeeResponse> contributionFees) {
+//     return ListView.builder(
+//       itemCount: contributionFees.length,
+//       itemBuilder: (context, index) {
+//         final contributionFeeResponse = contributionFees[index];
+//         return ExpansionTile(
+//           title: Text(
+//             contributionFeeResponse.description ?? 'No Description',
+//             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//           ),
+//           children: contributionFeeResponse.detail!
+//               .map(
+//                 (item) => Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+//               child: ContributionFeeCard(
+//                 item: item,
+//                 contributionFeeResponse: contributionFeeResponse,
+//               ),
+//             ),
+//           )
+//               .toList(),
+//         );
+//       },
+//     );
+//   }
+// }
 import 'package:flutter/material.dart';
-import 'package:frontend/services/fetch_contribution_fees.dart'; // Đảm bảo import đúng dịch vụ
-import '../../../../../models/contribution_fee_info.dart'; // Nhập mô hình ContributionFeeInfo
-import '../fee_management_component/contribution_fee_card.dart'; // Nhập ContributionFeeCard
+import '../../../../../models/contribution_fee_info.dart';
+import '../../../../../services/fetch_contribution_fees.dart';
+import '../fee_management_component/contribution_fee_card.dart';
 
-class AllContributionFees extends StatefulWidget {
-  const AllContributionFees({super.key});
+class ContributionFeeListScreen extends StatefulWidget {
+  const ContributionFeeListScreen({super.key});
 
   @override
-  State<AllContributionFees> createState() => _AllContributionFeesState();
+  State<ContributionFeeListScreen> createState() => _ContributionFeeListScreenState();
 }
 
-class _AllContributionFeesState extends State<AllContributionFees> {
-  late Future<ContributionFeeResponse?> futureContributionFees;
-
-  List<ContributionFeeInfo> _originalFees = []; // Danh sách gốc
-  List<ContributionFeeInfo> _displayedFees = []; // Danh sách hiển thị
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-  final TextEditingController _searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+class _ContributionFeeListScreenState extends State<ContributionFeeListScreen> {
+  late Future<List<ContributionFeeResponse>?> futureContributionFees;
 
   @override
   void initState() {
     super.initState();
-    futureContributionFees = fetchContributionFees().then((response) {
-      if (response != null && response.fees != null) {
-        setState(() {
-          _originalFees = response.fees!;
-          _displayedFees = _originalFees;
-        });
-      }
-      return response;
-    });
-    _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page?.round() ?? 0;
-      });
-
-      // Tính toán vị trí của scroll view để đảm bảo dot màu xanh luôn nằm trong tầm nhìn
-      double offset = 0;
-      if (_currentPage >= 4) {
-        offset = (_currentPage * 20.0 - 60.0); // Điều chỉnh giá trị này dựa vào khoảng cách giữa các dot
-      }
-      _scrollController.animateTo(
-        offset,
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeInOut,
-      );
-    });
-  }
-
-  // Hàm tìm kiếm mới
-  void _filterFees(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        _displayedFees = _originalFees;
-      } else {
-        _displayedFees = _originalFees.where((contributionInfo) {
-          return (contributionInfo.room?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
-              (contributionInfo.contributionFee?.toString().contains(query) ?? false);
-        }).toList();
-      }
-      _pageController.jumpToPage(0);
-    });
+    futureContributionFees = fetchContributionFees();
   }
 
   @override
   Widget build(BuildContext context) {
-    const int itemsPerPage = 5;
-    int pageCount = (_displayedFees.length / itemsPerPage).ceil();
-
-    return FutureBuilder<ContributionFeeResponse?>(
-      future: futureContributionFees,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 15),
-                TextFormField(
-                  controller: _searchController,
-                  onChanged: _filterFees,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
-                    suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.blue, width: 2.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.blue[200]!, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.grey, width: 2.0),
-                    ),
-                  ),
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.blue.shade50, Colors.white],
+          ),
+        ),
+        child: FutureBuilder<List<ContributionFeeResponse>?>(
+          future: futureContributionFees,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                 ),
-                const SizedBox(height: 15,),
-                Expanded(
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: pageCount,
-                    itemBuilder: (context, pageIndex) {
-                      final startIndex = pageIndex * itemsPerPage;
-                      final endIndex =
-                      (startIndex + itemsPerPage < _displayedFees.length)
-                          ? startIndex + itemsPerPage
-                          : _displayedFees.length;
-
-                      return GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 1,
-                          childAspectRatio: 3.3,
-                          mainAxisSpacing: 15.0,
-                        ),
-                        itemCount: endIndex - startIndex,
-                        itemBuilder: (context, index) {
-                          return ContributionFeeCard(
-                            item: _displayedFees[startIndex + index],
-                            contributionFeeResponse: snapshot.data!, // Truyền toàn bộ response
-                          );
-                        },
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                      );
-                    },
-                  ),
-                ),
-
-                // Phần dot chuyển trang
-                SizedBox(
-                  height: 30,
-                  width: 100,
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(pageCount, (index) {
-                        return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _currentPage == index
-                                ? Colors.blue
-                                : Colors.grey,
-                          ),
-                        );
-                      }),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 60, color: Colors.red[300]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Error: ${snapshot.error}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.red[700],
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
+              );
+            } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              final contributionFees = snapshot.data!;
+              return _buildContributionFeeList(contributionFees);
+            } else {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.inbox, size: 60, color: Colors.grey[400]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No data available',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
 
-                const SizedBox(height: 15),
-              ],
+  Widget _buildContributionFeeList(List<ContributionFeeResponse> contributionFees) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: contributionFees.length,
+      itemBuilder: (context, index) {
+        final contributionFeeResponse = contributionFees[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ExpansionTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.blue.shade100,
+              child: Icon(
+                Icons.description,
+                color: Colors.blue.shade700,
+              ),
             ),
-          );
-        }
+            title: Text(
+              contributionFeeResponse.description ?? 'No Description',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: contributionFeeResponse.detail!
+                      .map(
+                        (item) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: ContributionFeeCard(
+                        item: item,
+                        contributionFeeResponse: contributionFeeResponse,
+                      ),
+                    ),
+                  )
+                      .toList(),
+                ),
+              ),
+            ],
+          ),
+        );
       },
     );
   }

@@ -14,7 +14,6 @@ class Update extends StatefulWidget {
 
 class _UpdateState extends State<Update> {
   DateTime selectedDate = DateTime.now();
-  String _dob = '';
   TextEditingController name= TextEditingController();
   TextEditingController email= TextEditingController();
   TextEditingController phoneNumber= TextEditingController();
@@ -69,7 +68,7 @@ class _UpdateState extends State<Update> {
             icon: const Icon(Icons.arrow_back,color: Colors.white,)
         ),
         backgroundColor: Colors.blueAccent,
-        title: const Text('Update',style: TextStyle(color: Colors.white,fontSize: 25),),
+        title: const Text('Update Information',style: TextStyle(color: Colors.white,fontSize: 25),),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/view/home/management/fees_management/contribution_fees/all_contribution_fees.dart';
-import 'package:frontend/view/home/management/fees_management/contribution_fees/change_details/change_details.dart';
 import 'package:frontend/view/home/management/fees_management/fees_management.dart';
+import 'package:frontend/view/home/management/fees_management/parking_fee/change_details/change_details.dart';
+import 'package:frontend/view/home/management/fees_management/parking_fee/unpaid_parking_fee.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../models/contribution_fee_info.dart';
+import '../../../../../models/parking_fee_info.dart';
 import '../fee_management_component/date_filter.dart';
+import 'all.dart';
 
-class ContributionFees extends StatefulWidget {
-  const ContributionFees({super.key});
+class ParkingFee extends StatefulWidget {
+  const ParkingFee({super.key});
 
   @override
-  State<ContributionFees> createState() => _ContributionFeesState();
+  State<ParkingFee> createState() => _ParkingFeeState();
 }
 
-class _ContributionFeesState extends State<ContributionFees> with TickerProviderStateMixin {
+class _ParkingFeeState extends State<ParkingFee> with TickerProviderStateMixin {
   final DateFilterPopup _dateFilterPopup = DateFilterPopup(
     onDateRangeSelected: (startDate, endDate) {
       // Xử lý khi người dùng chọn khoảng thời gian
@@ -28,18 +29,11 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
 
   }
 
-  final List<ContributionFeeInfo> items = [];
-  // void handleAddNewFee(int room_id, String service_charge, String manage_charge, String fee) {
-  //   final newItem = FeeInfo(room_id: room_id, service_charge: service_charge, manage_charge: manage_charge,
-  //       fee: fee);
-  //   setState(() {
-  //     items.add(newItem);
-  //   });
-  // }
+  final List<ParkingFeeInfo> items = [];
 
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
@@ -64,7 +58,7 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
             style: const TextStyle(color: Colors.white, fontSize: 20),
           )
               : const Text(
-            'Contribution Fees',
+            'Parking Fee',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -114,7 +108,10 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
             labelPadding: const EdgeInsets.only(bottom: 2),
             tabs: const <Widget>[
               Tab(
-                child: Text('All', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('All Rooms', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+              ),
+              Tab(
+                child: Text('Unpaid', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
                 child: Text('Change Details', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
@@ -126,7 +123,8 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
         body: TabBarView(
           controller: _tabController,
           children: const <Widget>[
-            ContributionFeeListScreen(),
+            All(),
+            UnpaidParkingFee(),
             ChangeDetails(),
           ],
         ),
@@ -134,5 +132,4 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
     );
   }
 }
-
 

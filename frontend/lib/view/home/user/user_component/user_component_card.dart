@@ -55,7 +55,7 @@ class UserComponentCard extends StatelessWidget {
         {Navigator.push(context, MaterialPageRoute(builder: (context)=>const Pay()));
 
         }
-        if(title=='Update')
+        if(title=='Update Information')
         {Navigator.push(context, MaterialPageRoute(builder: (context)=>const Update()));
 
         }

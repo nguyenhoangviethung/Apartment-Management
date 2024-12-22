@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart'as http;
 
 Future<bool> checkAutoLog() async{
-     const String url='https://apartment-management-kjj9.onrender.com/auth/check_autolog';
+     const String url='https://apartment-management-kjj9.onrender.com/auth/check-autolog';
      SharedPreferences prefs= await SharedPreferences.getInstance();
      String? tokenlogin=prefs.getString('tokenlogin');
      if (tokenlogin == null || tokenlogin.isEmpty) {
@@ -31,19 +31,17 @@ Future<bool> checkAutoLog() async{
 
 }
 void main() async{
-     // WidgetsFlutterBinding.ensureInitialized(); // Đảm bảo Flutter được khởi tạo trước
-     // if(await checkAutoLog()){
-     //      runApp(const MainHome(currentIndex: 0,));
-     // }else{
-     //      runApp(
-     //          const MaterialApp(
-     //               debugShowCheckedModeBanner: false,
-     //               home: Login(),
-     //          )
-     //      );
-     // }
-     runApp(MainHome(currentIndex: 2,));
-
+     WidgetsFlutterBinding.ensureInitialized(); // Đảm bảo Flutter được khởi tạo trước
+     if(await checkAutoLog()){
+          runApp(const MainHome(currentIndex: 0,));
+     }else{
+          runApp(
+              const MaterialApp(
+                   debugShowCheckedModeBanner: false,
+                   home: Login(),
+              )
+          );
+     }
 }
 
 

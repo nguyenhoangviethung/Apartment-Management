@@ -19,17 +19,20 @@ class _EditFooterState extends State<EditFooter> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-
+  final TextEditingController householdController = TextEditingController();
   void handleOnClick() async {
     final newName = nameController.text.trim();
     final newPhoneNumber = phoneController.text.trim();
     final newDob = _dob;
     final newStatus = _selectedStatus;
-    widget.editResidentInfo(widget.id, newName, newDob, newStatus, newPhoneNumber);
+    final newHousehold = householdController.text.trim();
+    widget.editResidentInfo(widget.id, newName, newDob, newStatus, newPhoneNumber,newHousehold);
 
     // Xóa giá trị sau khi thêm
     nameController.clear();
     phoneController.clear();
+    householdController.clear();
+
   }
 
   @override
@@ -100,6 +103,8 @@ class _EditFooterState extends State<EditFooter> {
                 ],
               ),
               _buildTextField('Enter phone number', phoneController),
+              const SizedBox(height: 16),
+              _buildTextField('Enter Household Registration', householdController),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {

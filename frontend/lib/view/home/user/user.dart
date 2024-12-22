@@ -13,7 +13,7 @@ class User extends StatelessWidget {
           children: [
             UserComponentCard(
               imagelink: 'assets/images/update.jpg',
-              title: 'Update',
+              title: 'Update Information',
             ),
             SizedBox(
               height: 20,

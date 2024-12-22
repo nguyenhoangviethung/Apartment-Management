@@ -1,8 +1,71 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:frontend/models/user_fee.dart';
+import 'package:frontend/services/fetch_user_fee.dart';
+import 'package:frontend/view/home/user/vnpay.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
-class Pay extends StatelessWidget {
-  const Pay({Key? key}) : super(key: key);
+import '../main_home.dart';
+class Pay extends StatefulWidget {
+  const Pay({super.key});
 
+  @override
+  State<Pay> createState() => _PayState();
+}
+
+class _PayState extends State<Pay> {
+  late UserFee? userHouseholdFee;
+  late UserFee? userParkFee;
+  late List<UserContributionFee> ? userContributionFee;
+  bool isLoading = true;
+
+  Future<void> getUrlPay(int userId, int feeId, int householdId,int amount) async {
+    final url= 'https://apartment-management-kjj9.onrender.com/$userId/$feeId/$householdId/$amount';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? tokenlogin = prefs.getString('tokenlogin');
+    try{
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $tokenlogin'
+        }
+      );
+      print(response.body);
+      if(response.statusCode==302){
+        final urlResponse = jsonDecode(response.body);
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => VNPayPaymentScreen(paymentUrl: urlResponse)),
+          );
+        }
+      }
+    }catch(e){
+      print('Error $e');
+    }
+  }
+  Future<void> fetchData() async {
+    try {
+      userHouseholdFee = await fetchUserFee('user/fees');
+      userParkFee = await fetchUserFee('user/park-fees');
+      userContributionFee = await fetchUserContributionFee();
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchData();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,38 +73,64 @@ class Pay extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Payment Information',
-          style: TextStyle(color: Colors.black87),
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, size: 30, color: Colors.white),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> const MainHome(currentIndex: 1,)));
+            //Navigator.pop(context);
+          },
         ),
         backgroundColor: Colors.blue,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildPaymentCard(
-              amount: '1,200,000 VND',
-              nameFee: 'Room Fee',
-              dueDate: '20/11/2024',
-              status: 'Pending',
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  const Text('Required Fee'),
+                  _buildPaymentCard(
+                    amount: userHouseholdFee?.amount.toString() ?? 'N/A',
+                    nameFee: userHouseholdFee?.name_fee ?? 'N/A',
+                    dueDate: userHouseholdFee?.due_date ?? 'N/A',
+                    status: userHouseholdFee?.status ?? 'N/A',
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Park Fee'),
+                  _buildPaymentCard(
+                    amount: userParkFee?.amount.toString() ?? 'N/A',
+                    nameFee: userParkFee?.name_fee ?? 'N/A',
+                    dueDate: userParkFee?.due_date ?? 'N/A',
+                    status: userParkFee?.status ?? 'N/A',
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Contribution Fee'),
+                  ListView.builder(
+                      shrinkWrap: true, // Thêm shrinkWrap để tối ưu hóa
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: userContributionFee?.length,
+                      itemBuilder: (BuildContext context, int index){
+                        return Column(
+                          children: [
+                            _buildPaymentCard(amount: userContributionFee?[index].amount??'N/A',
+                                nameFee: userContributionFee?[index].description??'N/A',
+                                dueDate: userContributionFee?[index].due_date??'N/A',
+                                status: 'N/A'),
+                            const SizedBox(height: 10,)
+                          ],
+                        );
+                      }
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-            _buildPaymentCard(
-              amount: '200,000 VND',
-              nameFee: 'Electric Fee',
-              dueDate: '25/11/2024',
-              status: 'Paid',
-            ),
-            const SizedBox(height: 16),
-            _buildPaymentCard(
-              amount: '100,000 VND',
-              nameFee: 'Water Fee',
-              dueDate: '25/11/2024',
-              status: 'Overdue',
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -180,6 +269,7 @@ class Pay extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Chưa cần logic, sẽ bổ sung sau
+                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>VNPayPaymentScreen(paymentUrl: 'https://nguyenhaiminh.id.vn/')));
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(

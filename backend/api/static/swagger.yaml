@@ -2057,7 +2057,7 @@ paths:
         - name: datetime
           in: path
           required: true
-          description: "Datetime of the transaction must be like "YYYYMMDDhhmmss". "
+          description: "Datetime of the transaction must be like YYYYMMDDhhmmss"
           schema:
             type: string
             format: date-time
@@ -2142,7 +2142,7 @@ paths:
         - name: datetime
           in: path
           required: true
-          description: "Datetime of the transaction must be like "YYYYMMDDhhmmss". "
+          description: "Datetime of the transaction must be like YYYYMMDDhhmmss"
           schema:
             type: string
             format: date-time

@@ -66,21 +66,21 @@ def payment_return():
         if payment.validate_response(os.getenv('VNP_HASHSECRET')):
             if vnp_ResponseCode == '00':
                 desc = order_desc.strip().split()
-                if desc[0] == 'Transaction':
-                    fee = fee_service.get_fee_by_fee_id(fee_id = desc[1])
+                if desc[1] == 'Fee':
+                    fee = fee_service.get_fee_by_fee_id(fee_id = desc[2])
                     remain_amount = float(fee.amount) - amount
                     print(desc)
                     data_= {}
                     print(type(data_))
                     if remain_amount == 0 or remain_amount < 0:
                         data_['status'] = 'Đã thanh toán'
-                    fee_service.update_status(data_, fee_id = desc[1])    
+                    fee_service.update_status(data_, fee_id = desc[2])    
                     data = dict()
                     data = {
                         "description": desc[-1],
                         "amount": amount,
                         "transaction_id": order_id,
-                        "fee_id": desc[1],
+                        "fee_id": desc[2],
                         "park_id": None,
                         "user_pay": desc[-2],
                         "user_name": user_service.get_username(desc[-2]),
@@ -90,18 +90,18 @@ def payment_return():
                     }
                     transaction_service.add_transaction(data)
                     return jsonify({'message':f'thanh toan thanh cong'}), 302
-                if desc[0] == 'Transaction-Parking':
-                    park_fee = utils_service.get_park_fee_by_park_id(park_id = desc[1])
+                if desc[1] == 'Parking':
+                    park_fee = utils_service.get_park_fee_by_park_id(park_id = desc[2])
                     remain_amount = float(park_fee.amount) - amount
                     data_ = {}
                     if remain_amount == 0 or remain_amount < 0:
                         data_['status'] = 'Đã thanh toán'
-                    utils_service.update_status(data_, park_id = desc[1])   
+                    utils_service.update_status(data_, park_id = desc[2])   
                     data = dict() 
                     data = {
                         "amount": amount,
                         "transaction_id": order_id,
-                        "park_id": int(desc[1]),
+                        "park_id": int(desc[2]),
                         "fee_id": None,
                         "user_pay": desc[-2],
                         "user_name": user_service.get_username(desc[-2]),

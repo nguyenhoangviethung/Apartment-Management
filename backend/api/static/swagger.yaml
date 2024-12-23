@@ -1871,4 +1871,314 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: "Unexpected error: <error details>"                  
+                    example: "Unexpected error: <error details>"      
+
+  /{user_id}/{fee_id}/{amount}/{description}/pay-fee:
+    get:
+      summary: "Pay Fee"
+      description: "Initiate payment for a fee by user with specific details."
+      tags:
+        - Payment
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user making the payment."
+          schema:
+            type: integer
+            example: 1
+        - name: fee_id
+          in: path
+          required: true
+          description: "ID of the fee being paid."
+          schema:
+            type: integer
+            example: 101
+        - name: amount
+          in: path
+          required: true
+          description: "Amount to be paid (in base unit, e.g., VND)."
+          schema:
+            type: integer
+            example: 500000
+        - name: description
+          in: path
+          required: true
+          description: "Description of the fee."
+          schema:
+            type: string
+            example: "Electricity"
+      responses:
+        '200':
+          description: "Redirect to payment gateway with payment information."
+          headers:
+            Location:
+              description: "The URL to the payment gateway with payment query parameters."
+              schema:
+                type: string
+                example: "https://payment-gateway.com/payment?vnp_Amount=50000000&vnp_IpAddr=127.0.0.1&vnp_OrderInfo=Transaction 101 500000 for by 1 Electricity&vnp_CreateDate=20241109123000&vnp_ExpireDate=20241109124000&vnp_TxnRef=550e8400-e29b-41d4-a716-446655440000"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction redirected to payment gateway."
+        '400':
+          description: "Invalid request."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                    example: "Invalid parameters in request."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error while processing payment."
+
+  /{user_id}/{park_id}/{amount}/{description}/pay-park-fee:
+    get:
+      summary: "Pay Parking Fee"
+      description: "Initiate payment for a parking fee by user with specific details."
+      tags:
+        - Payment
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user making the payment."
+          schema:
+            type: integer
+            example: 2
+        - name: park_id
+          in: path
+          required: true
+          description: "ID of the parking spot."
+          schema:
+            type: integer
+            example: 301
+        - name: amount
+          in: path
+          required: true
+          description: "Amount to be paid for parking (in base unit, e.g., VND)."
+          schema:
+            type: in
+        responses:
+          '200':
+            description: "Redirect to payment gateway with payment information."
+            headers:
+              Location:
+                description: "The URL to the payment gateway with payment query parameters."
+                schema:
+                  type: string
+                  example: "https://payment-gateway.com/payment?vnp_Amount=50000000&vnp_IpAddr=127.0.0.1&vnp_OrderInfo=Transaction 101 500000 for by 1 Electricity&vnp_CreateDate=20241109123000&vnp_ExpireDate=20241109124000&vnp_TxnRef=550e8400-e29b-41d4-a716-446655440000"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Transaction redirected to payment gateway."
+          '400':
+            description: "Invalid request."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    Message:
+                      type: string
+                      example: "Invalid parameters in request."
+          '500':
+            description: "Internal server error."
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Server error while processing payment."
+
+  /admin/{user_id}/{fee_id}/{amount}/{description}/{datetime}/update-status-fee:
+    post:
+      summary: "Update Fee Payment Status"
+      description: "Update the payment status of a fee and log the transaction."
+      tags:
+        - Admin
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user who paid the fee."
+          schema:
+            type: integer
+            example: 1
+        - name: fee_id
+          in: path
+          required: true
+          description: "ID of the fee to update."
+          schema:
+            type: integer
+            example: 101
+        - name: amount
+          in: path
+          required: true
+          description: "Amount of the fee paid."
+          schema:
+            type: integer
+            example: 500000
+        - name: description
+          in: path
+          required: true
+          description: "Description of the fee."
+          schema:
+            type: string
+            example: "Electricity Bill"
+        - name: datetime
+          in: path
+          required: true
+          description: "Datetime of the transaction must be like "YYYYMMDDhhmmss". "
+          schema:
+            type: string
+            format: date-time
+            example: "20241224115900"
+      responses:
+        '201':
+          description: "Fee payment status updated successfully, and transaction logged."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "success"
+        '400':
+          description: "Invalid input data."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid fee ID or user ID."
+        '403':
+          description: "Admin privileges required."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Access denied."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the request."
+
+  /admin/{user_id}/{park_id}/{amount}/{description}/{datetime}/update-status-park-fee:
+    post:
+      summary: "Update Parking Fee Payment Status"
+      description: "Update the payment status of a parking fee and log the transaction."
+      tags:
+        - Admin
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user who paid the parking fee."
+          schema:
+            type: integer
+            example: 2
+        - name: park_id
+          in: path
+          required: true
+          description: "ID of the parking slot to update."
+          schema:
+            type: integer
+            example: 301
+        - name: amount
+          in: path
+          required: true
+          description: "Amount of the parking fee paid."
+          schema:
+            type: integer
+            example: 100000
+        - name: description
+          in: path
+          required: true
+          description: "Description of the parking fee."
+          schema:
+            type: string
+            example: "Monthly Parking Fee"
+        - name: datetime
+          in: path
+          required: true
+          description: "Datetime of the transaction must be like "YYYYMMDDhhmmss". "
+          schema:
+            type: string
+            format: date-time
+            example: "20241224115900"
+      responses:
+        '201':
+          description: "Fee payment status updated successfully, and transaction logged."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "success"
+        '400':
+          description: "Invalid input data."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid fee ID or user ID."
+        '403':
+          description: "Admin privileges required."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Access denied."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the request."
+  
+            

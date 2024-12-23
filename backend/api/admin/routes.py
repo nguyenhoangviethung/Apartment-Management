@@ -5,11 +5,11 @@ from dotenv import load_dotenv
 from helpers import validate_date, decimal_to_float, get_payload
 from datetime import datetime, timedelta
 from api.extensions import db
-from services import fee_service, contribution_service, households_service, resident_service, utils_service, vehicle_service, user_service
+from services import fee_service, contribution_service, households_service, resident_service, utils_service, vehicle_service, user_service, transaction_service
 from api.middlewares import admin_required, handle_exceptions
 from decimal import Decimal, InvalidOperation
 import logging
-
+import uuid
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ fee_service = fee_service.FeeService()
 utils_service = utils_service.UtilsService()
 vehicle_service = vehicle_service.VehicleService()
 user_service = user_service.UserService()
-
+transaction_service = transaction_service.TransactionService()
 @admin_bp.route('/')
 @admin_required
 def index():
@@ -373,3 +373,49 @@ def to_resident(res_id):
     data = request.form.to_dict()
     response, status_code = user_service.convert_to_resident(data, res_id)
     return jsonify(response), status_code
+
+@admin_bp.post("/<int:user_id>/<int:fee_id>/<int:amount>/<string:description>/<string:datetime>/update-status-fee")
+@admin_required
+@handle_exceptions
+def update_status_fee(user_id, fee_id, amount, description, datetime):
+    data = dict()
+    data['status'] = "Đã thanh toán"
+    fee_service.update_status(data, fee_id)
+    data_ = dict()
+    data_ = {
+        "description":description,
+        "amount": amount,
+        "transaction_id": uuid.uuid4(),
+        "fee_id": fee_id,
+        "park_id": None,
+        "user_pay": user_id,
+        "user_name": user_service.get_username(user_id),
+        "transaction_time": datetime,
+        "bank_code": None,
+        "type": "Real-Money",
+    }
+    transaction_service.add_transaction(data_)
+    return "message: success" , 201
+
+@admin_bp.post("/<int:user_id>/<int:park_id>/<int:amount>/<string:description>/<string:datetime>/update-status-park-fee")
+@admin_required
+@handle_exceptions
+def update_status_park_fee(user_id, park_id, amount, description, datetime):
+    data = dict()
+    data['status'] = "Đã thanh toán"
+    utils_service.update_status(data, park_id)
+    data_ = dict()
+    data_ = {
+        "description":description,
+        "amount": amount,
+        "transaction_id": uuid.uuid4(),
+        "park_id": park_id,
+        "fee_id": None,
+        "user_pay": user_id,
+        "user_name": user_service.get_username(user_id),
+        "transaction_time": datetime,
+        "bank_code": None,
+        "type": "Real-Money",
+    }
+    transaction_service.add_transaction(data_)
+    return "message: success" , 201

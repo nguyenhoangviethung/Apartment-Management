@@ -1878,7 +1878,7 @@ paths:
       summary: "Pay Fee"
       description: "Initiate payment for a fee by user with specific details."
       tags:
-        - Payment
+        - User
       parameters:
         - name: user_id
           in: path
@@ -1951,7 +1951,7 @@ paths:
       summary: "Pay Parking Fee"
       description: "Initiate payment for a parking fee by user with specific details."
       tags:
-        - Payment
+        - User
       parameters:
         - name: user_id
           in: path

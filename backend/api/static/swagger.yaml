@@ -1972,7 +1972,15 @@ paths:
           required: true
           description: "Amount to be paid for parking (in base unit, e.g., VND)."
           schema:
-            type: in
+            type: int
+            example: 500000
+        - name: description
+          in: path
+          required: true
+          description: "Description of the fee."
+          schema:
+            type: string
+            example: "Electricity"
       responses:
         '200':
           description: "Redirect to payment gateway with payment information."

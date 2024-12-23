@@ -1973,43 +1973,43 @@ paths:
           description: "Amount to be paid for parking (in base unit, e.g., VND)."
           schema:
             type: in
-        responses:
-          '200':
-            description: "Redirect to payment gateway with payment information."
-            headers:
-              Location:
-                description: "The URL to the payment gateway with payment query parameters."
-                schema:
-                  type: string
-                  example: "https://payment-gateway.com/payment?vnp_Amount=50000000&vnp_IpAddr=127.0.0.1&vnp_OrderInfo=Transaction 101 500000 for by 1 Electricity&vnp_CreateDate=20241109123000&vnp_ExpireDate=20241109124000&vnp_TxnRef=550e8400-e29b-41d4-a716-446655440000"
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    message:
-                      type: string
-                      example: "Transaction redirected to payment gateway."
-          '400':
-            description: "Invalid request."
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    Message:
-                      type: string
-                      example: "Invalid parameters in request."
-          '500':
-            description: "Internal server error."
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    message:
-                      type: string
-                      example: "Server error while processing payment."
+      responses:
+        '200':
+          description: "Redirect to payment gateway with payment information."
+          headers:
+            Location:
+              description: "The URL to the payment gateway with payment query parameters."
+              schema:
+                type: string
+                example: "https://payment-gateway.com/payment?vnp_Amount=50000000&vnp_IpAddr=127.0.0.1&vnp_OrderInfo=Transaction 101 500000 for by 1 Electricity&vnp_CreateDate=20241109123000&vnp_ExpireDate=20241109124000&vnp_TxnRef=550e8400-e29b-41d4-a716-446655440000"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction redirected to payment gateway."
+        '400':
+          description: "Invalid request."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                    example: "Invalid parameters in request."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error while processing payment."
 
   /admin/{user_id}/{fee_id}/{amount}/{description}/{datetime}/update-status-fee:
     post:

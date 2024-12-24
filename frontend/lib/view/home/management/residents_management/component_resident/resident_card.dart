@@ -36,6 +36,7 @@ class _ResidentCardState extends State<ResidentCard> {
                     children: [
                       _buildInfoRow('Name:', widget.item.full_name ?? 'No name provided'),
                       _buildInfoRow('Resident ID:', widget.item.res_id != null ? widget.item.res_id.toString() : 'No resident id'),
+                      _buildInfoRow('User ID:', widget.item.user_id != null ? widget.item.user_id.toString() : 'No user id'),
                       _buildInfoRow('Date of Birth:', widget.item.date_of_birth ?? 'No date provided'),
                       _buildInfoRow('ID Number:', widget.item.id_number ?? 'No ID provided'),
                       _buildInfoRow('Age:', widget.item.age != null ? widget.item.age.toString() : 'No age provided'),

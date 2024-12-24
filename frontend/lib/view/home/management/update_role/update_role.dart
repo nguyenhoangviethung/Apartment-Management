@@ -3,7 +3,6 @@ import 'package:frontend/View/Home/main_home.dart';
 import 'package:frontend/models/account_info.dart';
 import 'package:frontend/services/fetch_accounts.dart';
 import 'package:frontend/view/home/management/update_role/component_update_role/account_card.dart';
-import '../residents_management/component_resident/add_residents.dart';
 
 class UpdateRole extends StatefulWidget {
   const UpdateRole({super.key});
@@ -15,6 +14,7 @@ class UpdateRole extends StatefulWidget {
 class _UpdateRoleState extends State<UpdateRole> {
   List<AccountInfo> _accounts =[];
   List<AccountInfo> _allaccounts=[];
+  int numOfResident = 0;
 
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
@@ -25,11 +25,13 @@ class _UpdateRoleState extends State<UpdateRole> {
   @override
   void initState() {
     super.initState();
-
     fetchAccounts().then((value){
       setState(() {
         _accounts=value;
         _allaccounts=value;
+        numOfResident=_allaccounts.where((account)=>account.user_role=='admin'||
+            account.user_role=='resident'
+        ).length;
       });
     });
     _pageController.addListener(() {
@@ -86,50 +88,52 @@ class _UpdateRoleState extends State<UpdateRole> {
           children: [
             const SizedBox(height: 15),
             // Thanh tìm kiếm
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: TextFormField(
-                style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black),
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  hintStyle:
-                      const TextStyle(color: Colors.black54, fontSize: 20),
-                  suffixIcon:
-                      const Icon(Icons.search, color: Colors.blue, size: 35),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(
-                      color: Colors.blue,
-                      width: 2.0,
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: TextFormField(
+                  style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    hintStyle:
+                        const TextStyle(color: Colors.black54, fontSize: 20),
+                    suffixIcon:
+                        const Icon(Icons.search, color: Colors.blue, size: 35),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(
+                        color: Colors.blue,
+                        width: 2.0,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.blue[200]!,
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 2.0,
+                      ),
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color: Colors.blue[200]!,
-                      width: 2.0,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                      width: 2.0,
-                    ),
-                  ),
+                  onChanged: (text) {
+                    setState(() {
+                      text = text.toLowerCase();
+                      _accounts = _allaccounts.where((accountinfo) {
+                        var word = accountinfo.username?.toLowerCase() ?? '';
+                        return word.contains(text);
+                      }).toList();
+                    });
+                  },
                 ),
-                onChanged: (text) {
-                  setState(() {
-                    text = text.toLowerCase();
-                    _accounts = _allaccounts.where((accountinfo) {
-                      var word = accountinfo.username?.toLowerCase() ?? '';
-                      return word.contains(text);
-                    }).toList();
-                  });
-                },
               ),
             ),
 
@@ -157,6 +161,7 @@ class _UpdateRoleState extends State<UpdateRole> {
                       itemBuilder: (context, index) {
                         return AccountCard(
                           item: _accounts[startIndex + index],
+                          numOfRes: numOfResident,
                         );
                       },
                       physics: const NeverScrollableScrollPhysics(),

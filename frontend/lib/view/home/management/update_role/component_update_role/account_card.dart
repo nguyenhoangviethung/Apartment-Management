@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/account_info.dart';
-import 'package:frontend/services/fetch_accounts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../../../common/show_dialog.dart';
 class AccountCard extends StatefulWidget {
   final AccountInfo item;
+  final int numOfRes;
 
-
-  const AccountCard({super.key, required this.item,});
+  const AccountCard({super.key, required this.item, required this.numOfRes,});
   @override
   State<AccountCard> createState() => _AccountCardState();
 }
@@ -32,7 +31,7 @@ class _AccountCardState extends State<AccountCard> {
       );
       print(response.body);
       if(response.statusCode==200){
-        showinform(context, 'Success', 'Updated this resident to admin');
+        showinform(context, 'Success', 'Updated this user to admin');
         setState(() {
           widget.item.user_role = 'admin'; // Cập nhật trạng thái của user
         });
@@ -40,6 +39,38 @@ class _AccountCardState extends State<AccountCard> {
     }catch(e){
       print('Error');
       showinform(context, 'Failed', 'Cannot update this resident to admin');
+    }finally{
+      _isloading=false;
+    }
+  }
+  Future<void> updateUserToResident(int resId) async{
+    setState(() {
+      _isloading=true;
+    });
+    final url = 'https://apartment-management-kjj9.onrender.com/admin/user-to-res/$resId';
+    print('${url}');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String ?tokenlogin = prefs.getString('tokenlogin');
+    print(widget.item.user_id.toString());
+    try{
+      final response = await http.post(
+          Uri.parse(url),
+          headers: {
+            'Authorization':'Bearer ${tokenlogin}'
+          },
+          body: {
+            'user_id' : widget.item.user_id.toString()
+          }
+      );
+      print(response.body);
+      if(response.statusCode==200){
+        showinform(context, 'Success', 'Updated this user to resident');
+      }else{
+        showinform(context, 'Failed', 'This resident is already an user');
+      }
+    }catch(e){
+      print('Error: $e');
+      showinform(context, 'Failed', 'Cannot update this user to resident');
     }finally{
       _isloading=false;
     }
@@ -66,7 +97,7 @@ class _AccountCardState extends State<AccountCard> {
                     children: [
                       _buildInfoRow('Name:', widget.item.username?? 'No name provided'),
                       _buildInfoRow('Email:', widget.item.user_email?? 'No name provided'),
-                      _buildInfoRow('UserId:', widget.item.user_id.toString()?? 'No date provided'),
+                      _buildInfoRow('UserId:', widget.item.user_id?.toString()?? 'No date provided'),
                       _buildInfoRow('Phone number:', widget.item.phone_number ?? 'No ID provided'),
                       _buildInfoRow('Role:', widget.item.user_role ?? 'No status provided'),
                     ],
@@ -80,8 +111,9 @@ class _AccountCardState extends State<AccountCard> {
                         child: const Center(
                           child: Text("Resident", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
                         ),
-                        onPressed: () {
+                        onPressed: () async{
                           Navigator.of(context).pop();
+                          showInputForm();
                         },
                       ),
                       TextButton(
@@ -196,35 +228,54 @@ class _AccountCardState extends State<AccountCard> {
     );
   }
 
-  void showdeleteform(BuildContext context,String title, String message) {
+  void showInputForm() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        TextEditingController residentIdController = TextEditingController();
         return AlertDialog(
-          title: Text(title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),),
-          content: Text(message, style: const TextStyle(fontSize: 18),),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          title: const Text(
+            'Enter Resident ID',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          content: TextField(
+            controller: residentIdController,
+            decoration: const InputDecoration(
+              labelText: 'Resident ID',
+              border: OutlineInputBorder(),
+            ),
+          ),
           actions: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 TextButton(
-                  child: const Center(
-                    child: Text("OK", style: TextStyle(fontSize: 18),),
+                  child: const Text(
+                    "OK",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  onPressed: () {
-                    // Navigator.of(context).pop(); // Đóng hộp thoại
-                    // if (widget.item.res_id != null) {
-                    //   widget.onDelete( widget.item.res_id!);
-                    // } else {
-                    //   Navigator.of(context).pop();
-                    //   showinform(context, 'Error', 'Resident ID is missing.');
-                    // }
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    String residentId = residentIdController.text.trim();
+                    if (residentId.isEmpty) {
+                      showinform(
+                          context, 'Error', 'Resident ID cannot be empty.');
+                      return;
+                    }else{
+                      await updateUserToResident(int.parse(residentId));
+                    }
+                    Navigator.of(context).pop();
                   },
                 ),
                 TextButton(
-                  child: const Center(
-                    child: Text("Cancel", style: TextStyle(fontSize: 18,color: Colors.red),),
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();

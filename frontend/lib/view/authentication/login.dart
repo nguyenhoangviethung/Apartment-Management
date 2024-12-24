@@ -54,9 +54,11 @@ class _LoginState extends State<Login> {
         var responseData = jsonDecode(response.body);
         final tokenlogin = responseData['token'];
         final role = responseData['role'];
+        final user_id = responseData['user_id'];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('tokenlogin', tokenlogin);
         await prefs.setString('role', role);
+        await prefs.setString('user_id', user_id.toString());
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const MainHome()),

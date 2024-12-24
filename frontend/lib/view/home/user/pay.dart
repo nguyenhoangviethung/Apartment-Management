@@ -21,10 +21,11 @@ class _PayState extends State<Pay> {
   late List<UserContributionFee> ? userContributionFee;
   bool isLoading = true;
 
-  Future<void> getUrlPay(int userId, int feeId, int householdId,int amount) async {
-    final url= 'https://apartment-management-kjj9.onrender.com/$userId/$feeId/$householdId/$amount';
+  Future<void> getUrlPay(int feeId,String amount,String description) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? tokenlogin = prefs.getString('tokenlogin');
+    String? userId= prefs.getString('user_id');
+    final url= 'https://apartment-management-kjj9.onrender.com/${int.parse(userId!)}/$feeId/$amount/$description/pay-fee';
     try{
       final response = await http.get(
         Uri.parse(url),

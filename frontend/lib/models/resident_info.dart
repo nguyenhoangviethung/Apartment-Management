@@ -7,6 +7,7 @@ class ResidentInfo{
   String ?phone_number;
   String ?status;
   int ? res_id;
+  int ? user_id;
 
   ResidentInfo(
       {required this.full_name,
@@ -16,7 +17,8 @@ class ResidentInfo{
       required this.room,
       required this.phone_number,
       required this.status,
-      required this.res_id});
+      required this.res_id,
+      required this.user_id});
 
   ResidentInfo.forApi({
     required this.full_name,
@@ -36,6 +38,7 @@ class ResidentInfo{
     phone_number=json['phone_number'];
     status=json['status'];
     res_id=json['res_id'];
+    user_id=json['user_id'];
   }
   Map<String,dynamic> toJson(){
     return{

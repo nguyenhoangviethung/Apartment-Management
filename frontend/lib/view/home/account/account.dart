@@ -179,6 +179,7 @@ class _AccountScreenState extends State<AccountScreen> {
       if (response.statusCode == 200) {
         await prefs.remove('tokenlogin');
         await prefs.remove('role');
+        await prefs.remove('user_id');
         if (mounted) {
           ScaffoldMessenger.of(context).showMaterialBanner(
             MaterialBanner(

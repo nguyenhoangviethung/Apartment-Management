@@ -38,7 +38,6 @@ class _MainHomeState extends State<MainHome> {
       setState(() {
         _screens=[
           const HomePage(),
-          const User(),
           const Management(),
           const AccountScreen(),
         ];
@@ -58,10 +57,8 @@ class _MainHomeState extends State<MainHome> {
     if(_role=='admin'){
       switch (_currentIndex) {
         case 1:
-          return 'User Services';
-        case 2:
           return 'Management';
-        case 3:
+        case 2:
           return 'Account';
         default:
           return 'Welcome back';
@@ -127,10 +124,6 @@ class _MainHomeState extends State<MainHome> {
             const BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.rule),
-              label:'User Services',
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.manage_accounts),

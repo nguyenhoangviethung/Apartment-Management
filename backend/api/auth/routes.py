@@ -116,17 +116,18 @@ def login_post():
             return jsonify({"message" : "login failed"}), 403
         
         role =  user.user_role
+        user_id = user.user_id
         
         token = jwt.encode(
         payload = {
-            'user_id':  user.user_id ,
+            'user_id':  user_id ,
             'role': role,
             'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=30)
         },
         key = current_app.config['SECRET_KEY'],
         algorithm='HS256'
         )
-        return jsonify({"message": "login successful", 'token': token, 'role': role}), 200
+        return jsonify({"message": "login successful", 'token': token, 'role': role, 'user_id': user_id}), 200
     return jsonify({"message": "Login page loaded"}), 200
     
 @auth_bp.route('/forgot-password', methods=['GET', 'POST'])

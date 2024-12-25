@@ -201,7 +201,11 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                           text=text.toLowerCase();
                           _residents=_allresidents.where((residentinfo){
                             var word= residentinfo.full_name?.toLowerCase()??'';
-                            return word.contains(text);
+                            var idNumber= residentinfo.id_number?.toLowerCase()??'';
+                            var phoneNumber= residentinfo.phone_number?.toLowerCase()??'';
+                            var room= residentinfo.room?.toString()??'';
+                            return word.contains(text) || idNumber.contains(text)
+                                  ||phoneNumber.contains(text)||room.contains(text);
                           }).toList();
                         });
                       },
@@ -241,22 +245,24 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1, // Số cột trong lưới
-                        childAspectRatio: 3.4, // Tỷ lệ chiều rộng/chiều cao của mỗi card
-                        mainAxisSpacing: 22.0, // Khoảng cách giữa các hàng
+                    child: SingleChildScrollView(
+                      child: GridView.builder(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1, // Số cột trong lưới
+                          childAspectRatio: 3.4, // Tỷ lệ chiều rộng/chiều cao của mỗi card
+                          mainAxisSpacing: 22.0, // Khoảng cách giữa các hàng
+                        ),
+                        itemCount: endIndex - startIndex,
+                        itemBuilder: (context, index) {
+                          return ResidentCard(
+                            item: _residents[startIndex + index],
+                            onDelete: handleDeleteActivity,
+                            onEdit: handleEditActivity,
+                          );
+                        },
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
                       ),
-                      itemCount: endIndex - startIndex,
-                      itemBuilder: (context, index) {
-                        return ResidentCard(
-                          item: _residents[startIndex + index],
-                          onDelete: handleDeleteActivity,
-                          onEdit: handleEditActivity,
-                        );
-                      },
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
                     ),
                   );
                 },

@@ -25,7 +25,8 @@ class _PayState extends State<Pay> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? tokenlogin = prefs.getString('tokenlogin');
     String? userId= prefs.getString('user_id');
-    final url= 'https://apartment-management-kjj9.onrender.com/${int.parse(userId!)}/$feeId/$amount/$description/pay-fee';
+    final url= 'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$description/pay-park-fee';
+    print(url);
     try{
       final response = await http.get(
         Uri.parse(url),
@@ -34,8 +35,31 @@ class _PayState extends State<Pay> {
         }
       );
       print(response.body);
-      if(response.statusCode==302){
-        final urlResponse = jsonDecode(response.body);
+      if(response.statusCode==200){
+        final urlResponse = jsonDecode(response.body)['payment_url'];
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => VNPayPaymentScreen(paymentUrl: urlResponse)),
+          );
+        }
+      }
+    }catch(e){
+      print('Error $e');
+    }
+    String descrip = description.replaceAll('/', '');
+    final url2= 'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId)}/$feeId/${double.parse(amount).toInt()}/$descrip/pay-fee';
+    print(url2);
+    try{
+      final response = await http.get(
+          Uri.parse(url2),
+          headers: {
+            'Authorization': 'Bearer $tokenlogin'
+          }
+      );
+      print(response.body);
+      if(response.statusCode==200){
+        final urlResponse = jsonDecode(response.body)['payment_url'];
         if (mounted) {
           Navigator.push(
             context,
@@ -102,6 +126,7 @@ class _PayState extends State<Pay> {
                     nameFee: userHouseholdFee?.name_fee ?? 'N/A',
                     dueDate: userHouseholdFee?.due_date ?? 'N/A',
                     status: userHouseholdFee?.status ?? 'N/A',
+                    feeId: userHouseholdFee?.fee_id??0,
                   ),
                   const SizedBox(height: 20),
                   const Text('Park Fee'),
@@ -110,6 +135,7 @@ class _PayState extends State<Pay> {
                     nameFee: userParkFee?.name_fee ?? 'N/A',
                     dueDate: userParkFee?.due_date ?? 'N/A',
                     status: userParkFee?.status ?? 'N/A',
+                    feeId: userParkFee?.fee_id??0,
                   ),
                   const SizedBox(height: 20),
                   const Text('Contribution Fee'),
@@ -123,7 +149,9 @@ class _PayState extends State<Pay> {
                             _buildPaymentCard(amount: userContributionFee?[index].amount??'N/A',
                                 nameFee: userContributionFee?[index].description??'N/A',
                                 dueDate: userContributionFee?[index].due_date??'N/A',
-                                status: 'N/A'),
+                                status: 'N/A',
+                                feeId: userContributionFee?[index].fee_id??0,
+                            ),
                             const SizedBox(height: 10,)
                           ],
                         );
@@ -140,6 +168,7 @@ class _PayState extends State<Pay> {
     required String nameFee,
     required String dueDate,
     required String status,
+    required int feeId,
   }) {
     Color statusColor;
     Color cardColor;
@@ -268,7 +297,8 @@ class _PayState extends State<Pay> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async{
+                    await getUrlPay(feeId, amount, nameFee);
                     // Chưa cần logic, sẽ bổ sung sau
                     // Navigator.push(context, MaterialPageRoute(builder: (context)=>VNPayPaymentScreen(paymentUrl: 'https://nguyenhaiminh.id.vn/')));
                   },

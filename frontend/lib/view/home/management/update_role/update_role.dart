@@ -129,7 +129,9 @@ class _UpdateRoleState extends State<UpdateRole> {
                       text = text.toLowerCase();
                       _accounts = _allaccounts.where((accountinfo) {
                         var word = accountinfo.username?.toLowerCase() ?? '';
-                        return word.contains(text);
+                        var email = accountinfo.user_email?.toLowerCase() ?? '';
+                        var phoneNumber = accountinfo.phone_number?.toLowerCase() ?? '';
+                        return word.contains(text)||email.contains(text)||phoneNumber.contains(text);
                       }).toList();
                     });
                   },
@@ -151,21 +153,23 @@ class _UpdateRoleState extends State<UpdateRole> {
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1, // Số cột trong lưới
-                        childAspectRatio: 3.4, // Tỷ lệ chiều rộng/chiều cao của mỗi card
-                        mainAxisSpacing: 22.0, // Khoảng cách giữa các hàng
+                    child: SingleChildScrollView(
+                      child: GridView.builder(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1, // Số cột trong lưới
+                          childAspectRatio: 3.4, // Tỷ lệ chiều rộng/chiều cao của mỗi card
+                          mainAxisSpacing: 22.0, // Khoảng cách giữa các hàng
+                        ),
+                        itemCount: endIndex - startIndex,
+                        itemBuilder: (context, index) {
+                          return AccountCard(
+                            item: _accounts[startIndex + index],
+                            numOfRes: numOfResident,
+                          );
+                        },
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
                       ),
-                      itemCount: endIndex - startIndex,
-                      itemBuilder: (context, index) {
-                        return AccountCard(
-                          item: _accounts[startIndex + index],
-                          numOfRes: numOfResident,
-                        );
-                      },
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
                     ),
                   );
                 },

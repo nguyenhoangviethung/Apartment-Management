@@ -129,22 +129,24 @@ class _AllState extends State<All> {
                           ? startIndex + itemsPerPage
                           : _displayedFees.length;
 
-                      return GridView.builder(
-                        gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 1,
-                          childAspectRatio: 3.3,
-                          mainAxisSpacing: 15.0,
+                      return SingleChildScrollView(
+                        child: GridView.builder(
+                          gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 1,
+                            childAspectRatio: 3.3,
+                            mainAxisSpacing: 15.0,
+                          ),
+                          itemCount: endIndex - startIndex,
+                          itemBuilder: (context, index) {
+                            return ParkingFeeCard(
+                              item: _displayedFees[startIndex + index],
+                              parkingFeeResponse: snapshot.data!, // Truyền toàn bộ response
+                            );
+                          },
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
                         ),
-                        itemCount: endIndex - startIndex,
-                        itemBuilder: (context, index) {
-                          return ParkingFeeCard(
-                            item: _displayedFees[startIndex + index],
-                            parkingFeeResponse: snapshot.data!, // Truyền toàn bộ response
-                          );
-                        },
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
                       );
                     },
                   ),

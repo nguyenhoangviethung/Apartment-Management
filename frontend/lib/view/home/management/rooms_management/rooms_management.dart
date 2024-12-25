@@ -151,25 +151,27 @@ class _RoomsManagementState extends State<RoomsManagement> {
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 1, // Số cột trong lưới
-                        childAspectRatio: 3.4, // Tỷ lệ chiều rộng/chiều cao của mỗi card
-                        mainAxisSpacing: 22.0, // Khoảng cách giữa các hàng
+                    child: SingleChildScrollView(
+                      child: GridView.builder(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 1, // Số cột trong lưới
+                          childAspectRatio: 3.4, // Tỷ lệ chiều rộng/chiều cao của mỗi card
+                          mainAxisSpacing: 22.0, // Khoảng cách giữa các hàng
+                        ),
+                        itemCount: endIndex - startIndex,
+                        itemBuilder: (context, index) {
+                          return RoomCard(
+                            item: _rooms[startIndex + index],
+                            onEdit: (id, newNumResidents, newPhoneNumber) {
+                              updateRoomInfoById(id, newNumResidents, newPhoneNumber);
+                              setState(() {
+                              });
+                            },
+                          );
+                        },
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
                       ),
-                      itemCount: endIndex - startIndex,
-                      itemBuilder: (context, index) {
-                        return RoomCard(
-                          item: _rooms[startIndex + index],
-                          onEdit: (id, newNumResidents, newPhoneNumber) {
-                            updateRoomInfoById(id, newNumResidents, newPhoneNumber);
-                            setState(() {
-                            });
-                          },
-                        );
-                      },
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
                     ),
                   );
                 },

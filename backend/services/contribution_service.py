@@ -190,7 +190,8 @@ class ContributionService:
             info = {
                 "amount": fee.contribution_amount,
                 "due_date": datetime.strftime(fee.due_date, "%Y-%m-%d"),
-                "description": fee.contribution_type
+                "description": fee.contribution_type,
+                "fee_id": fee.contribution_id
             }
             response.append(info)
 

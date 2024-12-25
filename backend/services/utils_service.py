@@ -223,12 +223,13 @@ class UtilsService:
     @handle_exceptions
     def get_current_household_fee(self, household_id):
         now = datetime.now().date()
-        return db.session.query(ParkingFees).filter(ParkingFees.household_id == household_id, now <= ParkingFees.due_date).first()
+        return db.session.query(ParkingFees).filter(ParkingFees.household_id == household_id, now <= ParkingFees.due_date).one_or_none()
 
     @handle_exceptions
     def user_get_current_fee(self, resident_id):
         households_id = db.session.query(Residents.household_id).filter(Residents.resident_id == resident_id).scalar()
-        return self.get_current_household_fee(households_id)
+        # can return none
+        return self.get_current_household_fee(households_id) 
 
     @handle_exceptions
     def get_fee_by_userID(self, data):
@@ -245,12 +246,14 @@ class UtilsService:
             return ({'message': 'you do not have permission'}), 403
         
         fee_info = self.user_get_current_fee(resident_id)
-
+        if not fee_info:
+            return {"messages": "no fee found"}, 200
         result = {
             'amount' : fee_info.amount,
             'due_date' : datetime.strftime(fee_info.due_date, "%Y-%m-%d"),
             'status' : fee_info.status,
-            'name_fee' : fee_info.description
+            'name_fee' : fee_info.description,
+            'park_fee_id': fee_info.park_id
         }
         return (result), 200
 

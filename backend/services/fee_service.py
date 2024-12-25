@@ -101,7 +101,7 @@ class FeeService:
 
     def get_current_household_fee(self, household_id):
         now = datetime.now().date()
-        return db.session.query(Fees).filter(Fees.household_id == household_id, now <= Fees.due_date).first()
+        return db.session.query(Fees).filter(Fees.household_id == household_id, now <= Fees.due_date).one_or_none()
 
     def user_get_current_fee(self, resident_id):
         households_id = db.session.query(Residents.household_id).filter(Residents.resident_id == resident_id).scalar()
@@ -264,12 +264,14 @@ class FeeService:
             return ({'message': 'you do not have permission'}), 403
         
         fee_info = self.user_get_current_fee(resident_id)
-
+        if not fee_info:
+            return {"messages": "No fee found"}, 200
         result = {
             'amount' : fee_info.amount,
             'due_date' : datetime.strftime(fee_info.due_date, "%Y-%m-%d"),
             'status' : fee_info.status,
-            'name_fee' : fee_info.description
+            'name_fee' : fee_info.description,
+            'fee_id': fee_info.fee_id
         }
         return (result), 200
     

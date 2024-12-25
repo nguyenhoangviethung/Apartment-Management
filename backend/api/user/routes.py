@@ -31,7 +31,8 @@ def process_payment(user_id, identifier, amount, description, transaction_type):
     vnp_IpAddr = getIP()
     vnp_OrderInfo = f'Transaction {transaction_type} {identifier} {amount} for by {user_id} {description}'
     CreateDate = datetime.now()
-    ExpireDate = CreateDate + timedelta(minutes=100)
+    # test thu nen can fix
+    ExpireDate = CreateDate + timedelta(days=1)
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
     vnp_ExpireDate = ExpireDate.strftime('%Y%m%d%H%M%S')
     vnp_TxnRef = str(uuid.uuid4())

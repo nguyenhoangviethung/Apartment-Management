@@ -64,6 +64,7 @@ class Contributions(db.Model):
     create_date = Column(Date, default = None)
     created_by = Column(INTEGER, ForeignKey('Users.user_id'))
     updated_by = Column(INTEGER, ForeignKey('Users.user_id'))
+    status = Column(Enum('Đã thanh toán', 'Chưa thanh toán'), default='Chưa thanh toán')
 
 class TokenBlacklist(db.Model):
     id = Column(db.Integer, primary_key=True)

@@ -146,7 +146,7 @@ class ContributionService:
         
         for contribution in contributions:
             info  = {"description": contribution.contribution_type, "detail": []}
-            households = db.session.query(Contributions.household_id).filter(Contributions.contribution_type == contribution.contribution_type).all()
+            households = db.session.query(Contributions.household_id).filter(Contributions.contribution_type == contribution.contribution_type, Contributions.status == 'Đã thanh toán'.strip()).all()
             for household in households:
                 id = household.household_id
                 info['detail'].append({"amount": contribution.contribution_amount, "room": id})
@@ -155,6 +155,34 @@ class ContributionService:
 
         return result, 200
     
+    @handle_exceptions
+    def get_contributions_v3(self):
+        query_date = datetime.now().date()
+        
+        result = []
+
+        contributions = (
+                db.session.query(
+                    Contributions.contribution_type,
+                    Contributions.contribution_amount,
+                )
+                .filter(query_date <= Contributions.due_date)
+                .distinct()
+                .all()
+            )
+        
+        for contribution in contributions:
+            info  = {"description": contribution.contribution_type, "detail": []}
+            households = db.session.query(Contributions.household_id).filter(Contributions.contribution_type == contribution.contribution_type, Contributions.status == 'Đã thanh toán'.strip()).all()
+            for household in households:
+                id = household.household_id
+                info['detail'].append({"amount": contribution.contribution_amount, "room": id})
+            
+            if len(info['detail']) > 0:
+                result.append(info)
+
+        return result, 200
+
     @handle_exceptions
     def get_current_household_fee(self, household_id):
         now = datetime.now().date()

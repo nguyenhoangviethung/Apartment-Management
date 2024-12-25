@@ -34,15 +34,20 @@ def process_payment(user_id, identifier, amount, description, transaction_type):
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
     vnp_ExpireDate = ExpireDate.strftime('%Y%m%d%H%M%S')
     vnp_TxnRef = str(uuid.uuid4())
-    return url_for(
+    payment_url = url_for(
         'pay.payment',
         vnp_Amount=vnp_Amount,
         vnp_IpAddr=vnp_IpAddr,
         vnp_OrderInfo=vnp_OrderInfo,
         vnp_CreateDate=vnp_CreateDate,
         vnp_ExpireDate=vnp_ExpireDate,
-        vnp_TxnRef=vnp_TxnRef
+        vnp_TxnRef=vnp_TxnRef,
+        _external = True
     )
+
+    return jsonify({
+        "payment_url": payment_url
+    })
 
 @token_required
 @handle_exceptions

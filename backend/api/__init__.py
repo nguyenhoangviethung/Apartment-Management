@@ -34,8 +34,8 @@ def create_app(config_class=Config):
     from api.pay import pay_bp
     app.register_blueprint(pay_bp)
 
-    # from api.news import news_bp
-    # app.register_blueprint(news_bp)
+    from api.news import news_bp
+    app.register_blueprint(news_bp)
 
     @app.route('/')
     def test():

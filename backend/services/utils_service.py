@@ -253,7 +253,7 @@ class UtilsService:
             'due_date' : datetime.strftime(fee_info.due_date, "%Y-%m-%d"),
             'status' : fee_info.status,
             'name_fee' : fee_info.description,
-            'park_fee_id': fee_info.park_id
+            'fee_id': fee_info.park_id
         }
         return (result), 200
 

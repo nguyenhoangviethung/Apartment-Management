@@ -32,7 +32,7 @@ def process_payment(user_id, identifier, amount, description, transaction_type):
     vnp_OrderInfo = f'Transaction {transaction_type} {identifier} {amount} for by {user_id} {description}'
     CreateDate = datetime.now()
     # test thu nen can fix
-    ExpireDate = CreateDate + timedelta(days=1)
+    ExpireDate = CreateDate + timedelta(minutes=450)
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
     vnp_ExpireDate = ExpireDate.strftime('%Y%m%d%H%M%S')
     vnp_TxnRef = str(uuid.uuid4())

@@ -8,6 +8,7 @@ from models.models import *
 from services import fee_service, cloudinary_service, contribution_service, utils_service, user_service
 import cloudinary
 import uuid
+from pytz import utc
 
 fee_service = fee_service.FeeService()
 contribution_service = contribution_service.ContributionService()
@@ -29,8 +30,9 @@ def process_payment(user_id, identifier, amount, description, transaction_type):
     vnp_Amount = amount * 100
     vnp_IpAddr = getIP()
     vnp_OrderInfo = f'Transaction {transaction_type} {identifier} {amount} for by {user_id} {description}'
-    CreateDate = datetime.now()
-    ExpireDate = CreateDate + timedelta(minutes=10)
+    CreateDate = datetime.now(utc)
+    print(CreateDate)
+    ExpireDate = CreateDate + timedelta(minutes=100)
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
     vnp_ExpireDate = ExpireDate.strftime('%Y%m%d%H%M%S')
     vnp_TxnRef = str(uuid.uuid4())

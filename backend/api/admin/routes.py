@@ -374,22 +374,23 @@ def to_resident(res_id):
     response, status_code = user_service.convert_to_resident(data, res_id)
     return jsonify(response), status_code
 
-@admin_bp.post("/<int:user_id>/<int:fee_id>/<int:amount>/<string:description>/<string:datetime>/update-status-fee")
+@admin_bp.post("/<int:fee_id>/<string:datetime>/update-status-fee")
 @admin_required
 @handle_exceptions
-def update_status_fee(user_id, fee_id, amount, description, datetime):
+def update_status_fee(fee_id, datetime):
     data = dict()
     data['status'] = "Đã thanh toán"
+    fee = fee_service.get_fee_by_fee_id(fee_id)
     fee_service.update_status(data, fee_id)
     data_ = dict()
     data_ = {
-        "description":description,
-        "amount": amount,
+        "description":fee.description,
+        "amount": fee.amount,
         "transaction_id": uuid.uuid4(),
         "fee_id": fee_id,
         "park_id": None,
-        "user_pay": user_id,
-        "user_name": user_service.get_username(user_id),
+        "user_pay": fee.user_pay,
+        "user_name": user_service.get_username(fee.user_pay),
         "transaction_time": datetime,
         "bank_code": None,
         "type": "Real-Money",
@@ -397,22 +398,23 @@ def update_status_fee(user_id, fee_id, amount, description, datetime):
     transaction_service.add_transaction(data_)
     return "message: success" , 201
 
-@admin_bp.post("/<int:user_id>/<int:park_id>/<int:amount>/<string:description>/<string:datetime>/update-status-park-fee")
+@admin_bp.post("/<int:park_id>/<string:datetime>/update-status-park-fee")
 @admin_required
 @handle_exceptions
-def update_status_park_fee(user_id, park_id, amount, description, datetime):
+def update_status_park_fee(park_id, datetime):
     data = dict()
     data['status'] = "Đã thanh toán"
+    park_fee = utils_service.get_park_fee_by_park_id(park_id)
     utils_service.update_status(data, park_id)
     data_ = dict()
     data_ = {
-        "description":description,
-        "amount": amount,
+        "description":park_fee.description,
+        "amount": park_fee.amount,
         "transaction_id": uuid.uuid4(),
         "park_id": park_id,
         "fee_id": None,
-        "user_pay": user_id,
-        "user_name": user_service.get_username(user_id),
+        "user_pay": park_fee.user_pay,
+        "user_name": user_service.get_username(park_fee.user_pay),
         "transaction_time": datetime,
         "bank_code": None,
         "type": "Real-Money",

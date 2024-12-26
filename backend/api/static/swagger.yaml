@@ -2019,20 +2019,13 @@ paths:
                     type: string
                     example: "Server error while processing payment."
 
-  /admin/{user_id}/{fee_id}/{amount}/{description}/{datetime}/update-status-fee:
+  /admin/{fee_id}/{datetime}/update-status-fee:
     post:
       summary: "Update Fee Payment Status"
-      description: "Update the payment status of a fee and log the transaction."
+      description: "Update the payment status of a specific fee and log the transaction."
       tags:
         - Admin
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: "ID of the user who paid the fee."
-          schema:
-            type: integer
-            example: 1
         - name: fee_id
           in: path
           required: true
@@ -2040,28 +2033,14 @@ paths:
           schema:
             type: integer
             example: 101
-        - name: amount
-          in: path
-          required: true
-          description: "Amount of the fee paid."
-          schema:
-            type: integer
-            example: 500000
-        - name: description
-          in: path
-          required: true
-          description: "Description of the fee."
-          schema:
-            type: string
-            example: "Electricity Bill"
         - name: datetime
           in: path
           required: true
-          description: "Datetime of the transaction must be like YYYYMMDDhhmmss"
+          description: "Datetime of the transaction in ISO 8601 format."
           schema:
             type: string
             format: date-time
-            example: "20241224115900"
+            example: "2024-11-10T10:00:00"
       responses:
         '201':
           description: "Fee payment status updated successfully, and transaction logged."
@@ -2074,7 +2053,7 @@ paths:
                     type: string
                     example: "success"
         '400':
-          description: "Invalid input data."
+          description: "Invalid fee ID or datetime format."
           content:
             application/json:
               schema:
@@ -2082,7 +2061,7 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: "Invalid fee ID or user ID."
+                    example: "Invalid input data."
         '403':
           description: "Admin privileges required."
           content:
@@ -2104,52 +2083,31 @@ paths:
                     type: string
                     example: "Unable to process the request."
 
-  /admin/{user_id}/{park_id}/{amount}/{description}/{datetime}/update-status-park-fee:
+  /admin/{park_id}/{datetime}/update-status-park-fee:
     post:
       summary: "Update Parking Fee Payment Status"
       description: "Update the payment status of a parking fee and log the transaction."
       tags:
         - Admin
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: "ID of the user who paid the parking fee."
-          schema:
-            type: integer
-            example: 2
         - name: park_id
           in: path
           required: true
-          description: "ID of the parking slot to update."
+          description: "ID of the parking fee to update."
           schema:
             type: integer
             example: 301
-        - name: amount
-          in: path
-          required: true
-          description: "Amount of the parking fee paid."
-          schema:
-            type: integer
-            example: 100000
-        - name: description
-          in: path
-          required: true
-          description: "Description of the parking fee."
-          schema:
-            type: string
-            example: "Monthly Parking Fee"
         - name: datetime
           in: path
           required: true
-          description: "Datetime of the transaction must be like YYYYMMDDhhmmss"
+          description: "Datetime of the transaction in ISO 8601 format."
           schema:
             type: string
             format: date-time
-            example: "20241224115900"
+            example: "2024-11-10T12:00:00"
       responses:
         '201':
-          description: "Fee payment status updated successfully, and transaction logged."
+          description: "Parking fee payment status updated successfully, and transaction logged."
           content:
             application/json:
               schema:
@@ -2159,7 +2117,7 @@ paths:
                     type: string
                     example: "success"
         '400':
-          description: "Invalid input data."
+          description: "Invalid park ID or datetime format."
           content:
             application/json:
               schema:
@@ -2167,7 +2125,7 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: "Invalid fee ID or user ID."
+                    example: "Invalid input data."
         '403':
           description: "Admin privileges required."
           content:
@@ -2188,5 +2146,3 @@ paths:
                   error:
                     type: string
                     example: "Unable to process the request."
-  
-            

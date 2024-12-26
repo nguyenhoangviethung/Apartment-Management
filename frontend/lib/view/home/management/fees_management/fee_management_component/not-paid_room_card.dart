@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/not-paid_room_info.dart';
+import 'package:frontend/view/home/management/fees_management/fee_management_component/edit_payment_date.dart';
 
 class NotPaidRoomCard extends StatefulWidget {
   final NotPaidRoomInfo item;
@@ -77,6 +78,26 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                       maxLines: 1,
                     ),
                   ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const EditPaymentDate(
+                                );
+                              }
+                          );
+                        },
+                        child: const Icon(
+                          Icons.edit,
+                          size: 30,
+                          color: Color.fromRGBO(0, 0, 0, 0.6),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
 

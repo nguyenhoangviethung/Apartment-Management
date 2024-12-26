@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/management/component_management/management_card.dart';
-import 'package:frontend/view/home/management/residents_management/residents_management.dart';
-import 'package:frontend/view/home/management/vehicles_management/vehicles_management.dart';
+
 
 
 class Management extends StatelessWidget {

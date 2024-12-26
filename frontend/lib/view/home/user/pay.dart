@@ -21,54 +21,57 @@ class _PayState extends State<Pay> {
   late List<UserContributionFee> ? userContributionFee;
   bool isLoading = true;
 
-  Future<void> getUrlPay(int feeId,String amount,String description) async {
+  Future<void> getUrlPay(int feeId,String amount,String description,String type) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? tokenlogin = prefs.getString('tokenlogin');
     String? userId= prefs.getString('user_id');
-    final url= 'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$description/pay-park-fee';
-    print(url);
-    try{
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Authorization': 'Bearer $tokenlogin'
-        }
-      );
-      print(response.body);
-      if(response.statusCode==200){
-        final urlResponse = jsonDecode(response.body)['payment_url'];
-        if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => VNPayPaymentScreen(paymentUrl: urlResponse)),
-          );
-        }
-      }
-    }catch(e){
-      print('Error $e');
-    }
-    String descrip = description.replaceAll('/', '');
-    final url2= 'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId)}/$feeId/${double.parse(amount).toInt()}/$descrip/pay-fee';
-    print(url2);
-    try{
-      final response = await http.get(
-          Uri.parse(url2),
-          headers: {
-            'Authorization': 'Bearer $tokenlogin'
+    if(type=='park'){
+      final url= 'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$description/pay-park-fee';
+      print(url);
+      try{
+        final response = await http.get(
+            Uri.parse(url),
+            headers: {
+              'Authorization': 'Bearer $tokenlogin'
+            }
+        );
+        print(response.body);
+        if(response.statusCode==200){
+          final urlResponse = jsonDecode(response.body)['payment_url'];
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => VNPayPaymentScreen(paymentUrl: urlResponse)),
+            );
           }
-      );
-      print(response.body);
-      if(response.statusCode==200){
-        final urlResponse = jsonDecode(response.body)['payment_url'];
-        if (mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => VNPayPaymentScreen(paymentUrl: urlResponse)),
-          );
         }
+      }catch(e){
+        print('Error $e');
       }
-    }catch(e){
-      print('Error $e');
+    }else{
+      String descrip = description.replaceAll('/', '');
+      final url2= 'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$descrip/pay-fee';
+      print(url2);
+      try{
+        final response = await http.get(
+            Uri.parse(url2),
+            headers: {
+              'Authorization': 'Bearer $tokenlogin'
+            }
+        );
+        print(response.body);
+        if(response.statusCode==200){
+          final urlResponse = jsonDecode(response.body)['payment_url'];
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => VNPayPaymentScreen(paymentUrl: urlResponse)),
+            );
+          }
+        }
+      }catch(e){
+        print('Error $e');
+      }
     }
   }
   Future<void> fetchData() async {
@@ -127,6 +130,7 @@ class _PayState extends State<Pay> {
                     dueDate: userHouseholdFee?.due_date ?? 'N/A',
                     status: userHouseholdFee?.status ?? 'N/A',
                     feeId: userHouseholdFee?.fee_id??0,
+                    typeFee: 'required'
                   ),
                   const SizedBox(height: 20),
                   const Text('Park Fee'),
@@ -136,6 +140,7 @@ class _PayState extends State<Pay> {
                     dueDate: userParkFee?.due_date ?? 'N/A',
                     status: userParkFee?.status ?? 'N/A',
                     feeId: userParkFee?.fee_id??0,
+                    typeFee: 'park'
                   ),
                   const SizedBox(height: 20),
                   const Text('Contribution Fee'),
@@ -151,6 +156,7 @@ class _PayState extends State<Pay> {
                                 dueDate: userContributionFee?[index].due_date??'N/A',
                                 status: 'N/A',
                                 feeId: userContributionFee?[index].fee_id??0,
+                                typeFee: 'contribution'
                             ),
                             const SizedBox(height: 10,)
                           ],
@@ -169,6 +175,7 @@ class _PayState extends State<Pay> {
     required String dueDate,
     required String status,
     required int feeId,
+    required String typeFee,
   }) {
     Color statusColor;
     Color cardColor;
@@ -298,7 +305,7 @@ class _PayState extends State<Pay> {
                 alignment: Alignment.bottomRight,
                 child: ElevatedButton(
                   onPressed: () async{
-                    await getUrlPay(feeId, amount, nameFee);
+                    await getUrlPay(feeId, amount, nameFee,typeFee);
                     // Chưa cần logic, sẽ bổ sung sau
                     // Navigator.push(context, MaterialPageRoute(builder: (context)=>VNPayPaymentScreen(paymentUrl: 'https://nguyenhaiminh.id.vn/')));
                   },

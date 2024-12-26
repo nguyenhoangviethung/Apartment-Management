@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../models/unpaid_parking_fee_info.dart';
+import 'edit_payment_date.dart';
 
 class UnpaidParkingFeeCard extends StatefulWidget {
   final UnpaidParkingFeeInfo item;
@@ -73,6 +74,26 @@ class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
                       maxLines: 1,
                     ),
                   ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const EditPaymentDate(
+                                );
+                              }
+                          );
+                        },
+                        child: const Icon(
+                          Icons.edit,
+                          size: 30,
+                          color: Color.fromRGBO(0, 0, 0, 0.6),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
 

@@ -101,7 +101,7 @@ class FeeService:
 
     def get_current_household_fee(self, household_id):
         now = datetime.now().date()
-        return db.session.query(Fees).filter(Fees.household_id == household_id, now <= Fees.due_date).one_or_none()
+        return db.session.query(Fees).filter(Fees.household_id == household_id, now <= Fees.due_date).first() or None
 
     def user_get_current_fee(self, resident_id):
         households_id = db.session.query(Residents.household_id).filter(Residents.resident_id == resident_id).scalar()

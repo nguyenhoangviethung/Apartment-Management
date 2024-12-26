@@ -131,6 +131,7 @@ class FeeService:
                 continue
 
             info = { 
+                    'fee_id': f_id,
                     'fee' : f'{amount}',
                     'room': f'{household_id}'
             }

@@ -50,15 +50,11 @@ def process_payment(user_id, identifier, amount, description, transaction_type):
     return jsonify({
         "payment_url": payment_url
     })
-
-@token_required
 @handle_exceptions
 @user_bp.get('/<int:user_id>/<int:fee_id>/<int:amount>/<string:description>/pay-fee')
 def pay_fee(user_id, fee_id, amount, description):
     return process_payment(user_id, fee_id, amount, description, transaction_type="Fee"), 200
 
-
-@token_required
 @handle_exceptions
 @user_bp.get('/<int:user_id>/<int:park_id>/<int:amount>/<string:description>/pay-park-fee')
 def pay_park_fee(user_id, park_id, amount, description):

@@ -7,27 +7,25 @@ class NotificationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, String>> notifications = [
       {
-        'title': 'Thông báo thay đổi lịch dạy lớp 154007 - Technical Writing and Presentation',
-        'date': '11/12/2024',
-        'content': 'Thông báo thay đổi lịch dạy lớp 154007 - Technical Writing and Presentation',
+        "title": "Thông báo thay đổi lịch thu phí quản lý chung cư",
+        "date": "11/12/2024",
+        "content": "Thông báo về việc thay đổi lịch thu phí quản lý chung cư tại tòa nhà A."
       },
       {
-        'title': 'Chương trình tham quan thực tế công ty Công nghiệp Brother Việt Nam',
-        'date': '03/12/2024',
-        'content':
-        'Công ty TNHH Công nghiệp Brother Việt Nam (BIVN) là Công ty 100% vốn đầu tư của Nhật Bản...',
+        "title": "Chương trình kiểm tra hệ thống PCCC tại chung cư",
+        "date": "03/12/2024",
+        "content": "Ban quản lý chung cư thông báo về chương trình kiểm tra định kỳ hệ thống phòng cháy chữa cháy..."
       },
       {
-        'title': 'Mời bạn tham dự các chương trình Hội thảo tại Career Day 2024',
-        'date': '02/12/2024',
-        'content':
-        'Năm nay Nhà trường tiếp tục phối hợp cùng với các doanh nghiệp, các đơn vị... để tổ chức NGÀY HỘI...',
+        "title": "Mời cư dân tham dự cuộc họp thường niên tại chung cư",
+        "date": "02/12/2024",
+        "content": "Cuộc họp thường niên với sự tham gia của cư dân sẽ được tổ chức tại hội trường tầng trệt..."
       },
       {
-        'title': 'Thông báo thay đổi lịch dạy lớp 154007 - Technical Writing and Presentation',
-        'date': '27/11/2024',
-        'content': 'Thông báo thay đổi lịch dạy lớp 154007 - Technical Writing and Presentation',
-      },
+        "title": "Thông báo bảo trì thang máy tại chung cư",
+        "date": "27/11/2024",
+        "content": "Thông báo về việc bảo trì thang máy tại tòa nhà B, cư dân vui lòng sử dụng thang máy khác trong thời gian bảo trì."
+      }
     ];
 
     return Scaffold(

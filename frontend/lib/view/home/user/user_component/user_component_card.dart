@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/view/home/user/pay.dart';
+import 'package:frontend/view/home/user/payment_component/apartment_fee.dart';
+import 'package:frontend/view/home/user/payment_component/contribution_fee.dart';
 import 'package:frontend/view/home/user/update.dart';
+
+import '../payment_component/electric_water_fee.dart';
 
 class UserComponentCard extends StatelessWidget {
   final String imagelink;
@@ -52,12 +56,24 @@ class UserComponentCard extends StatelessWidget {
       ),
       onTap: (){
         if(title=='Payment')
-        {Navigator.push(context, MaterialPageRoute(builder: (context)=>const Pay()));
-
+        {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const Pay()));
         }
         if(title=='Update Information')
-        {Navigator.push(context, MaterialPageRoute(builder: (context)=>const Update()));
-
+        {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const Update()));
+        }
+        if(title=='Apartment Fees')
+        {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const ApartmentFee()));
+        }
+        if(title=='Contribution Fees')
+        {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const ContributionFee()));
+        }
+        if(title=='Electric and Water Fees')
+        {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const ElectricWaterFee()));
         }
       },
     );

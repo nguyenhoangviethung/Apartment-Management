@@ -17,7 +17,7 @@ class CustomPagination extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -39,7 +39,7 @@ class CustomPagination extends StatelessWidget {
               onTap: currentPage > 1 ? onPrevious : null,
               borderRadius: BorderRadius.circular(8),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
                   color: currentPage > 1 ? Colors.blue.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -52,13 +52,7 @@ class CustomPagination extends StatelessWidget {
                       color: currentPage > 1 ? Colors.blue[700] : Colors.grey,
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      'Previous',
-                      style: TextStyle(
-                        color: currentPage > 1 ? Colors.blue[700] : Colors.grey,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+
                   ],
                 ),
               ),
@@ -67,7 +61,7 @@ class CustomPagination extends StatelessWidget {
 
           // Page Numbers
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
+            margin: const EdgeInsets.symmetric(horizontal: 10),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.grey.withOpacity(0.1),
@@ -100,20 +94,13 @@ class CustomPagination extends StatelessWidget {
               onTap: currentPage < totalPages ? onNext : null,
               borderRadius: BorderRadius.circular(8),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
                   color: currentPage < totalPages ? Colors.blue.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
-                    Text(
-                      'Next',
-                      style: TextStyle(
-                        color: currentPage < totalPages ? Colors.blue[700] : Colors.grey,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
                     const SizedBox(width: 4),
                     Icon(
                       Icons.arrow_forward_ios,

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import '../../../../../common/custom_date_picker.dart';
 
 
 class EditPaymentDate extends StatefulWidget {
-  const EditPaymentDate({super.key});
+  final dynamic it;
+  final String typeFee;
+  const EditPaymentDate({super.key, required this.it, required this.typeFee});
 
   @override
   State<EditPaymentDate> createState() => _EditPaymentDateState();
@@ -15,7 +18,36 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
 
   DateTime selectedDate = DateTime.now();
   String _dob = '';
+  bool isloading=false;
+  Future<void> editPayDate ()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? tokelogin = prefs.getString('tokenlogin');
+    print(_dob);
+    setState(() {
+      isloading=true;
+    });
+    final String url = widget.typeFee=='required'?
+    'https://apartment-management-kjj9.onrender.com/admin/101/${widget.it.fee_id}/update-status-fee':
+    'https://apartment-management-kjj9.onrender.com/admin/${widget.it.fee_id}/$_dob/update-status-park-fee';
+    print(url);
+    try{
+      final reponse = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Authorization' : 'Bearer $tokelogin'
+        }
+      );
+      print(reponse.body);
+      print(reponse.statusCode);
 
+    }catch(e){
+      print('Error: $e');
+    }finally{
+      setState(() {
+        isloading=false;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -69,6 +101,7 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
               ElevatedButton(
                 onPressed: () {
                   FocusScope.of(context).unfocus();
+                  editPayDate();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
@@ -78,7 +111,8 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: const Text(
+                child: isloading? const CircularProgressIndicator(color: Colors.white,):
+                const Text(
                   'Save',
                   style: TextStyle(
                     fontFamily: 'Times New Roman',
@@ -95,31 +129,6 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {VoidCallback? onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.blue, width: 2),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.grey, width: 1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        style: const TextStyle(
-          fontFamily: 'Times New Roman',
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
-      ),
-    );
-  }
 
 }
 

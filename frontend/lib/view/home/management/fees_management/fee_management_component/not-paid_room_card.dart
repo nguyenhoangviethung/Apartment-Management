@@ -38,6 +38,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                       _buildInfoRow('Service fee:', widget.item.service_fee?.toString() ?? '0'),
                       _buildInfoRow('Manage fee:', widget.item.manage_fee?.toString() ?? '0'),
                       _buildInfoRow('Fee type:', widget.item.fee_type ?? 'Unknown'),
+                      _buildInfoRow('Fee ID:', widget.item.fee_id?.toString() ?? '0'),
 
                     ],
                   ),
@@ -85,13 +86,15 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                           showModalBottomSheet(
                               context: context,
                               builder: (BuildContext context) {
-                                return const EditPaymentDate(
+                                return EditPaymentDate(
+                                  it: widget.item,
+                                  typeFee: 'required',
                                 );
                               }
                           );
                         },
                         child: const Icon(
-                          Icons.edit,
+                          Icons.edit_calendar,
                           size: 30,
                           color: Color.fromRGBO(0, 0, 0, 0.6),
                         ),

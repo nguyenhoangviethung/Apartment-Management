@@ -33,6 +33,7 @@ class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildInfoRow('Room id:', widget.item.room ?? 'Unknown'),
+                      _buildInfoRow('FeeID:', widget.item.fee_id?.toString() ?? '0'),
                       _buildInfoRow('Amount:', widget.item.amount?.toString() ?? '0'),
                       _buildInfoRow('Fee type:', widget.item.fee_type ?? 'Unknown'),
                     ],
@@ -81,13 +82,15 @@ class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
                           showModalBottomSheet(
                               context: context,
                               builder: (BuildContext context) {
-                                return const EditPaymentDate(
+                                return EditPaymentDate(
+                                  it: widget.item,
+                                  typeFee: 'parking',
                                 );
                               }
                           );
                         },
                         child: const Icon(
-                          Icons.edit,
+                          Icons.edit_calendar,
                           size: 30,
                           color: Color.fromRGBO(0, 0, 0, 0.6),
                         ),

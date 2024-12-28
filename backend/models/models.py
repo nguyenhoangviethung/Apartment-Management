@@ -96,8 +96,6 @@ class Transactions(db.Model):
     fee_id = Column(db.Integer, ForeignKey('Fees.fee_id'))
     park_id = Column(INTEGER, ForeignKey('ParkingFees.park_id'))
     contribution_id = Column(INTEGER, ForeignKey('Contributions.contribution_id'))
-    electric_id = Column(INTEGER)
-    water_id = Column(INTEGER)
     amount = Column(DECIMAL(10,2), nullable=False)
     user_pay = Column(INTEGER, ForeignKey('Users.user_id'))
     user_name = Column(db.String(40), nullable=False)
@@ -105,3 +103,15 @@ class Transactions(db.Model):
     bank_code = Column(db.String(10))
     type = Column(db.String(10), nullable=False)
     description = Column(NVARCHAR(150), nullable=False)
+
+class Electrics(db.Model):
+    __tablename__ = 'Electric'
+    customer_id = Column(String(11), nullable=False, primary_key=True)
+    amount = Column(DECIMAL(10,2), nullable=False)
+    status = Column(Enum('Đã thanh toán', 'Chưa thanh toán'), default='Chưa thanh toán')
+
+class Waters(db.Model):
+    __tablename__ = 'Water'
+    customer_id = Column(String(9), nullable=False, primary_key=True)
+    amount = Column(DECIMAL(10,2), nullable=False)
+    status = Column(Enum('Đã thanh toán', 'Chưa thanh toán'), default='Chưa thanh toán')

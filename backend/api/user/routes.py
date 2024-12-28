@@ -27,7 +27,7 @@ def index():
         return f'Lỗi: {str(e)}'
     
 def process_payment(user_id, identifier, amount, description, transaction_type):
-    vnp_Amount = amount * 100
+    vnp_Amount = int(amount * 100)
     vnp_IpAddr = getIP()
     vnp_OrderInfo = f'Transaction {transaction_type} {identifier} {amount} for by {user_id} {description}'
     CreateDate = datetime.now()
@@ -64,6 +64,11 @@ def pay_park_fee(user_id, park_id, amount, description):
 @user_bp.get('/<int:user_id>/<int:contribution_id>/<int:amount>/<string:description>/pay-contribution-fee')
 def pay_contribution_fee(user_id, contribution_id, amount, description):
     return process_payment(user_id, contribution_id, amount, description, transaction_type="Contribution"), 200
+@handle_exceptions
+@user_bp.get('/<string:customer_id>/pay-electric-fee')
+def pay_electric_fee(customer_id,):
+    data, status_code = utils_service.get_electric_fee(customer_id)
+    return process_payment(user_id = 2 , identifier = customer_id, description = "Thu ho", amount = int(data['amount']), transaction_type = "Electric"), 200
 @user_bp.get('/info')
 @token_required
 @handle_exceptions
@@ -168,3 +173,19 @@ def upload_image(data):
 def to_resident(data, res_id):
     response, status_code = user_service.convert_to_resident(data, res_id)
     return jsonify(response), status_code
+
+@user_bp.get('/get-electric-bill/')
+@handle_exceptions
+def get_electric_bill():
+    data = request.form.to_dict()
+    customer_id = data['customer_id']
+    response, status_code = utils_service.get_electric_fee(customer_id)
+    return response, status_code
+
+@user_bp.get('/get-water-bill/')
+@handle_exceptions
+def get_water_bill():
+    data = request.form.to_dict()
+    customer_id = data['customer_id']
+    response, status_code = utils_service.get_water_fee(customer_id)
+    return response, status_code

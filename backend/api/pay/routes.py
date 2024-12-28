@@ -36,7 +36,7 @@ def payment():
         # 250000 thanh toan hoa don, need more flexible
     payment.requestData['vnp_OrderType'] = 'billpayment'
     #todo
-    payment.requestData['vnp_ReturnUrl'] = 'https://apartment-management-kjj9.onrender.com/pay/payment-return'
+    payment.requestData['vnp_ReturnUrl'] = 'http://127.0.0.1:5000/pay/payment-return'
     payment.requestData['vnp_ExpireDate'] = vnp_ExpireDate
     payment.requestData['vnp_TxnRef'] = vnp_TxnRef
             
@@ -67,6 +67,9 @@ def payment_return():
         if payment.validate_response(os.getenv('VNP_HASHSECRET')):
             if vnp_ResponseCode == '00':
                 desc = order_desc.strip().split()
+                if desc[1] == 'Electric':
+                    utils_service.update_electric(desc[2])
+                    return jsonify({'message':f'thanh toan thanh cong'}), 302 
                 data = dict()
                 data = {
                     "description": desc[-1],
@@ -75,14 +78,13 @@ def payment_return():
                     "fee_id": None,
                     "park_id": None,
                     "contribution_id": None,
-                    "electric_id": None,
-                    "water_id": None,
                     "user_pay": desc[-2],
                     "user_name": user_service.get_username(desc[-2]),
                     "transaction_time": vnp_PayDate,
                     "bank_code": vnp_BankCode,
                     "type": vnp_CardType,
                 }
+                print(desc[-2])
                 if desc[1] == 'Fee':
                     fee = fee_service.get_fee_by_fee_id(fee_id = desc[2])
                     remain_amount = float(fee.amount) - amount
@@ -109,10 +111,11 @@ def payment_return():
                     data_ = {}
                     if remain_amount == 0 or remain_amount < 0:
                         data_['status'] = 'Đã thanh toán'
-                    park_fee.update_status(data_, park_id = desc[2])   
+                    utils_service.update_status(data_, park_id = desc[2])   
                     data['park_id'] = desc[2]
                     transaction_service.add_transaction(data)
                     return jsonify({'message':f'thanh toan thanh cong'}), 302
+                                  
             else:
                 return jsonify({'message':'thanh toan that bai'}), 406
         else:

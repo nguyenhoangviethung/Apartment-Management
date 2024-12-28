@@ -426,7 +426,7 @@ def update_status_park_fee(park_id, user_id, datetime):
     transaction_service.add_transaction(data_)
     return "message: success" , 201
 
-@admin_bp.post("/<int:contribution_id>/<int:user_id><string:datetime>/update-status-contribution-fee")
+@admin_bp.post("/<int:contribution_id>/<int:user_id>/<string:datetime>/update-status-contribution-fee")
 @admin_required
 @handle_exceptions
 def update_status_contribution_fee(contribution_id, user_id, datetime):

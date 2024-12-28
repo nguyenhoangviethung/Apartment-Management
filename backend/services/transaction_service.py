@@ -50,8 +50,6 @@ class TransactionService:
             fee_id=data['fee_id'],
             park_id=data['park_id'],
             contribution_id = data['contribution_id'],
-            electric_id=data['electric_id'],
-            water_id=data['water_id'],
             user_pay=data['user_pay'],
             user_name=data['user_name'],
             transaction_time=self.convert_datetime(data['transaction_time']),

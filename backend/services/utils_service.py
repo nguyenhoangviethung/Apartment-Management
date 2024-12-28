@@ -3,7 +3,7 @@ import logging
 from helpers import validate_date, decimal_to_float
 from decimal import Decimal, InvalidOperation
 from api.middlewares import handle_exceptions
-from models.models import Vehicles, Households, ParkingFees, Residents
+from models.models import Vehicles, Households, ParkingFees, Residents, Electrics, Waters
 from datetime import datetime, timedelta, date
 
 class UtilsService:
@@ -258,13 +258,36 @@ class UtilsService:
         }
         return (result), 200
 
-    def get_electric_fee_by_householdID(self, household_id):
-        pass
-
-    def get_electric_fee_by_householdID(self, household_id):
-        pass
-
-    def get_electric_fee_by_householdID(self, household_id):
-        pass
-
+    def get_electric_fee(self, customer_id):
+        if len(customer_id) != 11:
+            return "message: customer_id is not available", 404
+        result = db.session.query(Electrics).filter(Electrics.customer_id == customer_id).first()
+        if result is None:
+            return "message: customer_id is not available", 404
+        data = dict()
+        data = {
+            "customer_id": result.customer_id,
+            "amount": result.amount
+        }
+        return data, 200
+    def update_electric(self, customer_id):
+        result = db.session.query(Electrics).filter(Electrics.customer_id == customer_id).first()
+        db.session.delete(result)
+        db.session.commit()
+    def get_water_fee(self, customer_id):
+        if len(customer_id) != 9:
+            return "message: customer_id is not available", 404
+        result = db.session.query(Waters).filter(Waters.customer_id == customer_id).first()
+        if result is None:
+            return "message: customer_id is not available", 404
+        data = dict()
+        data = {
+            "customer_id": result.customer_id,
+            "amount": decimal_to_float(result.amount)
+        }
+        return data, 200
+    def update_water(self, customer_id):
+        result = db.session.query(Waters).filter(Waters.customer_id == customer_id).first()
+        db.session.delete(result)
+        db.session.commit()
     

@@ -212,7 +212,8 @@ class UtilsService:
             infor = {
                 'room': str(fee.household_id),
                 'amount': decimal_to_float(fee.amount),
-                'fee_type': str(fee.description)
+                'fee_type': str(fee.description),
+                'fee_id': fee.park_id
             }
 
             res['infor'].append(infor)

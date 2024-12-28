@@ -217,7 +217,8 @@ class FeeService:
                 'due_date': fee.due_date.strftime('%Y-%m-%d'),
                 'service_fee': decimal_to_float(service_fee),
                 'manage_fee': decimal_to_float(manage_fee),
-                'fee_type': str(fee.description)
+                'fee_type': str(fee.description),
+                'fee_id': fee.fee_id
             }
 
             res['infor'].append(infor)

@@ -224,3 +224,25 @@ class ContributionService:
             response.append(info)
 
         return (response), 200
+
+    @handle_exceptions
+    def get_contribution_by_contribution_id(self, contribution_id):
+        return db.session.query(Contributions).filter(Contributions.contribution_id == contribution_id).first()
+    
+    @handle_exceptions
+    def update_status(self, data, contribution_id):
+        contribution = self.get_contribution_by_contribution_id(contribution_id)
+
+        if contribution is None:
+            return 'contribution not found'
+        valid_statuses = ['Đã thanh toán', 'Chưa thanh toán']
+       
+        for key, value in data.items():
+            if key not in contribution.__table__.columns:
+                continue  
+            if key == 'status' and value not in valid_statuses:
+                return f'Invalid status value: {value}'
+            setattr(contribution, key, value)
+        db.session.commit()
+        db.session.refresh(contribution)
+        return ('message: transaction successfully'), 302

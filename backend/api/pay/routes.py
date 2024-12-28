@@ -5,13 +5,14 @@ from random import randint
 from vnpay import VNPAY
 from api.pay import pay_bp
 from datetime import datetime, timedelta
-from services import fee_service, user_service,transaction_service, utils_service
+from services import fee_service, user_service,transaction_service, utils_service, contribution_service
 load_dotenv()
 
 fee_service = fee_service.FeeService()
 user_service = user_service.UserService()
 transaction_service = transaction_service.TransactionService()
 utils_service = utils_service.UtilsService()
+contribution_service = contribution_service.ContributionService()
 @pay_bp.route('/payment')
 def payment():
     vnp_Amount = request.args.get('vnp_Amount', type = int)
@@ -91,6 +92,29 @@ def payment_return():
                     transaction_service.add_transaction(data)
                     return jsonify({'message':f'thanh toan thanh cong'}), 302
                 if desc[1] == 'Parking':
+                    contribution = contribution_service.get_contribution_by_contribution_id(desc[2])
+                    remain_amount = float(contribution.amount) - amount
+                    data_ = {}
+                    if remain_amount == 0 or remain_amount < 0:
+                        data_['status'] = 'Đã thanh toán'
+                    contribution_service.update_status(data_, park_id = desc[2])   
+                    data = dict() 
+                    data = {
+                        "amount": amount,
+                        "transaction_id": order_id,
+                        "park_id": int(desc[2]),
+                        "fee_id": None,
+                        "user_pay": desc[-2],
+                        "user_name": user_service.get_username(desc[-2]),
+                        "transaction_time": vnp_PayDate,
+                        "bank_code": vnp_BankCode,
+                        "type": vnp_CardType,
+                        "description": desc[-1]
+                    }
+                    print(jsonify(data))
+                    transaction_service.add_transaction(data)
+                    return jsonify({'message':f'thanh toan thanh cong'}), 302
+                if desc[1] == 'Contribution':
                     park_fee = utils_service.get_park_fee_by_park_id(park_id = desc[2])
                     remain_amount = float(park_fee.amount) - amount
                     data_ = {}

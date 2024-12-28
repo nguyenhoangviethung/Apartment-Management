@@ -60,6 +60,10 @@ def pay_fee(user_id, fee_id, amount, description):
 def pay_park_fee(user_id, park_id, amount, description):
     return process_payment(user_id, park_id, amount, description, transaction_type="Parking"), 200
 
+@handle_exceptions
+@user_bp.get('/<int:user_id>/<int:contribution_id>/<int:amount>/<string:description>/pay-contribution-fee')
+def pay_contribution_fee(user_id, contribution_id, amount, description):
+    return process_payment(user_id, contribution_id, amount, description, transaction_type="Contribution"), 200
 # @token_required
 # @handle_exceptions
 # @user_bp.get('/<int:user_id>/<int:fee_id>/<int:amount>/<string:description>/pay-fee')

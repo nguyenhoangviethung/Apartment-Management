@@ -68,6 +68,7 @@ def payment_return():
             if vnp_ResponseCode == '00':
                 desc = order_desc.strip().split()
                 if desc[1] == 'Electric':
+                    tp = utils_service.get_electric_fee(desc[2])
                     utils_service.update_electric(desc[2])
                     return jsonify({'message':f'thanh toan thanh cong'}), 302 
                 data = dict()

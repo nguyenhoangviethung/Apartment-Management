@@ -2040,7 +2040,7 @@ paths:
           schema:
             type: string
             format: date-time
-            example: "2024-11-10T10:00:00"
+            example: "20241229011111"
       responses:
         '201':
           description: "Fee payment status updated successfully, and transaction logged."
@@ -2104,7 +2104,7 @@ paths:
           schema:
             type: string
             format: date-time
-            example: "2024-11-10T12:00:00"
+            example: "20241229011111"
       responses:
         '201':
           description: "Parking fee payment status updated successfully, and transaction logged."
@@ -2146,3 +2146,212 @@ paths:
                   error:
                     type: string
                     example: "Unable to process the request."
+  /admin/{contribution_id}/{datetime}/update-status-contribution-fee:
+    post:
+      summary: "Update contribution Fee Payment Status"
+      description: "Update the payment status of a contribution fee and log the transaction."
+      tags:
+        - Admin
+      parameters:
+        - name: contribution_id
+          in: path
+          required: true
+          description: "ID of the contribution fee to update."
+          schema:
+            type: integer
+            example: 301
+        - name: datetime
+          in: path
+          required: true
+          description: "Datetime of the transaction in ISO 8601 format."
+          schema:
+            type: string
+            format: date-time
+            example: "20241229011111"
+      responses:
+        '201':
+          description: "contribution fee payment status updated successfully, and transaction logged."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "success"
+        '400':
+          description: "Invalid contribution ID or datetime format."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid input data."
+        '403':
+          description: "Admin privileges required."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Access denied."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the request."
+
+  /{customer_id}/pay-electric-fee:
+    get:
+      summary: "Pay Electric Fee"
+      description: "Process the payment for an electric bill for a specified customer ID and return the payment URL."
+      tags:
+        - User
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          description: "ID of the customer whose electric bill is being paid."
+          schema:
+            type: string
+            example: "CUST0000003"
+      responses:
+        '200':
+          description: "Electric fee payment URL generated successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payment_url:
+                    type: string
+                    format: uri
+                    example: "https://example.com/pay?txn_ref=abc123&amount=15000"
+        '400':
+          description: "Invalid customer ID or insufficient data."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid customer ID or missing amount information."
+        '500':
+          description: "Internal server error while generating the payment URL."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the electric fee payment."
+  /get-electric-bill/:
+    get:
+      summary: "Get Electric Bill"
+      description: "Retrieve the electric bill for a given customer based on their customer ID."
+      tags:
+        - User
+      parameters:
+        - name: customer_id
+          in: query
+          required: true
+          description: "ID of the customer to retrieve the electric bill for."
+          schema:
+            type: string
+            example: "CUST0000003"
+      responses:
+        '200':
+          description: "Electric bill retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    format: float
+                    example: 1500000.00
+                  customer_id:
+                    type: string
+                    example: "CUST0000003"
+        '400':
+          description: "Invalid customer ID provided."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Customer ID is missing or invalid."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to retrieve the electric bill."
+
+  /get-water-bill/:
+    get:
+      summary: "Get Water Bill"
+      description: "Retrieve the water bill for a given customer based on their customer ID."
+      tags:
+        - User
+      parameters:
+        - name: customer_id
+          in: query
+          required: true
+          description: "ID of the customer to retrieve the water bill for."
+          schema:
+            type: string
+            example: "CUST00003"
+      responses:
+        '200':
+          description: "Water bill retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    format: float
+                    example: 75.50
+                  customer:
+                    type: string
+                    example: "CUST0000003"
+        '400':
+          description: "Invalid customer ID provided."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Customer ID is missing or invalid."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to retrieve the water bill."

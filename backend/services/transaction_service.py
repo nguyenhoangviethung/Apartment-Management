@@ -51,7 +51,7 @@ class TransactionService:
             park_id=data['park_id'],
             contribution_id = data['contribution_id'],
             electric_id=data['electric_id'],
-            water_id=data['water'],
+            water_id=data['water_id'],
             user_pay=data['user_pay'],
             user_name=data['user_name'],
             transaction_time=self.convert_datetime(data['transaction_time']),
@@ -59,12 +59,6 @@ class TransactionService:
             type=data['type'],
             description=data['description']
         )
-        # if data['fee_id']:
-        #     new_transaction.fee_id = data['fee_id']
-        # else:
-        #     new_transaction.fee_id = 0
-        # if data['park_id']:
-        #     new_transaction.park_id = data['park_id']
         db.session.add(new_transaction)
         db.session.commit()
         return {'message': 'Add transaction successfully'}

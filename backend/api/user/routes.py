@@ -64,42 +64,6 @@ def pay_park_fee(user_id, park_id, amount, description):
 @user_bp.get('/<int:user_id>/<int:contribution_id>/<int:amount>/<string:description>/pay-contribution-fee')
 def pay_contribution_fee(user_id, contribution_id, amount, description):
     return process_payment(user_id, contribution_id, amount, description, transaction_type="Contribution"), 200
-# @token_required
-# @handle_exceptions
-# @user_bp.get('/<int:user_id>/<int:fee_id>/<int:amount>/<string:description>/pay-fee')
-# def pay_fee(user_id,fee_id, amount, description):
-#     vnp_Amount = amount*100
-#     vnp_IpAddr = getIP()
-#     vnp_OrderInfo = f'Transaction {fee_id} {amount} for by {user_id} {description}'
-#     CreateDate = datetime.now()
-#     ExpireDate = CreateDate + timedelta(minutes = 10)
-#     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
-#     vnp_ExpireDate = ExpireDate.strftime('%Y%m%d%H%M%S')
-#     vnp_TxnRef = str(uuid.uuid4())
-#     return redirect(url_for(
-#           'pay.payment', 
-# vnp_Amount=vnp_Amount, 
-#           vnp_IpAddr=vnp_IpAddr,
-#            vnp_OrderInfo=vnp_OrderInfo, 
-#               vnp_CreateDate=vnp_CreateDate, 
-#               vnp_ExpireDate=vnp_ExpireDate, 
-#               vnp_TxnRef=vnp_TxnRef))
-
-# @token_required
-# @handle_exceptions
-# @user_bp.get('/<int:user_id>/<int:park_id>/<int:amount>/<string:description>/pay-park-fee')
-# def pay_park_fee(user_id,park_id, amount, description):
-#     vnp_Amount = amount*100
-#     vnp_IpAddr = getIP()
-#     vnp_OrderInfo = f'Transaction-Parking {park_id} {amount} for by {user_id} {description}'
-#     CreateDate = datetime.now()
-#     ExpireDate = CreateDate + timedelta(minutes = 10)
-#     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
-#     vnp_ExpireDate = ExpireDate.strftime('%Y%m%d%H%M%S')
-#     vnp_TxnRef = str(uuid.uuid4())
-#     return redirect(url_for('pay.payment', vnp_Amount=vnp_Amount, vnp_IpAddr=vnp_IpAddr, vnp_OrderInfo=vnp_OrderInfo, vnp_CreateDate=vnp_CreateDate, vnp_ExpireDate=vnp_ExpireDate, vnp_TxnRef=vnp_TxnRef))
-
-    
 @user_bp.get('/info')
 @token_required
 @handle_exceptions

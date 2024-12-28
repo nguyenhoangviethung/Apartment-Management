@@ -36,7 +36,7 @@ def payment():
         # 250000 thanh toan hoa don, need more flexible
     payment.requestData['vnp_OrderType'] = 'billpayment'
     #todo
-    payment.requestData['vnp_ReturnUrl'] = 'https://apartment-management-kjj9.onrender.com/pay/payment-return'
+    payment.requestData['vnp_ReturnUrl'] = 'http://127.0.0.1:5000/pay/payment-return'
     payment.requestData['vnp_ExpireDate'] = vnp_ExpireDate
     payment.requestData['vnp_TxnRef'] = vnp_TxnRef
             
@@ -95,11 +95,11 @@ def payment_return():
                     return jsonify({'message':f'thanh toan thanh cong'}), 302
                 if desc[1] == 'Contribution':
                     contribution = contribution_service.get_contribution_by_contribution_id(desc[2])
-                    remain_amount = float(contribution.amount) - amount
+                    remain_amount = float(contribution.contribution_amount) - amount
                     data_ = {}
                     if remain_amount == 0 or remain_amount < 0:
                         data_['status'] = 'Đã thanh toán'
-                    contribution_service.update_status(data_, park_id = desc[2])   
+                    contribution_service.update_status(data_, contribution_id = desc[2])   
                     data["contribution_id"] = desc[2]
                     transaction_service.add_transaction(data)
                     return jsonify({'message':f'thanh toan thanh cong'}), 302

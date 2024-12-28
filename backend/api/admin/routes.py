@@ -374,50 +374,73 @@ def to_resident(res_id):
     response, status_code = user_service.convert_to_resident(data, res_id)
     return jsonify(response), status_code
 
-@admin_bp.post("/<int:fee_id>/<string:datetime>/update-status-fee")
+def prepare_data(datetime):
+    data = dict()
+    data = {
+        "transaction_id": uuid.uuid4(),
+        "transaction_time": datetime,
+        "bank_code": None,
+        "type": "Real-Money",
+        "fee_id": None,
+        "park_id": None,
+        "contribution_id": None,
+        "electric_id": None,
+        "water_id": None,
+    }
+    return data
+@admin_bp.post("/<int:fee_id>/<int:user_id>/<string:datetime>/update-status-fee")
 @admin_required
 @handle_exceptions
-def update_status_fee(fee_id, datetime):
+def update_status_fee(fee_id, user_id, datetime):
     data = dict()
     data['status'] = "Đã thanh toán"
     fee = fee_service.get_fee_by_fee_id(fee_id)
     fee_service.update_status(data, fee_id)
-    data_ = dict()
-    data_ = {
+    data_ = prepare_data(datetime)
+    data_.update({
         "description":fee.description,
         "amount": fee.amount,
-        "transaction_id": uuid.uuid4(),
         "fee_id": fee_id,
-        "park_id": None,
-        "user_pay": fee.user_pay,
-        "user_name": user_service.get_username(fee.user_pay),
-        "transaction_time": datetime,
-        "bank_code": None,
-        "type": "Real-Money",
-    }
+        "user_pay": user_id,
+        "user_name": user_service.get_username(user_id),
+    })
     transaction_service.add_transaction(data_)
     return "message: success" , 201
 
-@admin_bp.post("/<int:park_id>/<string:datetime>/update-status-park-fee")
+@admin_bp.post("/<int:park_id>/<int:user_id>/<string:datetime>/update-status-park-fee")
 @admin_required
 @handle_exceptions
-def update_status_park_fee(park_id, datetime):
+def update_status_park_fee(park_id, user_id, datetime):
     data = dict()
     data['status'] = "Đã thanh toán"
     park_fee = utils_service.get_park_fee_by_park_id(park_id)
     utils_service.update_status(data, park_id)
-    data_ = dict()
-    data_ = {
+    data_ = prepare_data(datetime)
+    data_.update({
         "description":park_fee.description,
         "amount": park_fee.amount,
-        "transaction_id": uuid.uuid4(),
         "park_id": park_id,
-        "fee_id": None,
-        "user_pay": park_fee.user_pay,
-        "user_name": user_service.get_username(park_fee.user_pay),
-        "transaction_time": datetime,
-        "bank_code": None,
-        "type": "Real-Money",
-    }
+        "user_pay": user_id,
+        "user_name": user_service.get_username(user_id),
+    })
+    transaction_service.add_transaction(data_)
+    return "message: success" , 201
+
+@admin_bp.post("/<int:contribution_id>/<int:user_id><string:datetime>/update-status-contribution-fee")
+@admin_required
+@handle_exceptions
+def update_status_contribution_fee(contribution_id, user_id, datetime):
+    data = dict()
+    data['status'] = "Đã thanh toán"
+    contribution = contribution_service.get_contribution_by_contribution_id(contribution_id)
+    contribution_service.update_status(data, contribution_id)
+    data_ = prepare_data(datetime)
+    data_.update({
+        "description":contribution.contribution_type,
+        "amount": contribution.contribution_amount,
+        "contribution_id": contribution_id,
+        "user_pay": user_id,
+        "user_name": user_service.get_username(user_id),
+    })
     transaction_service.add_transaction(data_)
     return "message: success" , 201

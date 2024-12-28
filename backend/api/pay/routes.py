@@ -86,9 +86,7 @@ def payment_return():
                 if desc[1] == 'Fee':
                     fee = fee_service.get_fee_by_fee_id(fee_id = desc[2])
                     remain_amount = float(fee.amount) - amount
-                    print(desc)
                     data_= {}
-                    print(type(data_))
                     if remain_amount == 0 or remain_amount < 0:
                         data_['status'] = 'Đã thanh toán'
                     fee_service.update_status(data_, fee_id = desc[2])    
@@ -111,7 +109,7 @@ def payment_return():
                     data_ = {}
                     if remain_amount == 0 or remain_amount < 0:
                         data_['status'] = 'Đã thanh toán'
-                    contribution_service.update_status(data_, park_id = desc[2])   
+                    park_fee.update_status(data_, park_id = desc[2])   
                     data['park_id'] = desc[2]
                     transaction_service.add_transaction(data)
                     return jsonify({'message':f'thanh toan thanh cong'}), 302

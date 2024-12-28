@@ -44,11 +44,10 @@ class _RoomsManagementState extends State<RoomsManagement> {
     });
   }
 
-  void updateRoomInfoById(int id, int newNumResidents, String newPhoneNumber) {
+  void updateRoomInfoById(int id, String newPhoneNumber) {
     setState(() {
       for (var room in _rooms) {
         if (room.apartment_number == id.toString()) {
-          room.num_residents = newNumResidents;  // Cập nhật số cư dân
           room.phone_number = newPhoneNumber;     // Cập nhật số điện thoại
           break; // Dừng vòng lặp khi tìm thấy
         }
@@ -162,8 +161,8 @@ class _RoomsManagementState extends State<RoomsManagement> {
                         itemBuilder: (context, index) {
                           return RoomCard(
                             item: _rooms[startIndex + index],
-                            onEdit: (id, newNumResidents, newPhoneNumber) {
-                              updateRoomInfoById(id, newNumResidents, newPhoneNumber);
+                            onEdit: (id, newPhoneNumber) {
+                              updateRoomInfoById(id, newPhoneNumber);
                               setState(() {
                               });
                             },

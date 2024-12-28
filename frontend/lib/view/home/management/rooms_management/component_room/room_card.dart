@@ -4,7 +4,7 @@ import 'package:frontend/view/home/management/rooms_management/component_room/de
 import 'edit_footer.dart';
 class RoomCard extends StatefulWidget {
   final RoomInfo item;
-  final Function(int, int, String) onEdit;
+  final Function(int, String) onEdit;
 
   const RoomCard({super.key, required this.item, required this.onEdit,});
 
@@ -106,8 +106,8 @@ class _RoomCardState extends State<RoomCard> {
                           builder: (BuildContext context) {
                             return EditFooter(
                               id: int.parse(widget.item.apartment_number!),
-                              editRoomInfo: (id, newNumResidents, newPhoneNumber) {
-                                widget.onEdit(id, newNumResidents, newPhoneNumber);
+                              editRoomInfo: (id, newPhoneNumber) {
+                                widget.onEdit(id, newPhoneNumber);
                               },
                             );
                           }

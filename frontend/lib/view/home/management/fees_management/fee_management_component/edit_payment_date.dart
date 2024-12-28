@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/common/show_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -22,13 +23,13 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
   Future<void> editPayDate ()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? tokelogin = prefs.getString('tokenlogin');
-    print(_dob);
+    final dateOfPay = '${_dob.replaceAll('-', '').trim()}000000';
     setState(() {
       isloading=true;
     });
     final String url = widget.typeFee=='required'?
-    'https://apartment-management-kjj9.onrender.com/admin/101/${widget.it.fee_id}/update-status-fee':
-    'https://apartment-management-kjj9.onrender.com/admin/${widget.it.fee_id}/$_dob/update-status-park-fee';
+    'https://apartment-management-kjj9.onrender.com/admin/${widget.it.fee_id}/1/$dateOfPay/update-status-fee':
+    'https://apartment-management-kjj9.onrender.com/admin/${widget.it.fee_id}/1/$dateOfPay/update-status-park-fee';
     print(url);
     try{
       final reponse = await http.post(
@@ -37,9 +38,9 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
           'Authorization' : 'Bearer $tokelogin'
         }
       );
-      print(reponse.body);
-      print(reponse.statusCode);
-
+      if(reponse.statusCode==201){
+        showinform(context, 'Success', 'Pay Fee Successful');
+      }
     }catch(e){
       print('Error: $e');
     }finally{
@@ -47,6 +48,7 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
         isloading=false;
       });
     }
+
   }
   @override
   Widget build(BuildContext context) {

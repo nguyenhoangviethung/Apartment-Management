@@ -16,11 +16,11 @@ class EditFooter extends StatefulWidget {
 class _EditFooterState extends State<EditFooter> {
   bool _isload=false;
   // Tạo các controller riêng cho mỗi trường nhập liệu
-  final TextEditingController numResidentsController = TextEditingController();
+  final TextEditingController idNumber = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   @override
   void dispose() {
-    numResidentsController.dispose();
+    idNumber.dispose();
     phoneController.dispose();
     super.dispose();
   }
@@ -30,9 +30,9 @@ class _EditFooterState extends State<EditFooter> {
       _isload = true;
     });
 
-    final newNumResidents = int.tryParse(numResidentsController.text.trim()) ?? 0;
+    final idNum = idNumber.text.trim();
     final newPhoneNumber = phoneController.text.trim();
-    widget.editRoomInfo(widget.id, newNumResidents, newPhoneNumber);
+    widget.editRoomInfo(widget.id, newPhoneNumber);
 
     final url = 'https://apartment-management-kjj9.onrender.com/admin/update${widget.id}';
     try {
@@ -45,7 +45,7 @@ class _EditFooterState extends State<EditFooter> {
           'Authorization': 'Bearer $tokenlogin',
         },
         body: {
-          'num_residents': newNumResidents.toString(),
+          'id_num': idNum,
           'phone_number': newPhoneNumber,
         },
       );
@@ -53,11 +53,16 @@ class _EditFooterState extends State<EditFooter> {
       setState(() {
         _isload = false;
       });
+      print(response.body);
+      print(response.statusCode);
       if (response.statusCode == 200) {
-        widget.editRoomInfo(widget.id, newNumResidents, newPhoneNumber);
+        widget.editRoomInfo(widget.id, newPhoneNumber);
         Navigator.of(context).pop();
         showinform(context, 'Success', 'Update Successful');
       } else {
+        setState(() {
+          _isload = false;
+        });
         showinform(context, 'Failed', 'Try again');
       }
     } catch (e) {
@@ -68,7 +73,7 @@ class _EditFooterState extends State<EditFooter> {
     }
 
     // Xóa giá trị sau khi thêm
-    numResidentsController.clear();
+    idNumber.clear();
     phoneController.clear();
   }
 
@@ -95,7 +100,7 @@ class _EditFooterState extends State<EditFooter> {
           children: [
             Text('Edit room ${widget.id} information', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
             const SizedBox(height: 16),
-            _buildTextField('Enter new number of residents', numResidentsController),
+            _buildTextField('Enter ID number', idNumber),
             const SizedBox(height: 16),
             _buildTextField('Enter new phone number', phoneController),
             const SizedBox(height: 16),

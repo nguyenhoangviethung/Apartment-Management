@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/common/show_dialog.dart';
 import 'package:http/http.dart' as http;
 
 import '../vnpay.dart';
@@ -39,9 +40,12 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
           customer_id = jsonResponse['customer_id'];
           hasBillData = true;
         });
+      }else{
+        showinform(context, 'Lỗi', 'Hóa đơn đã được thanh toán hoặc bạn đã nhập sai mã KH');
       }
     } catch (e) {
       print('Error:$e');
+      showinform(context, 'Lỗi', 'Hóa đơn đã được thanh toán hoặc bạn đã nhập sai mã KH');
     } finally {
       setState(() {
         isload = false;
@@ -76,53 +80,55 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Thông tin hóa đơn tiền điện',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                   TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'Mã khách hàng',
-                      prefixIcon: Icon(Icons.person),
-                    ),
-                    controller: customerId,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      getElectricBill(customerId.text.trim());
-                    },
-                    child: const Text('Kiểm tra hóa đơn'),
-                  ),
-                  const SizedBox(height: 20),
-                  if (isload)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  if (hasBillData && !isload)
-                    _buildPaymentCard(
-                      amount: '${amount} VNĐ',
-                      nameFee: 'Tiền điện',
-                      status: 'Chưa thanh toán',
-                    ),
-                ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Thông tin hóa đơn tiền điện',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            Card(
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                     TextField(
+                      decoration: const InputDecoration(
+                        labelText: 'Mã khách hàng',
+                        prefixIcon: Icon(Icons.person),
+                      ),
+                      controller: customerId,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        getElectricBill(customerId.text.trim());
+                      },
+                      child: const Text('Kiểm tra hóa đơn'),
+                    ),
+                    const SizedBox(height: 20),
+                    if (isload)
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    if (hasBillData && !isload)
+                      _buildPaymentCard(
+                        amount: '${amount} VNĐ',
+                        nameFee: 'Tiền điện',
+                        status: 'Chưa thanh toán',
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

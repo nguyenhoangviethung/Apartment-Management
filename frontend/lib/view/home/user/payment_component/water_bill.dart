@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../../common/show_dialog.dart';
 import '../vnpay.dart';
 class WaterBillScreen extends StatefulWidget {
   const WaterBillScreen({super.key});
@@ -40,9 +41,12 @@ class _WaterBillScreenState extends State<WaterBillScreen> {
           customer_id = jsonResponse['customer_id'];
           hasBillData = true;
         });
+      }else{
+        showinform(context, 'Lỗi', 'Hóa đơn đã được thanh toán hoặc bạn đã nhập sai mã KH');
       }
     } catch (e) {
       print('Error:$e');
+      showinform(context, 'Lỗi', 'Hóa đơn đã được thanh toán hoặc bạn đã nhập sai mã KH');
     } finally {
       setState(() {
         isload = false;
@@ -76,54 +80,56 @@ class _WaterBillScreenState extends State<WaterBillScreen> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Thông tin hóa đơn tiền nước',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: customerId,
-                    decoration: const InputDecoration(
-                      labelText: 'Mã khách hàng',
-                      prefixIcon: Icon(Icons.person),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      getWaterBill(customerId.text.trim());
-                    },
-                    child: const Text('Kiểm tra hóa đơn'),
-                  ),
-                  const SizedBox(height: 20),
-                  if (isload)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  if (hasBillData && !isload)
-                    _buildPaymentCard(
-                      amount: '${amount.toStringAsFixed(0)} VNĐ',
-                      nameFee: 'Tiền nước',
-                      status: 'Chưa thanh toán',
-                    ),
-                ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Thông tin hóa đơn tiền nước',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 20),
+            Card(
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: customerId,
+                      decoration: const InputDecoration(
+                        labelText: 'Mã khách hàng',
+                        prefixIcon: Icon(Icons.person),
+                      ),
+                    ),
+        
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        getWaterBill(customerId.text.trim());
+                      },
+                      child: const Text('Kiểm tra hóa đơn'),
+                    ),
+                    const SizedBox(height: 20),
+                    if (isload)
+                      const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    if (hasBillData && !isload)
+                      _buildPaymentCard(
+                        amount: '${amount.toStringAsFixed(0)} VNĐ',
+                        nameFee: 'Tiền nước',
+                        status: 'Chưa thanh toán',
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

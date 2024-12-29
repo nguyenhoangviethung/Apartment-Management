@@ -51,7 +51,7 @@ class _MainHomeState extends State<MainHome> {
         case 2:
           return 'Tài khoản';
         default:
-          return 'Welcome back';
+          return 'Chào mừng trở lại';
       }
     }
   }

@@ -23,7 +23,7 @@ class _ContributionFeeState extends State<ContributionFee> {
     String? tokenlogin = prefs.getString('tokenlogin');
     String? userId = prefs.getString('user_id');
     final url =
-        'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$description/pay-park-fee';
+        'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$description/pay-contribution-fee';
     try {
       final response = await http.get(Uri.parse(url),
           headers: {'Authorization': 'Bearer $tokenlogin'});

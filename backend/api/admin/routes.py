@@ -444,3 +444,9 @@ def update_status_contribution_fee(contribution_id, user_id, datetime):
     })
     transaction_service.add_transaction(data_)
     return "message: success" , 201
+
+@admin_bp.post("/<int:user_id>/get-transaction")
+@admin_required
+@handle_exceptions
+def get_transaction_by_user_id(user_id):
+    return transaction_service.get_transaction_by_user_pay(user_id), 200

@@ -2018,6 +2018,78 @@ paths:
                   message:
                     type: string
                     example: "Server error while processing payment."
+  /{user_id}/{contribution_id}/{amount}/{description}/pay-contribution-fee:
+    get:
+      summary: "Pay Contribution Fee"
+      description: "Initiate payment for a contribution fee by user with specific details."
+      tags:
+        - User
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user making the payment."
+          schema:
+            type: integer
+            example: 2
+        - name: contribution_id
+          in: path
+          required: true
+          description: "ID of the contribution spot."
+          schema:
+            type: integer
+            example: 301
+        - name: amount
+          in: path
+          required: true
+          description: "Amount to be paid for contribution (in base unit, e.g., VND)."
+          schema:
+            type: int
+            example: 500000
+        - name: description
+          in: path
+          required: true
+          description: "Description of the fee."
+          schema:
+            type: string
+            example: "Electricity"
+      responses:
+        '200':
+          description: "Redirect to payment gateway with payment information."
+          headers:
+            Location:
+              description: "The URL to the payment gateway with payment query parameters."
+              schema:
+                type: string
+                example: "https://payment-gateway.com/payment?vnp_Amount=50000000&vnp_IpAddr=127.0.0.1&vnp_OrderInfo=Transaction 101 500000 for by 1 Electricity&vnp_CreateDate=20241109123000&vnp_ExpireDate=20241109124000&vnp_TxnRef=550e8400-e29b-41d4-a716-446655440000"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction redirected to payment gateway."
+        '400':
+          description: "Invalid request."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                    example: "Invalid parameters in request."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error while processing payment."
 
   /admin/{fee_id}/{datetime}/update-status-fee:
     post:
@@ -2401,3 +2473,97 @@ paths:
                   error:
                     type: string
                     example: "Unable to retrieve the water bill."
+
+  /admin/{user_id}/get-transaction:
+    post:
+      summary: "Get Transactions by User ID"
+      description: "Retrieve all transactions made by a specific user."
+      tags:
+        - Admin
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user whose transactions are to be retrieved."
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '200':
+          description: "Successfully retrieved transactions for the user."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    transaction_id:
+                      type: string
+                      example: "a1b2c3d4-e5f6-7890-1234-56789abcdef0"
+                    description:
+                      type: string
+                      example: "Parking fee payment"
+                    amount:
+                      type: number
+                      format: float
+                      example: 100.50
+                    fee_id:
+                      type: integer
+                      nullable: true
+                      example: 101
+                    park_id:
+                      type: integer
+                      nullable: true
+                      example: null
+                    contribution_id:
+                      type: integer
+                      nullable: true
+                      example: null
+                    user_pay:
+                      type: integer
+                      example: 123
+                    user_name:
+                      type: string
+                      example: "john_doe"
+                    transaction_time:
+                      type: string
+                      format: date-time
+                      example: "2024-11-10T15:30:00"
+                    bank_code:
+                      type: string
+                      nullable: true
+                      example: null
+                    type:
+                      type: string
+                      example: "Real-Money"
+        '400':
+          description: "Invalid user ID format."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid user ID."
+        '403':
+          description: "Admin privileges required."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Access denied."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the request."

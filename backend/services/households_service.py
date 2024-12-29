@@ -62,7 +62,8 @@ class HouseholdsService:
                 'owner': owner_name,
                 'num_residents': pop,
                 'phone_number': apartment.phone_number,
-                'apartment_number': apartment.apartment_number
+                'apartment_number': apartment.apartment_number,
+                'apartment_name': apartment.household_name
             }
             house_list.append(apartment_data)
         return house_list, 200

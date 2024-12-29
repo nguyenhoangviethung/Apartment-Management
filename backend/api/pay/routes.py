@@ -106,10 +106,11 @@ def payment_return():
                     return jsonify({'message':f'thanh toan thanh cong'}), 302
                 if desc[1] == 'Contribution':
                     contribution = contribution_service.get_contribution_by_contribution_id(desc[2])
-                    remain_amount = float(contribution.contribution_amount) - amount
+                    remain_amount = float(contribution.contribution_amount) + amount
                     data_ = {}
                     if remain_amount == 0 or remain_amount < 0:
                         data_['status'] = 'Đã thanh toán'
+                        data_['amount'] = remain_amount
                     contribution_service.update_status(data_, contribution_id = desc[2])   
                     data["contribution_id"] = desc[2]
                     transaction_service.add_transaction(data)

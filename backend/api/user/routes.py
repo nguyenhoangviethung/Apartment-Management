@@ -9,7 +9,7 @@ from services import fee_service, cloudinary_service, contribution_service, util
 import cloudinary
 import uuid
 from pytz import utc
-
+from urllib.parse import unquote
 fee_service = fee_service.FeeService()
 contribution_service = contribution_service.ContributionService()
 utils_service = utils_service.UtilsService()
@@ -30,7 +30,7 @@ def process_payment(user_id, identifier, amount, description, transaction_type):
     vnp_Amount = int(amount * 100)
     vnp_IpAddr = getIP()
     vnp_OrderInfo = f'Transaction {transaction_type} {identifier} {amount} for by {user_id} {description}'
-    CreateDate = datetime.now()
+    CreateDate = datetime.now()                                                                 
     # test thu nen can fix
     ExpireDate = CreateDate + timedelta(minutes=430)
     vnp_CreateDate = CreateDate.strftime('%Y%m%d%H%M%S')
@@ -53,16 +53,19 @@ def process_payment(user_id, identifier, amount, description, transaction_type):
 @handle_exceptions
 @user_bp.get('/<int:user_id>/<int:fee_id>/<int:amount>/<string:description>/pay-fee')
 def pay_fee(user_id, fee_id, amount, description):
+    description = unquote(description)
     return process_payment(user_id, fee_id, amount, description, transaction_type="Fee"), 200
 
 @handle_exceptions
 @user_bp.get('/<int:user_id>/<int:park_id>/<int:amount>/<string:description>/pay-park-fee')
 def pay_park_fee(user_id, park_id, amount, description):
+    description = unquote(description)
     return process_payment(user_id, park_id, amount, description, transaction_type="Parking"), 200
 
 @handle_exceptions
 @user_bp.get('/<int:user_id>/<int:contribution_id>/<int:amount>/<string:description>/pay-contribution-fee')
 def pay_contribution_fee(user_id, contribution_id, amount, description):
+    description = unquote(description)
     return process_payment(user_id, contribution_id, amount, description, transaction_type="Contribution"), 200
 @handle_exceptions
 @user_bp.get('/<string:customer_id>/pay-electric-fee')

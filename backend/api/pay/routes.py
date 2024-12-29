@@ -76,15 +76,19 @@ def payment_return():
                     utils_service.update_water(desc[2])
                     return jsonify({'message':f'thanh toan thanh cong'}), 302  
                 data = dict()
+                description = desc[7:-1]
+                description.append(desc[-1])
+                description_str = " ".join(map(str, description))
+                print(description_str)
                 data = {
-                    "description": desc[-1],
+                    "description": description_str,
                     "amount": amount,
                     "transaction_id": order_id,
                     "fee_id": None,
                     "park_id": None,
                     "contribution_id": None,
-                    "user_pay": desc[-2],
-                    "user_name": user_service.get_username(desc[-2]),
+                    "user_pay": desc[6],
+                    "user_name": user_service.get_username(desc[6]),
                     "transaction_time": vnp_PayDate,
                     "bank_code": vnp_BankCode,
                     "type": vnp_CardType,

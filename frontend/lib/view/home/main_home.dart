@@ -1,196 +1,181 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/view/home/admin_management/admin_management.dart';
+import 'package:frontend/view/home/account/account.dart';
 import 'package:frontend/view/home/home_page/home_page.dart';
+import 'package:frontend/view/home/notification/notification_screen.dart';
+import 'package:frontend/view/home/user/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-
-// void main() => runApp(const Home());
-//
-// class Home extends StatelessWidget {
-//   const Home({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Quản lý cư dân',
-//       theme: ThemeData(
-//         primarySwatch: Colors.lightBlue,
-//       ),
-//       home: const MainHome(),
-//     );
-//   }
-// }
+import 'management/management.dart';
 
 class MainHome extends StatefulWidget {
-  const MainHome({super.key});
+  final int currentIndex;
+
+  const MainHome({super.key, this.currentIndex = 0});
 
   @override
   _MainHomeState createState() => _MainHomeState();
 }
 
 class _MainHomeState extends State<MainHome> {
-  int _currentIndex = 0;
+  late int _currentIndex;
+  late Future<String> _roleFuture;
+  late List<Widget> _screens = [];
 
-  final List<Widget> _screens = [
-    const Home_Page(),
-    const Center(child: Text('Rules Screen')),
-    const ResidentManagementScreen(),
-    const Center(child: Text('Account Screen')),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.currentIndex;
+    _roleFuture = _getRole();
+  }
 
-  String _getAppBarTitle() {
-    switch (_currentIndex) {
-      case 1:
-        return 'Rules';
-      case 2:
-        return 'Resident Management';
-      case 3:
-        return 'Account';
-      default:
-        return 'Welcome back';
+  Future<String> _getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? role = prefs.getString('role');
+    return role ?? 'user';
+  }
+
+  String _getAppBarTitle(String role) {
+    if (role == 'admin') {
+      switch (_currentIndex) {
+        case 1:
+          return 'Management';
+        case 2:
+          return 'Account';
+        default:
+          return 'Welcome back';
+      }
+    } else {
+      switch (_currentIndex) {
+        case 1:
+          return 'User Services';
+        case 2:
+          return 'Account';
+        default:
+          return 'Welcome back';
+      }
     }
   }
 
   bool _shouldShowBackButton() {
-    return _currentIndex != 0;
+    return _currentIndex != 0; // Chỉ hiển thị back button khi _currentIndex khác 0
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.lightBlue,
-        title: Text(
-          _getAppBarTitle(),
-          style: const TextStyle(
-            fontSize: 20,
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
+  List<BottomNavigationBarItem> _buildBottomNavigationBarItems(String role) {
+    if (role == 'admin') {
+      return [
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
         ),
-        centerTitle: true,
-        leading: _shouldShowBackButton()
-            ? IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            setState(() {
-              _currentIndex = 0;
-            });
-          },
-        )
-            : null,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white),
-            onPressed: () {
-
-            },
-          ),
-        ],
-      ),
-      body: _screens[_currentIndex],
-      bottomNavigationBar: AdminManagement(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
-    );
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.manage_accounts),
+          label: 'Management',
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.account_circle),
+          label: 'Account',
+        ),
+      ];
+    } else {
+      return [
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.rule),
+          label: 'User Services',
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.account_circle),
+          label: 'Account',
+        ),
+      ];
+    }
   }
-}
 
-
-class ResidentManagementScreen extends StatelessWidget {
-  const ResidentManagementScreen({super.key});
+  List<Widget> _buildScreens(String role) {
+    if (role == 'admin') {
+      return [
+        const HomePage(),
+        const Management(),
+        const AccountScreen(),
+      ];
+    } else {
+      return [
+        const HomePage(),
+        const User(),
+        const AccountScreen(),
+      ];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ResidentManagementDetailScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                textStyle: const TextStyle(fontSize: 18),
+    return FutureBuilder<String>(
+      future: _roleFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
+        } else if (snapshot.hasError) {
+          return Scaffold(
+              body: Center(child: Text('Error: ${snapshot.error}')));
+        } else {
+          String role = snapshot.data ?? 'user';
+          _screens = _buildScreens(role);
+
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.lightBlue,
+              title: Text(
+                _getAppBarTitle(role),
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
               ),
-              child: const Text('Resident Management', textAlign: TextAlign.center),
-
+              centerTitle: true,
+              leading: _shouldShowBackButton()
+                  ? IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      // Thay đổi màu nút back
+                      onPressed: () {
+                        setState(() {
+                          _currentIndex = 0;
+                        });
+                      },
+                    )
+                  : null,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.notifications, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const NotificationScreen()));
+                  },
+                ),
+              ],
             ),
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FeeDetailScreen()),
-                );
+            body: _screens[_currentIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: Colors.lightBlue,
+              selectedItemColor: Colors.white,
+              unselectedItemColor: Colors.white60,
+              items: _buildBottomNavigationBarItems(role),
+              currentIndex: _currentIndex,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
               },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-              child: const Text('Fee'),
             ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class ResidentManagementDetailScreen extends StatelessWidget {
-  const ResidentManagementDetailScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Resident Management Detail',
-          style: TextStyle(color: Colors.white),),
-        backgroundColor: Colors.lightBlue,
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-      ),
-      body: const Center(
-        child: Text('Resident Management Detail Screen'),
-      ),
-    );
-  }
-}
-
-class FeeDetailScreen extends StatelessWidget {
-  const FeeDetailScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Fee Detail',
-          style: TextStyle(color: Colors.white),),
-        backgroundColor: Colors.lightBlue,
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-
-      ),
-      body: const Center(
-        child: Text('Fee Detail Screen'),
-      ),
+          );
+        }
+      },
     );
   }
 }

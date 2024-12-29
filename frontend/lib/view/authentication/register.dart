@@ -77,7 +77,7 @@ class _RegisterState extends State<Register> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: const Text(
-            'Register',
+            'Đăng ký',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -117,7 +117,7 @@ class _RegisterState extends State<Register> {
                     Icon(Icons.account_circle, size: 50, color: Colors.grey[700]),
                     const SizedBox(height: 8),
                     const Text(
-                      'Create a new account',
+                      'Tạo tài khoản mới',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
@@ -228,7 +228,7 @@ class _RegisterState extends State<Register> {
                         color: Colors.white,
                       )
                           : const Text(
-                        'SIGN UP',
+                        'ĐĂNG KÝ',
                         style: TextStyle(
                             fontSize: 24,
                             color: Colors.white,

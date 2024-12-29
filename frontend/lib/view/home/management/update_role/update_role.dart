@@ -69,7 +69,7 @@ class _UpdateRoleState extends State<UpdateRole> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: const Text(
-            'Update Account Role',
+            'Cập nhật vai trò tài khoản',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,

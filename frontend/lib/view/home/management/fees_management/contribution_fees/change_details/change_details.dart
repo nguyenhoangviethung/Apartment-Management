@@ -24,9 +24,9 @@ class _ChangeDetailsState extends State<ChangeDetails> {
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.white60,
                 tabs: [
-                  Tab(child: Text('Add', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign:TextAlign.center)),
-                  Tab(child: Text('Update', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign:TextAlign.center)),
-                  Tab(child: Text('Delete', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign:TextAlign.center)),
+                  Tab(child: Text('Thêm', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign:TextAlign.center)),
+                  Tab(child: Text('Cập nhật', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign:TextAlign.center)),
+                  Tab(child: Text('Xóa', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign:TextAlign.center)),
                 ],
               ),
             ),

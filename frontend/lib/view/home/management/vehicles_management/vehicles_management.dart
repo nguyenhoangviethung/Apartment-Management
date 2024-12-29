@@ -108,7 +108,7 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text(
-          'Vehicles Management',
+          'Quản lý phương tiện',
           style: TextStyle(
             fontSize: 25,
             color: Colors.white,

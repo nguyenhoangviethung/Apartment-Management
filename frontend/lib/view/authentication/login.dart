@@ -207,7 +207,7 @@ class _LoginState extends State<Login> {
                             child: _islogin
                                 ? const CircularProgressIndicator(color: Colors.white)
                                 : const Text(
-                              'Login',
+                              'Đăng nhập',
                               style: TextStyle(fontSize: 25),
                             ),
                           ),
@@ -226,7 +226,7 @@ class _LoginState extends State<Login> {
                           builder: (context) {
                             return GestureDetector(
                               child: const Text(
-                                'Sign up?',
+                                'Đăng ký',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -246,7 +246,7 @@ class _LoginState extends State<Login> {
                           builder: (context) {
                             return GestureDetector(
                               child: const Text(
-                                'Forgot Password?',
+                                'Quên mật khẩu?',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,

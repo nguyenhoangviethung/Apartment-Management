@@ -74,7 +74,7 @@ class _RoomsManagementState extends State<RoomsManagement> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: const Text(
-            'Rooms Management',
+            'Quản lý phòng',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,

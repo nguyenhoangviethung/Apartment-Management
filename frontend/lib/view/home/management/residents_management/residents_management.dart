@@ -143,7 +143,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: const Text(
-            'Residents Management',
+            'Quản lý cư dân',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,

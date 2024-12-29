@@ -52,19 +52,19 @@ class ManagementCard extends StatelessWidget {
         ),
       ),
       onTap: (){
-        if(title=='Residents Management'){
+        if(title=='Quản lý cư dân'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ResidentsManagement()));
         }
-        if(title=='Fees Management'){
+        if(title=='Quản lý phí'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const FeesManagement()));
         }
-        if(title=='Rooms Management'){
+        if(title=='Quản lý phòng'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const RoomsManagement()));
         }
-        if(title=='Update Account Role'){
+        if(title=='Cập nhật vai trò tài khoản'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const UpdateRole()));
         }
-        if(title=='Vehicles Management'){
+        if(title=='Quản lý phương tiện'){
            Navigator.push(context, MaterialPageRoute(builder: (context)=>const VehiclesManagement()));
         }
       },

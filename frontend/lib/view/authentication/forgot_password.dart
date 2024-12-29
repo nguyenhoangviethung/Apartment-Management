@@ -89,7 +89,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           appBar: AppBar(
             backgroundColor: Colors.blue,
             title: const Text(
-              'Forgot Password',
+              'Quên Mật Khẩu',
               style: TextStyle(
                 fontSize: 25,
                 color: Colors.white,
@@ -121,7 +121,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Mail Address Here',
+                  'Nhập Địa Chỉ Email Tại Đây',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -133,7 +133,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Enter the email address associated with your account.',
+                  'Nhập địa chỉ email liên kết với tài khoản của bạn.',
                   style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
               ),
@@ -170,7 +170,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           _forgotpass(_email.text.trim());
                         },
                         child: _isforgot? const CircularProgressIndicator(color: Colors.white): const Text(
-                            'Recover Password',
+                            'Khôi phục Mật Khẩu',
                             style: TextStyle(
                               fontSize: 20,
                               color: Colors.white,

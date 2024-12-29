@@ -42,16 +42,16 @@ class _UpdateState extends State<Update> {
       );
       print(response.statusCode);
       if (response.statusCode == 200) {
-        showinform(context, 'Success', 'Fees updated successfully');
+        showinform(context, 'Thành công', 'Thông tin phí đã được cập nhật thành công');
       } else {
         if (response.statusCode == 400) {
-          showinform(context, 'Failed', 'Invalid or missing data');
+          showinform(context, 'Thất bại', 'Dữ liệu không hợp lệ hoặc bị thiếu');
         } else {
-          showinform(context, 'Failed', 'Fees not found with the given description');
+          showinform(context, 'Thất bại', 'Không tìm thấy phí với mô tả đã cho');
         }
       }
     } catch (e) {
-      showinform(context, 'Error', 'An error occurred. Please try again.');
+      showinform(context, 'Lỗi', 'Đã xảy ra lỗi. Vui lòng thử lại.');
     } finally {
       setState(() {
         _isLoad = false;
@@ -73,7 +73,7 @@ class _UpdateState extends State<Update> {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  'Update Fee Information',
+                  'Cập nhật thông tin phí',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -84,13 +84,13 @@ class _UpdateState extends State<Update> {
               ),
               const SizedBox(height: 30),
               _buildLabeledTextField(
-                'Description',
-                'Enter description',
+                'Mô tả',
+                'Nhập mô tả',
                 descriptionController,
                 maxLines: 2,
               ),
               const SizedBox(height: 20),
-              _buildLabeledTextField('Amount', 'Enter new amount', amountController),
+              _buildLabeledTextField('Số tiền', 'Nhập số tiền mới', amountController),
               const SizedBox(height: 30),
               Center(
                 child: ElevatedButton(
@@ -106,7 +106,7 @@ class _UpdateState extends State<Update> {
                   child: _isLoad
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                    'Update Fee',
+                    'Cập nhật phí',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),

@@ -183,7 +183,7 @@ def to_resident(data, res_id):
     response, status_code = user_service.convert_to_resident(data, res_id)
     return jsonify(response), status_code
 
-@user_bp.get('/get-electric-bill/')
+@user_bp.post('/get-electric-bill/')
 @handle_exceptions
 def get_electric_bill():
     data = request.form.to_dict()
@@ -191,7 +191,7 @@ def get_electric_bill():
     response, status_code = utils_service.get_electric_fee(customer_id)
     return response, status_code
 
-@user_bp.get('/get-water-bill/')
+@user_bp.post('/get-water-bill/')
 @handle_exceptions
 def get_water_bill():
     data = request.form.to_dict()

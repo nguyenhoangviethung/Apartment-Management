@@ -138,14 +138,14 @@ class _MainHomeState extends State<MainHome> {
               centerTitle: true,
               leading: _shouldShowBackButton()
                   ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                // Thay đổi màu nút back
-                onPressed: () {
-                  setState(() {
-                    _currentIndex = 0;
-                  });
-                },
-              )
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      // Thay đổi màu nút back
+                      onPressed: () {
+                        setState(() {
+                          _currentIndex = 0;
+                        });
+                      },
+                    )
                   : null,
               actions: [
                 IconButton(

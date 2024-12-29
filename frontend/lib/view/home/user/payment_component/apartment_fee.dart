@@ -307,8 +307,6 @@ class _ApartmentFeeState extends State<ApartmentFee> {
                     : ElevatedButton(
                         onPressed: () async {
                           await getUrlPay(feeId, amount, nameFee, typeFee);
-                          // Chưa cần logic, sẽ bổ sung sau
-                          // Navigator.push(context, MaterialPageRoute(builder: (context)=>VNPayPaymentScreen(paymentUrl: 'https://nguyenhaiminh.id.vn/')));
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(

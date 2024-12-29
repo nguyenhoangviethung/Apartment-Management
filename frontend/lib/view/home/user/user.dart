@@ -12,14 +12,14 @@ class User extends StatelessWidget {
         child: Column(
           children: [
             UserComponentCard(
-              imagelink: 'assets/images/update.jpg',
+              imagelink: 'assets/images/update_information.jpg',
               title: 'Update Information',
             ),
             SizedBox(
               height: 20,
             ),
             UserComponentCard(
-              imagelink: 'assets/images/pay.jpg',
+              imagelink: 'assets/images/payment.jpg',
               title: 'Payment',
             ),
           ],

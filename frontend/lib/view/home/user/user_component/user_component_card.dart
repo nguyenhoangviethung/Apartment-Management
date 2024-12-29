@@ -15,7 +15,7 @@ class UserComponentCard extends StatelessWidget {
     return GestureDetector(
       child: Container(
         width: double.infinity,
-        height: 160,
+        height: 180,
         decoration: BoxDecoration(
           color: Colors.lightBlue[100],
           borderRadius: BorderRadius.circular(20),

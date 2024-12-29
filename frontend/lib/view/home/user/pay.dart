@@ -57,7 +57,7 @@ class Pay extends StatelessWidget {
                 height: 20,
               ),
               UserComponentCard(
-                imagelink: 'assets/images/charity_activities.png',
+                imagelink: 'assets/images/electric_water_bill.jpg',
                 title: 'Electric and Water Fees',
               ),
             ],

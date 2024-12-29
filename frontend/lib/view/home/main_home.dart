@@ -18,43 +18,24 @@ class MainHome extends StatefulWidget {
 
 class _MainHomeState extends State<MainHome> {
   late int _currentIndex;
-  late String _role;
+  late Future<String> _roleFuture;
   late List<Widget> _screens = [];
+
   @override
   void initState() {
     super.initState();
-    // TODO: implement initState
     _currentIndex = widget.currentIndex;
-    isAdminOrNot();
-  }
-  Future<void> isAdminOrNot()async{
-    SharedPreferences prefs =await SharedPreferences.getInstance();
-    String? role=prefs.getString('role');
-
-    setState(() {
-      _role=role!;
-    });
-    if(role=='admin'){
-      setState(() {
-        _screens=[
-          const HomePage(),
-          const Management(),
-          const AccountScreen(),
-        ];
-      });
-    }else{
-      setState(() {
-        _screens=[
-          const HomePage(),
-          const User(),
-          const AccountScreen(),
-        ];
-      });
-    }
+    _roleFuture = _getRole();
   }
 
-  String _getAppBarTitle() {
-    if(_role=='admin'){
+  Future<String> _getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? role = prefs.getString('role');
+    return role ?? 'user';
+  }
+
+  String _getAppBarTitle(String role) {
+    if (role == 'admin') {
       switch (_currentIndex) {
         case 1:
           return 'Management';
@@ -63,7 +44,7 @@ class _MainHomeState extends State<MainHome> {
         default:
           return 'Welcome back';
       }
-    }else{
+    } else {
       switch (_currentIndex) {
         case 1:
           return 'User Services';
@@ -76,85 +57,125 @@ class _MainHomeState extends State<MainHome> {
   }
 
   bool _shouldShowBackButton() {
-    return _currentIndex != 0;
+    return _currentIndex != 0; // Chỉ hiển thị back button khi _currentIndex khác 0
+  }
+
+  List<BottomNavigationBarItem> _buildBottomNavigationBarItems(String role) {
+    if (role == 'admin') {
+      return [
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.manage_accounts),
+          label: 'Management',
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.account_circle),
+          label: 'Account',
+        ),
+      ];
+    } else {
+      return [
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.rule),
+          label: 'User Services',
+        ),
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.account_circle),
+          label: 'Account',
+        ),
+      ];
+    }
+  }
+
+  List<Widget> _buildScreens(String role) {
+    if (role == 'admin') {
+      return [
+        const HomePage(),
+        const Management(),
+        const AccountScreen(),
+      ];
+    } else {
+      return [
+        const HomePage(),
+        const User(),
+        const AccountScreen(),
+      ];
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.lightBlue,
-          title: Text(
-            _getAppBarTitle(),
-            style: const TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-            ),
-          ),
-          centerTitle: true,
-          leading: _shouldShowBackButton()
-              ? IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  // Thay đổi màu nút back
+    return FutureBuilder<String>(
+      future: _roleFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+              body: Center(child: CircularProgressIndicator()));
+        } else if (snapshot.hasError) {
+          return Scaffold(
+              body: Center(child: Text('Error: ${snapshot.error}')));
+        } else {
+          String role = snapshot.data ?? 'user';
+          _screens = _buildScreens(role);
+
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.lightBlue,
+              title: Text(
+                _getAppBarTitle(role),
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              ),
+              centerTitle: true,
+              leading: _shouldShowBackButton()
+                  ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                // Thay đổi màu nút back
+                onPressed: () {
+                  setState(() {
+                    _currentIndex = 0;
+                  });
+                },
+              )
+                  : null,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.notifications, color: Colors.white),
                   onPressed: () {
-                    setState(() {
-                      _currentIndex = 0;
-                    });
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const NotificationScreen()));
                   },
-                )
-              : null,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.white),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const NotificationScreen()));
+                ),
+              ],
+            ),
+            body: _screens[_currentIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: Colors.lightBlue,
+              selectedItemColor: Colors.white,
+              unselectedItemColor: Colors.white60,
+              items: _buildBottomNavigationBarItems(role),
+              currentIndex: _currentIndex,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
               },
             ),
-          ],
-        ),
-        body: _screens[_currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.lightBlue,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white60,
-          items: _role=='admin'? [
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.manage_accounts),
-              label:'Management',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              label: 'Account',
-            ),
-          ]: [
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.rule),
-              label: 'User Services',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              label: 'Account',
-            ),
-          ],
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 }

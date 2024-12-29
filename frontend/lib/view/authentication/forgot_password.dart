@@ -29,7 +29,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       setState(() {
         _isforgot = false;
       });
-      showinform(context, 'Invalid email', "Please fill in all the fields!");
+      showinform(context, 'Email không hợp lệ', "Vui lòng điền đầy đủ tất cả các trường!");
       return;
     }
 
@@ -59,18 +59,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           await prefs.setString('token', token);
           Navigator.push(context, MaterialPageRoute(builder: (context) => const EmailVerification()));
         } else {
-          showinform(context, 'Error', 'Token not found in response');
+          showinform(context, 'Lỗi', 'Không tìm thấy token trong phản hồi');
         }
       } else if (response.statusCode == 404) {
-        showinform(context, 'Wrong email', 'No account registered with the provided email');
+        showinform(context, 'Email không hợp lệ', 'Không có tài khoản nào được đăng ký với email đã cung cấp');
       } else {
-        showinform(context, 'Error', 'Unexpected error occurred');
+        showinform(context, 'Lỗi', 'Đã xảy ra lỗi không mong muốn');
       }
     } catch (e) {
       setState(() {
         _isforgot = false;
       });
-      showinform(context, 'Error', 'Error occurred: $e');
+      showinform(context, 'Lỗi', 'Đã xảy ra lỗi: $e');
       print('Error occurred: $e');
     }
   }
@@ -89,7 +89,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           appBar: AppBar(
             backgroundColor: Colors.blue,
             title: const Text(
-              'Forgot Password',
+              'Quên Mật Khẩu',
               style: TextStyle(
                 fontSize: 25,
                 color: Colors.white,
@@ -121,7 +121,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Mail Address Here',
+                  'Nhập Địa Chỉ Email Tại Đây',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -133,7 +133,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Enter the email address associated with your account.',
+                  'Nhập địa chỉ email liên kết với tài khoản của bạn.',
                   style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
               ),
@@ -170,7 +170,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           _forgotpass(_email.text.trim());
                         },
                         child: _isforgot? const CircularProgressIndicator(color: Colors.white): const Text(
-                            'Recover Password',
+                            'Khôi phục Mật Khẩu',
                             style: TextStyle(
                               fontSize: 20,
                               color: Colors.white,

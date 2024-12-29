@@ -57,12 +57,12 @@ class _AddParkingFeeState extends State<AddParkingFee> {
       print(response.body);
       print(body);
       if (response.statusCode == 200) {
-        showinform(context, 'Success', 'Fees added successfully');
+        showinform(context, 'Thành công', 'Đã thêm phí thành công');
       } else {
-        showinform(context, 'Failed', 'Cannot add fee');
+        showinform(context, 'Thất bại', 'Không thể thêm phí');
       }
     } catch (e) {
-      showinform(context, 'Error', 'An error occurred. Please try again.');
+      showinform(context, 'Lỗi', 'Đã xảy ra lỗi. Vui lòng thử lại.');
     } finally {
       setState(() {
         _isLoad = false;
@@ -83,7 +83,7 @@ class _AddParkingFeeState extends State<AddParkingFee> {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  'Add New Parking Fee',
+                  'Thêm Phí Đỗ Xe Mới',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -96,7 +96,7 @@ class _AddParkingFeeState extends State<AddParkingFee> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Start date:', style: TextStyle(fontSize: 16)),
+                  const Text('Ngày bắt đầu:', style: TextStyle(fontSize: 16)),
                   const SizedBox(width: 10),
                   Expanded(
                     child: CustomDatePicker(
@@ -115,7 +115,7 @@ class _AddParkingFeeState extends State<AddParkingFee> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Due date:  ', style: TextStyle(fontSize: 16)),
+                  const Text('Ngày đáo hạn:  ', style: TextStyle(fontSize: 16)),
                   const SizedBox(width: 10),
                   Expanded(
                     child: CustomDatePicker(
@@ -132,8 +132,8 @@ class _AddParkingFeeState extends State<AddParkingFee> {
               ),
               const SizedBox(height: 20),
               _buildLabeledTextField(
-                'Description',
-                'Enter description',
+                'Mô tả',
+                'Nhập mô tả',
                 descriptionController,
                 maxLines: 2,
               ),
@@ -152,7 +152,7 @@ class _AddParkingFeeState extends State<AddParkingFee> {
                   child: _isLoad
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                    'Add Fee',
+                    'Thêm Phí',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),

@@ -28,7 +28,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       setState(() {
         _isload = false;
       });
-      showinform(context, 'Error', 'Passwords do not match!');
+      showinform(context, 'Lỗi', 'Mật khẩu không khớp!');
       return;
     }
 
@@ -36,7 +36,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       setState(() {
         _isload = false;
       });
-      showinform(context, 'Error', 'Please fill in all the fields!');
+      showinform(context, 'Lỗi', 'Vui lòng điền đầy đủ tất cả các trường!');
       return;
     }
 
@@ -64,14 +64,14 @@ class _ResetPasswordState extends State<ResetPassword> {
       print('$token');
       if (response.statusCode == 200) {
 
-        showinform(context, 'Successful', 'Password has been reset');
+        showinform(context, 'Thành công', 'Mật khẩu đã được đặt lại');
         Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));
       } else if (response.statusCode == 404) {
-        showinform(context, 'Error', 'No email stored in session.');
+        showinform(context, 'Lỗi', 'Không có email lưu trữ trong phiên làm việc');
       } else if(response.statusCode==401) {
-        showinform(context, 'Error', 'Invalid or expired token');
+        showinform(context, 'Lỗi', 'Mã token không hợp lệ hoặc đã hết hạn');
       }else{
-        showinform(context, 'Error', 'An error occurred: ${response.statusCode}');
+        showinform(context, 'Lỗi', 'Đã xảy ra lỗi: ${response.statusCode}');
       }
     } catch (e) {
       setState(() {
@@ -79,7 +79,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       });
 
       print('Error : $e');
-      showinform(context, 'Error', 'An unexpected error occurred. Please try again.');
+      showinform(context, 'Lỗi', 'Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.');
     }
   }
 
@@ -93,7 +93,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: const Text(
-            'Reset Password',
+            'Đặt lại mật khẩu',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -129,7 +129,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               children: [
                 const SizedBox(height: 20),
                 const Text(
-                  'Enter New Password',
+                  'Nhập mật khẩu mới',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -138,7 +138,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Your new password must be different from the previously used password.',
+                  'Mật khẩu mới của bạn phải khác với mật khẩu đã sử dụng trước đó.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
@@ -221,7 +221,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                             resetpassword(_pass.text.trim(), _confirmpass.text.trim());
                           },
                           child: _isload? CircularProgressIndicator(color: Colors.white,): const Text(
-                            'Continue',
+                            'Tiếp tục',
                             style: TextStyle(
                               fontSize: 20,
                               color: Colors.white,

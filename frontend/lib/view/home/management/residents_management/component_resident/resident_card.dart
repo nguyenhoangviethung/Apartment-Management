@@ -24,7 +24,7 @@ class _ResidentCardState extends State<ResidentCard> {
               return AlertDialog(
                 title: const Center(
                   child: Text(
-                    'Information',
+                    'Thông tin',
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
                 ),
@@ -34,15 +34,15 @@ class _ResidentCardState extends State<ResidentCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Name:', widget.item.full_name ?? 'No name provided'),
-                      _buildInfoRow('Resident ID:', widget.item.res_id != null ? widget.item.res_id.toString() : 'No resident id'),
-                      _buildInfoRow('User ID:', widget.item.user_id != null ? widget.item.user_id.toString() : 'No user id'),
-                      _buildInfoRow('Date of Birth:', widget.item.date_of_birth ?? 'No date provided'),
-                      _buildInfoRow('ID Number:', widget.item.id_number ?? 'No ID provided'),
-                      _buildInfoRow('Age:', widget.item.age != null ? widget.item.age.toString() : 'No age provided'),
-                      _buildInfoRow('Status:', widget.item.status ?? 'No status provided'),
-                      _buildInfoRow('Room:', widget.item.room != null ? widget.item.room.toString() : 'No room provided'),
-                      _buildInfoRow('Phone:', widget.item.phone_number ?? 'No phone number provided'),
+                      _buildInfoRow('Tên:', widget.item.full_name ?? 'Chưa được cung cấp'),
+                      _buildInfoRow('ID cư dân:', widget.item.res_id != null ? widget.item.res_id.toString() : 'Chưa được cung cấp'),
+                      _buildInfoRow('ID người dùng:', widget.item.user_id != null ? widget.item.user_id.toString() : 'Chưa được cung cấp'),
+                      _buildInfoRow('Ngày sinh:', widget.item.date_of_birth ?? 'Chưa được cung cấp'),
+                      _buildInfoRow('Số ID:', widget.item.id_number ?? 'Chưa được cung cấp'),
+                      _buildInfoRow('Tuổi:', widget.item.age != null ? widget.item.age.toString() : 'Chưa được cung cấp'),
+                      _buildInfoRow('Tình trạng:', widget.item.status ?? 'Chưa được cung cấp'),
+                      _buildInfoRow('Phòng:', widget.item.room != null ? widget.item.room.toString() : 'Chưa được cung cấp'),
+                      _buildInfoRow('Số điện thoại:', widget.item.phone_number ?? 'Chưa được cung cấp'),
                     ],
                   ),
                 ),
@@ -120,7 +120,7 @@ class _ResidentCardState extends State<ResidentCard> {
                       const SizedBox(width: 10),
                       GestureDetector(
                         onTap: () {
-                          showdeleteform(context, 'Warning', 'Are you sure to delete this resident?');
+                          showdeleteform(context, 'Cảnh báo', 'Bạn có chắc chắn muốn xóa cư dân này không?');
                         },
                         child: const Icon (
                           Icons.delete,
@@ -158,7 +158,7 @@ class _ResidentCardState extends State<ResidentCard> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.item.phone_number ?? 'No phone number',
+                              widget.item.phone_number ?? 'Chưa được cung cấp',
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
@@ -224,13 +224,13 @@ class _ResidentCardState extends State<ResidentCard> {
                       widget.onDelete( widget.item.res_id!);
                     } else {
                       Navigator.of(context).pop();
-                      showinform(context, 'Error', 'Resident ID is missing.');
+                      showinform(context, 'Lỗi', 'Thiếu ID cư dân.');
                     }
                   },
                 ),
                 TextButton(
                   child: const Center(
-                    child: Text("Cancel", style: TextStyle(fontSize: 18,color: Colors.red),),
+                    child: Text("Hủy bỏ", style: TextStyle(fontSize: 18,color: Colors.red),),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();

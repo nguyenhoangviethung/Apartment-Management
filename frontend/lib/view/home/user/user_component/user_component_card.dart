@@ -55,23 +55,23 @@ class UserComponentCard extends StatelessWidget {
         ),
       ),
       onTap: (){
-        if(title=='Payment')
+        if(title=='Thanh toán hóa đơn')
         {
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const Pay()));
         }
-        if(title=='Update Information')
+        if(title=='Cập nhật thông tin')
         {
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const Update()));
         }
-        if(title=='Apartment Fees')
+        if(title=='Phí căn hộ')
         {
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ApartmentFee()));
         }
-        if(title=='Contribution Fees')
+        if(title=='Phí đóng góp')
         {
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ContributionFee()));
         }
-        if(title=='Electric and Water Fees')
+        if(title=='Hóa đơn điện và nước')
         {
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ElectricWaterFee()));
         }

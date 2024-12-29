@@ -78,7 +78,7 @@ class _AllRoomsState extends State<AllRooms> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text('Lỗi: ${snapshot.error}'));
         } else {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -91,7 +91,7 @@ class _AllRoomsState extends State<AllRooms> {
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
 
                   decoration: InputDecoration(
-                    hintText: 'Search',
+                    hintText: 'Tìm kiếm',
                     hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
                     suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
                     border: OutlineInputBorder(

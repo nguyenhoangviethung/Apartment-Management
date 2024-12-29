@@ -74,11 +74,11 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
         });
       }
       else{
-        throw Exception('Error: ${response.statusCode}');
+        throw Exception('Lỗi: ${response.statusCode}');
       }
     }catch(e){
       print('Error : $e');
-      showinform(context, 'Failed', 'Can not remove this resident');
+      showinform(context, 'Thất bại', 'Không thể xóa cư dân này');
     }
   }
 
@@ -103,7 +103,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
       );
       print(response.statusCode);
       if(response.statusCode==201){
-        showinform(context, 'Success', 'Resident updated successfully');
+        showinform(context, 'Thành công', 'Thông tin cư dân đã được cập nhật thành công');
         setState(() {
           for (var item in _residents) {
             if (item.res_id == res_id) {
@@ -116,11 +116,11 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
           }
         });
       }else{
-        showinform(context, 'Failed', 'Can not update this resident');
+        showinform(context, 'Thất bại', 'Không thể cập nhật thông tin cư dân này');
       }
     }catch(e){
       print('Error : $e');
-      showinform(context, 'Failed', 'Can not update this resident');
+      showinform(context, 'Thất bại', 'Không thể cập nhật thông tin cư dân này');
     }
   }
 
@@ -143,7 +143,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: const Text(
-            'Residents Management',
+            'Quản lý cư dân',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -171,7 +171,7 @@ class _ResidentsManagementState extends State<ResidentsManagement> {
                     child: TextFormField(
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
                       decoration: InputDecoration(
-                        hintText: 'Search',
+                        hintText: 'Tìm kiếm',
                         hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
                         suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
                         border: OutlineInputBorder(

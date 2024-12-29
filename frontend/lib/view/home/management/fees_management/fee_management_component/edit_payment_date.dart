@@ -39,10 +39,10 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
         }
       );
       if(reponse.statusCode==201){
-        showinform(context, 'Success', 'Pay Fee Successful');
+        showinform(context, 'Thành công', 'Thanh toán phí thành công');
       }
     }catch(e){
-      print('Error: $e');
+      print('Lỗi: $e');
     }finally{
       setState(() {
         isloading=false;
@@ -74,7 +74,7 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 16),
-              const Text('Update payment date'),
+              const Text('Cập nhật ngày thanh toán'),
               const SizedBox(height: 8),
 
               Row(
@@ -82,7 +82,7 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
                 children: [
                   const SizedBox(width: 10),
                   const Text(
-                    'Date of paying: ',
+                    'Ngày thanh toán: ',
                     style: TextStyle(fontSize: 18),
                   ),
                   const SizedBox(width: 10),
@@ -115,7 +115,7 @@ class _EditPaymentDateState extends State<EditPaymentDate> {
                 ),
                 child: isloading? const CircularProgressIndicator(color: Colors.white,):
                 const Text(
-                  'Save',
+                  'Lưu',
                   style: TextStyle(
                     fontFamily: 'Times New Roman',
                     fontWeight: FontWeight.bold,

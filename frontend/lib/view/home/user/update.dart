@@ -183,7 +183,7 @@ class _UpdateState extends State<Update> {
             )),
         backgroundColor: Colors.blueAccent,
         title: const Text(
-          'Update Information',
+          'Cập nhật thông tin',
           style: TextStyle(color: Colors.white, fontSize: 25),
         ),
       ),

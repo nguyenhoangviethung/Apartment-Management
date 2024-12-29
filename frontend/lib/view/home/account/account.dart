@@ -48,20 +48,20 @@ class _AccountScreenState extends State<AccountScreen> {
         setState(() {
           _userId = userInfo['user_id']?.toString();
           userData = {
-            'full_name': userInfo['username'] ?? 'Not provided',
-            'phone_number': userInfo['phone_number'] ?? 'Not provided',
-            'role': userInfo['user_role'] ?? 'Not provided',
-            'date_of_birth': userInfo['date_of_birth'] ?? 'Not provided',
-            'age': userInfo['age'] ?? 'Not provided',
-            'id_number': userInfo['id_number'] ?? 'Not provided',
-            'room': userInfo['room'] ?? 'Not provided',
-            'email': userInfo['user_email'] ?? 'Not provided',
+            'full_name': userInfo['username'] ?? 'Chưa được cung cấp',
+            'phone_number': userInfo['phone_number'] ?? 'Chưa được cung cấp',
+            'role': userInfo['user_role'] ?? 'Chưa được cung cấp',
+            'date_of_birth': userInfo['date_of_birth'] ?? 'Chưa được cung cấp',
+            'age': userInfo['age'] ?? 'Chưa được cung cấp',
+            'id_number': userInfo['id_number'] ?? 'Chưa được cung cấp',
+            'room': userInfo['room'] ?? 'Chưa được cung cấp',
+            'email': userInfo['user_email'] ?? 'Chưa được cung cấp',
           };
           isLoading = false;
         });
         await loadSavedImageUrl();
       } else {
-        throw Exception('Failed to load user data: ${response.statusCode}');
+        throw Exception('Không thể tải dữ liệu người dùng: ${response.statusCode}');
       }
     } catch (e) {
       print('Error detail: $e');
@@ -70,7 +70,7 @@ class _AccountScreenState extends State<AccountScreen> {
           isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+          SnackBar(content: Text('Lỗi: ${e.toString()}')),
         );
       }
     }
@@ -185,7 +185,7 @@ class _AccountScreenState extends State<AccountScreen> {
             MaterialBanner(
               content: const Center(
                 child: Text(
-                  'Logout successful',
+                  'Đăng xuất thành công',
                   style: TextStyle(fontSize: 16),
                 ),
               ),
@@ -206,18 +206,18 @@ class _AccountScreenState extends State<AccountScreen> {
         }
       } else {
         throw Exception(
-            'Logout failed: ${response.statusCode} - ${response.body}');
+            'Đăng xuất không thành công: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       print('Error details: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showMaterialBanner(
           MaterialBanner(
-            content: Text('Error logout: ${e.toString()}'),
+            content: Text('Đăng xuất không thành công: ${e.toString()}'),
             backgroundColor: Colors.red,
             actions: [
               TextButton(
-                child: Text('Close'),
+                child: Text('Đóng'),
                 onPressed: () =>
                     ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
               ),
@@ -308,7 +308,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    userData['full_name'] ?? 'Username',
+                    userData['full_name'] ?? 'Tên người dùng',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -317,7 +317,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    userData['phone_number'] ?? 'Phone not provided',
+                    userData['phone_number'] ?? 'Số điện thoại chưa được cung cấp.',
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.white,
@@ -333,37 +333,37 @@ class _AccountScreenState extends State<AccountScreen> {
                   _buildInfoItem(
                     Icons.email,
                     'Email',
-                    userData['email'] ?? 'Not provided',
+                    userData['email'] ?? 'Chưa được cung cấp',
                   ),
                   _buildInfoItem(
                     Icons.phone,
-                    'Phone',
-                    userData['phone_number'] ?? 'Not provided',
+                    'Số điện thoại',
+                    userData['phone_number'] ?? 'Chưa được cung cấp',
                   ),
                   _buildInfoItem(
                     Icons.person,
-                    'Role',
-                    userData['role'] ?? 'Not provided',
+                    'Vai trò',
+                    userData['role'] ?? 'Chưa được cung cấp',
                   ),
                   _buildInfoItem(
                     Icons.cake,
-                    'Date of Birth',
-                    userData['date_of_birth'] ?? 'Not provided',
+                    'Ngày sinh',
+                    userData['date_of_birth'] ?? 'Chưa được cung cấp',
                   ),
                   _buildInfoItem(
                     Icons.calendar_today,
-                    'Age',
-                    userData['age']?.toString() ?? 'Not provided',
+                    'Tuổi',
+                    userData['age']?.toString() ?? 'Chưa được cung cấp',
                   ),
                   _buildInfoItem(
                     Icons.badge,
-                    'ID Number',
-                    userData['id_number'] ?? 'Not provided',
+                    'Số ID',
+                    userData['id_number'] ?? 'Chưa được cung cấp',
                   ),
                   _buildInfoItem(
                     Icons.meeting_room,
-                    'Room',
-                    userData['room'] ?? 'Not provided',
+                    'Phòng',
+                    userData['room'] ?? 'Chưa được cung cấp',
                   ),
                   const SizedBox(height: 30),
                   SizedBox(
@@ -373,7 +373,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       onPressed: handleLogout,
                       icon: const Icon(Icons.logout),
                       label: const Text(
-                        'Logout',
+                        'Đăng xuất',
                         style: TextStyle(fontSize: 16),
                       ),
                       style: ElevatedButton.styleFrom(

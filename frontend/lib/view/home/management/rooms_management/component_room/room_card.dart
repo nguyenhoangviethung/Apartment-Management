@@ -24,7 +24,7 @@ class _RoomCardState extends State<RoomCard> {
               return AlertDialog(
                 title: const Center(
                   child: Text(
-                    'Information',
+                    'Thông tin',
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
                 ),
@@ -34,12 +34,12 @@ class _RoomCardState extends State<RoomCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Room:', widget.item.apartment_number!),
-                      _buildInfoRow('Area:', widget.item.area.toString()),
-                      _buildInfoRow('Status:', widget.item.status!),
-                      _buildInfoRow('Owner:', widget.item.owner!),
-                      _buildInfoRow('Number of residents:', widget.item.num_residents.toString()),
-                      _buildInfoRow('Phone number:', widget.item.phone_number!),
+                      _buildInfoRow('Phòng:', widget.item.apartment_number!),
+                      _buildInfoRow('Diện tích:', widget.item.area.toString()),
+                      _buildInfoRow('Tình trạng:', widget.item.status!),
+                      _buildInfoRow('Chủ sở hữu:', widget.item.owner!),
+                      _buildInfoRow('Số lượng thành viên:', widget.item.num_residents.toString()),
+                      _buildInfoRow('Số điện thoại:', widget.item.phone_number!),
                     ],
                   ),
                 ),
@@ -58,7 +58,7 @@ class _RoomCardState extends State<RoomCard> {
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>DetailedRoom(detailedroom: widget.item,)));
                           },
                           child: const Text(
-                            'Details',
+                            'Chi tiết',
                             style: TextStyle(
                                 color: Colors.red,
                                 fontSize: 24,fontWeight: FontWeight.bold

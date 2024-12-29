@@ -23,7 +23,7 @@ class _DetailedNewState extends State<DetailedNew> {
               },
               icon: const Icon(Icons.arrow_back,color: Colors.white,size: 24,)
           ),
-          title: const Text('Detailed News',style: TextStyle(fontSize: 24,color: Colors.white),),
+          title: const Text('Tin tức chi tiết',style: TextStyle(fontSize: 24,color: Colors.white),),
         ),
         body: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -32,20 +32,20 @@ class _DetailedNewState extends State<DetailedNew> {
               children: [
                 Center(
                   child: Text(
-                    widget.currentNews.title??"No Title",
+                    widget.currentNews.title??"Không có tiêu đề",
                     style: const TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 24),
                     textAlign: TextAlign.center,
                   ),
                 ),
                 const SizedBox(height: 60),
                 Image.network(
-                  widget.currentNews.linkImage??"No Image",
+                  widget.currentNews.linkImage??"Không có hình ảnh",
 
                 ),
 
                 const SizedBox(height: 40,),
                 Text(
-                  widget.currentNews.content??"No Content",
+                  widget.currentNews.content??"Không có nội dung",
                   style: const TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 20),
                 )
               ],

@@ -60,12 +60,12 @@ class _VNPayPaymentScreenState extends State<VNPayPaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pay online'),
+        title: const Text('Thanh toán online'),
       ),
       body: isloading
           ? const Center(child: CircularProgressIndicator())
           : const Center(
-        child: Text('Redirecting to payment page...'),
+        child: Text('Đang chuyển hướng đến trang thanh toán...'),
       ),
     );
   }

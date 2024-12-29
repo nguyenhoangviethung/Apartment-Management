@@ -55,7 +55,7 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
           }
         );
         if(response.statusCode==201){
-          showinform(context, 'Success', 'Added new vehicles');
+          showinform(context, 'Thành công', 'Đã thêm phương tiện mới');
           setState(() {
             Vehicle newVehicle = Vehicle(
               int.parse(roomController.text),
@@ -72,7 +72,7 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed: Please fill all fields')),
+        const SnackBar(content: Text('Thất bại: Vui lòng điền đầy đủ tất cả các trường')),
       );
     }
   }
@@ -93,9 +93,9 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
           allVehicles.removeWhere((vehicle) => vehicle.vehicles_id == vehicleId);
           filteredVehicles.removeWhere((vehicle) => vehicle.vehicles_id == vehicleId);
         });
-        showinform(context, 'Success', 'Completely Deleted vehicle');
+        showinform(context, 'Thành công', 'Đã xóa phương tiện thành công');
       }else{
-        showinform(context, 'Failed', 'Try again');
+        showinform(context, 'Thất bại', 'Hãy thử lại');
       }
     }catch(e){
       print('Error');
@@ -108,7 +108,7 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text(
-          'Vehicles Management',
+          'Quản lý phương tiện',
           style: TextStyle(
             fontSize: 25,
             color: Colors.white,
@@ -132,7 +132,7 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
-                      hintText: "Search by phone",
+                      hintText: "Tìm kiếm theo số điện thoại",
                       suffixIcon: const Icon(
                         Icons.search
                       ),
@@ -165,26 +165,26 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
                         builder: (context) => StatefulBuilder( // Thêm StatefulBuilder
                           builder: (context, setState) { // Thêm setState riêng trong dialog
                             return AlertDialog(
-                              title: const Text('Add New Vehicle'),
+                              title: const Text('Thêm phương tiện mới'),
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   TextField(
                                     controller: IdController,
                                     decoration: const InputDecoration(
-                                      labelText: 'Vehicle Id',
+                                      labelText: 'Id phương tiện',
                                     ),
                                   ),
                                   TextField(
                                     controller: roomController,
                                     decoration: const InputDecoration(
-                                      labelText: 'Room',
+                                      labelText: 'Phòng',
                                     ),
                                   ),
                                   TextField(
                                     controller: licenseController,
                                     decoration: const InputDecoration(
-                                      labelText: 'License Plate',
+                                      labelText: 'Biển số xe',
                                     ),
                                   ),
                                   DropdownButton<String>(
@@ -192,15 +192,15 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
                                     items: const [
                                       DropdownMenuItem(
                                         value: 'car',
-                                        child: Text('car'),
+                                        child: Text('ô tô'),
                                       ),
                                       DropdownMenuItem(
                                         value: 'bicycle',
-                                        child: Text('bicycle'),
+                                        child: Text('xe đạp'),
                                       ),
                                       DropdownMenuItem(
                                         value: 'motor',
-                                        child: Text('motor'),
+                                        child: Text('xe gắn máy'),
                                       ),
                                     ],
                                     onChanged: (value) {
@@ -216,14 +216,14 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: const Text('Cancel'),
+                                  child: const Text('Hủy bỏ'),
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
                                     addVehicle();
                                     Navigator.pop(context);
                                   },
-                                  child: const Text('Add'),
+                                  child: const Text('Thêm'),
                                 ),
                               ],
                             );
@@ -244,10 +244,10 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
               itemBuilder: (context, index) {
                 final vehicle = filteredVehicles[index];
                 return VehicleCard(
-                  id: vehicle.vehicles_id?.toString()??"unidentified",
-                  room: vehicle.household_id?.toString()?? "unidentified",
-                  license: vehicle.license_plate??"unidentified",
-                  type: vehicle.vehicle_type??"unidentified",
+                  id: vehicle.vehicles_id?.toString()??"Không xác định",
+                  room: vehicle.household_id?.toString()?? "Không xác định",
+                  license: vehicle.license_plate??"Không xác định",
+                  type: vehicle.vehicle_type??"Không xác định",
                   onDelete: () => deleteVehicle(vehicle.vehicles_id!),
                 );
               },
@@ -298,7 +298,7 @@ class VehicleCard extends StatelessWidget {
           children: [
             const Icon(Icons.home, size: 18),
             const SizedBox(width: 4),
-            Text("Room: $room"),
+            Text("Phòng: $room"),
             const SizedBox(width: 16),
             const Icon(Icons.home_repair_service_outlined, size: 18),
             const SizedBox(width: 4),

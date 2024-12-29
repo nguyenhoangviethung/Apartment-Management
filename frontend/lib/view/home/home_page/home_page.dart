@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load news: $e')),
+        SnackBar(content: Text('Không thể tải tin tức: $e')),
       );
     }
   }
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.blue[700],
         title: const Text(
-          'Apartment News',
+          'Tin tức chung cư',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,
@@ -158,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                                 child: Hero(
                                   tag: 'news-${_currentPage}-$index',
                                   child: Image.network(
-                                    newsItem.linkImage ?? 'No Image',
+                                    newsItem.linkImage ?? 'Không có hình ảnh',
                                     height: double.infinity,
                                     width: 100,
                                     fit: BoxFit.cover,
@@ -194,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                                               BorderRadius.circular(20),
                                         ),
                                         child: Text(
-                                          'News ${(_currentPage - 1) * _itemsPerPage + index + 1}',
+                                          'Tin tức ${(_currentPage - 1) * _itemsPerPage + index + 1}',
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 12,
@@ -204,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        newsItem.title ?? 'No Title',
+                                        newsItem.title ?? 'Không có tiêu đề',
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
@@ -215,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        newsItem.content ?? 'No Content',
+                                        newsItem.content ?? 'Không có nội dung',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(

@@ -26,7 +26,7 @@ class _LoginState extends State<Login> {
       _islogin = true;
     });
     if (username.isEmpty || password.isEmpty) {
-      showinform(context, "Registration Failed", "Please fill in all the fields!");
+      showinform(context, "Đăng nhập thất bại", "Vui lòng điền đầy đủ tất cả các trường!");
       setState(() {
         _islogin = false;
       });
@@ -63,9 +63,9 @@ class _LoginState extends State<Login> {
           context,
           MaterialPageRoute(builder: (context) => const MainHome()),
         );
-        showinform(context, 'Login Successful', '');
+        showinform(context, 'Đăng nhập thành công', '');
       } else if (response.statusCode == 403) {
-        showinform(context, 'Login Failed', 'Incorrect Details');
+        showinform(context, 'Đăng nhập thất bại', 'Thông tin không chính xác');
       }
     } catch (error) {
       print('Error occurred: $error');
@@ -207,7 +207,7 @@ class _LoginState extends State<Login> {
                             child: _islogin
                                 ? const CircularProgressIndicator(color: Colors.white)
                                 : const Text(
-                              'Login',
+                              'Đăng nhập',
                               style: TextStyle(fontSize: 25),
                             ),
                           ),
@@ -226,7 +226,7 @@ class _LoginState extends State<Login> {
                           builder: (context) {
                             return GestureDetector(
                               child: const Text(
-                                'Sign up?',
+                                'Đăng ký',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -246,7 +246,7 @@ class _LoginState extends State<Login> {
                           builder: (context) {
                             return GestureDetector(
                               child: const Text(
-                                'Forgot Password?',
+                                'Quên mật khẩu?',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,

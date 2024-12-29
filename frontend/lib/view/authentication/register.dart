@@ -27,7 +27,7 @@ class _RegisterState extends State<Register> {
     });
 
     if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      showinform(context,"Registration Failed", "Please fill in all the fields!");
+      showinform(context,"Đăng ký thất bại", "Vui lòng điền đầy đủ tất cả các trường!");
       setState(() {
         isSingup = false;
       });
@@ -35,7 +35,7 @@ class _RegisterState extends State<Register> {
     }
 
     if (password != confirmPassword) {
-      showinform(context,"Registration Failed", "Passwords do not match!");
+      showinform(context,"Đăng ký thất bại", "Mật khẩu không khớp!");
       setState(() {
         isSingup = false;
       });
@@ -60,11 +60,11 @@ class _RegisterState extends State<Register> {
     });
 
     if (response.statusCode == 200) {
-      showinform(context,"Registration Successful", "Check email to verify your account");
+      showinform(context,"Đăng ký thành công", "Kiểm tra email để xác thực tài khoản của bạn");
     } else if (response.statusCode == 400) {
-      showinform(context,"Registration Failed", "User already exists.");
+      showinform(context,"Đăng ký thất bại", "Người dùng đã tồn tại.");
     } else {
-      showinform(context,"Registration Failed", "Error: ${response.statusCode}");
+      showinform(context,"Đăng ký thất bại", "Lỗi: ${response.statusCode}");
     }
   }
 
@@ -77,7 +77,7 @@ class _RegisterState extends State<Register> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: const Text(
-            'Register',
+            'Đăng ký',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -117,7 +117,7 @@ class _RegisterState extends State<Register> {
                     Icon(Icons.account_circle, size: 50, color: Colors.grey[700]),
                     const SizedBox(height: 8),
                     const Text(
-                      'Create a new account',
+                      'Tạo tài khoản mới',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
@@ -228,7 +228,7 @@ class _RegisterState extends State<Register> {
                         color: Colors.white,
                       )
                           : const Text(
-                        'SIGN UP',
+                        'ĐĂNG KÝ',
                         style: TextStyle(
                             fontSize: 24,
                             color: Colors.white,

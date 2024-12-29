@@ -80,7 +80,7 @@ class _AddFooterState extends State<AddFooter> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 16),
-              _buildTextField('Enter name', nameController),
+              _buildTextField('Nhập tên', nameController),
               const SizedBox(height: 8),
 
               Row(
@@ -88,7 +88,7 @@ class _AddFooterState extends State<AddFooter> {
                 children: [
                   const SizedBox(width: 10),
                   const Text(
-                    'Date of birth: ',
+                    'Ngày sinh: ',
                     style: TextStyle(fontSize: 18),
                   ),
                   const SizedBox(width: 10),
@@ -108,13 +108,13 @@ class _AddFooterState extends State<AddFooter> {
               ),
 
               const SizedBox(height: 8),
-              _buildTextField('Enter id number', idController),
+              _buildTextField('Nhập số id', idController),
               const SizedBox(height: 16),
-              _buildTextField('Enter age', ageController),
+              _buildTextField('Nhập tuổi', ageController),
               const SizedBox(height: 16),
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Status:', style: TextStyle(
+                child: Text('Trạng thái:', style: TextStyle(
                   fontFamily: 'Times New Roman',
                   fontSize: 18,
                 )),
@@ -127,9 +127,9 @@ class _AddFooterState extends State<AddFooter> {
                   _buildRadioOption("Tạm vắng"),
                 ],
               ),
-              _buildTextField('Enter room', roomController),
+              _buildTextField('Nhập phòng', roomController),
               const SizedBox(height: 16),
-              _buildTextField('Enter phone number', phoneController),
+              _buildTextField('Nhập số điện thoại', phoneController),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -145,7 +145,7 @@ class _AddFooterState extends State<AddFooter> {
                   ),
                 ),
                 child: const Text(
-                  'Add',
+                  'Thêm',
                   style: TextStyle(
                     fontFamily: 'Times New Roman',
                     fontWeight: FontWeight.bold,

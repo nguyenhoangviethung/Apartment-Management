@@ -64,7 +64,7 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
             style: const TextStyle(color: Colors.white, fontSize: 20),
           )
               : const Text(
-            'Contribution Fees',
+            'Phí đóng góp',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -114,10 +114,10 @@ class _ContributionFeesState extends State<ContributionFees> with TickerProvider
             labelPadding: const EdgeInsets.only(bottom: 2),
             tabs: const <Widget>[
               Tab(
-                child: Text('All', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('Tất cả phí', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
-                child: Text('Change Details', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('Thay đổi chi tiết', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
             ],
           ),

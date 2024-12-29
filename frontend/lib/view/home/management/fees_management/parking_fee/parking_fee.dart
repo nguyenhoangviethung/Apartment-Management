@@ -58,7 +58,7 @@ class _ParkingFeeState extends State<ParkingFee> with TickerProviderStateMixin {
             style: const TextStyle(color: Colors.white, fontSize: 20),
           )
               : const Text(
-            'Parking Fee',
+            'Phí Đỗ Xe',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -108,13 +108,13 @@ class _ParkingFeeState extends State<ParkingFee> with TickerProviderStateMixin {
             labelPadding: const EdgeInsets.only(bottom: 2),
             tabs: const <Widget>[
               Tab(
-                child: Text('All Rooms', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('Tất Cả', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
-                child: Text('Unpaid', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('Chưa Thanh Toán', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
-                child: Text('Change Details', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('Thay Đổi', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
             ],
           ),

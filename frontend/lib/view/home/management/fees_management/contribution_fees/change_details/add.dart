@@ -55,12 +55,12 @@ class _AddState extends State<Add> {
       print(response.statusCode);
 
       if (response.statusCode == 200) {
-        showinform(context, 'Success', 'Fees added successfully');
+        showinform(context, 'Thành công', 'Phí đã được thêm thành công');
       } else {
-        showinform(context, 'Failed', 'Cannot add fee');
+        showinform(context, 'Thất bại', 'Không thể thêm phí');
       }
     } catch (e) {
-      showinform(context, 'Error', 'An error occurred. Please try again.');
+      showinform(context, 'Lỗi', 'Đã xảy ra lỗi. Vui lòng thử lại.');
     } finally {
       setState(() {
         _isLoad = false;
@@ -82,7 +82,7 @@ class _AddState extends State<Add> {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  'Add New Fee Information',
+                  'Thêm Thông Tin Phí Mới',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -95,7 +95,7 @@ class _AddState extends State<Add> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Start date:', style: TextStyle(fontSize: 16)),
+                  const Text('Ngày bắt đầu:', style: TextStyle(fontSize: 16)),
                   const SizedBox(width: 10),
                   Expanded(
                     child: CustomDatePicker(
@@ -114,7 +114,7 @@ class _AddState extends State<Add> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Due date:  ', style: TextStyle(fontSize: 16)),
+                  const Text('Ngày đáo hạn:  ', style: TextStyle(fontSize: 16)),
                   const SizedBox(width: 10),
                   Expanded(
                     child: CustomDatePicker(
@@ -130,11 +130,11 @@ class _AddState extends State<Add> {
                 ],
               ),
               const SizedBox(height: 20),
-              _buildLabeledTextField('Amount', 'Enter amount', amountController),
+              _buildLabeledTextField('Số tiền', 'Nhập số tiền', amountController),
               const SizedBox(height: 20),
               _buildLabeledTextField(
-                'Description',
-                'Enter description',
+                'Mô tả',
+                'Nhập mô tả',
                 descriptionController,
                 maxLines: 2,
               ),
@@ -153,7 +153,7 @@ class _AddState extends State<Add> {
                   child: _isLoad
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                    'Add Fee',
+                    'Thêm phí',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),

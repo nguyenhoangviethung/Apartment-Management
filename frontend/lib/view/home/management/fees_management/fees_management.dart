@@ -21,7 +21,7 @@ class _FeesManagementState extends State<FeesManagement> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text(
-          'Fees Management',
+          'Quản lý phí',
           style: TextStyle(
             fontSize: 25,
             color: Colors.white,
@@ -51,11 +51,11 @@ class _FeesManagementState extends State<FeesManagement> {
           padding: EdgeInsets.all(20.0),
           child: Column(
             children: [
-              FeesManagementCard(imagelink: 'assets/images/fee.jpg', title: 'Required Fees',),
+              FeesManagementCard(imagelink: 'assets/images/fee.jpg', title: 'Phí cần thiết',),
               SizedBox(height: 20,),
-              FeesManagementCard(imagelink: 'assets/images/charity_activities.png', title: 'Contribution Fees',),
+              FeesManagementCard(imagelink: 'assets/images/charity_activities.png', title: 'Phí đóng góp',),
               SizedBox(height: 20,),
-              FeesManagementCard(imagelink: 'assets/images/vehicle.jpg', title: 'Parking Fees',),
+              FeesManagementCard(imagelink: 'assets/images/vehicle.jpg', title: 'Phí đỗ xe',),
             ],
           ),
         ),
@@ -111,13 +111,13 @@ class FeesManagementCard extends StatelessWidget {
         ),
       ),
       onTap: (){
-        if(title=='Required Fees'){
+        if(title=='Phí cần thiết'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const RequiredFees()));
         }
-        if(title=='Contribution Fees'){
+        if(title=='Phí đóng góp'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ContributionFees()));
         }
-        if(title=='Parking Fees'){
+        if(title=='Phí đỗ xe'){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ParkingFee()));
         }
       },

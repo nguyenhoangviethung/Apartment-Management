@@ -43,11 +43,11 @@ class _AddResidentsState extends State<AddResidents> {
       if (response.statusCode == 201) {
         return true;
       } else if (response.statusCode == 400) {
-        throw Exception('Missing required field');
+        throw Exception('Thiếu trường bắt buộc');
       } else if (response.statusCode == 500) {
-        throw Exception('Unexpected error');
+        throw Exception('Lỗi không mong muốn');
       } else {
-        throw Exception('An error occurred: ${response.statusCode}');
+        throw Exception('Đã xảy ra lỗi: ${response.statusCode}');
       }
     }catch(e){
       return false;
@@ -94,7 +94,7 @@ class _AddResidentsState extends State<AddResidents> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: const Text(
-            'Add Residents',
+            'Thêm cư dân',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -141,7 +141,7 @@ class _AddResidentsState extends State<AddResidents> {
                     bool success = await addresident(residentToSend);
                     if (!success) {
                       allSuccessful = false;
-                      showinform(context, 'Failed', 'Failed to add resident: ${resident.full_name}');
+                      showinform(context, 'Thất bại', 'Thêm cư dân ${resident.full_name} không thành công');
                       break;
                     }
                   } catch (e) {
@@ -150,7 +150,7 @@ class _AddResidentsState extends State<AddResidents> {
                   }
                 }
                 if (allSuccessful) {
-                  showinform(context, 'Success', 'All residents were added successfully');
+                  showinform(context, 'Thành công', 'Tất cả cư dân đã được thêm thành công');
                 } else {
                 }
               },

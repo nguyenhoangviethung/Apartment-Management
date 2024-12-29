@@ -59,7 +59,7 @@ class _EditFooterState extends State<EditFooter> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 16),
-              _buildTextField('Enter name', nameController),
+              _buildTextField('Nhập tên', nameController),
               const SizedBox(height: 8),
 
               Row(
@@ -67,7 +67,7 @@ class _EditFooterState extends State<EditFooter> {
                 children: [
                   const SizedBox(width: 10),
                   const Text(
-                    'Date of birth: ',
+                    'Ngày sinh: ',
                     style: TextStyle(fontSize: 18),
                   ),
                   const SizedBox(width: 10),
@@ -89,7 +89,7 @@ class _EditFooterState extends State<EditFooter> {
               const SizedBox(height: 8),
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Status:', style: TextStyle(
+                child: Text('Tình trạng:', style: TextStyle(
                   fontFamily: 'Times New Roman',
                   fontSize: 18,
                 )),
@@ -102,9 +102,9 @@ class _EditFooterState extends State<EditFooter> {
                   _buildRadioOption("Tạm vắng"),
                 ],
               ),
-              _buildTextField('Enter phone number', phoneController),
+              _buildTextField('Nhập số điện thoại', phoneController),
               const SizedBox(height: 16),
-              _buildTextField('Enter Household Registration', householdController),
+              _buildTextField('Nhập thông tin đăng ký hộ khẩu', householdController),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -120,7 +120,7 @@ class _EditFooterState extends State<EditFooter> {
                   ),
                 ),
                 child: const Text(
-                  'Edit',
+                  'Lưu',
                   style: TextStyle(
                     fontFamily: 'Times New Roman',
                     fontWeight: FontWeight.bold,

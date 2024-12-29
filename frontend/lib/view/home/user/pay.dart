@@ -12,7 +12,7 @@ class Pay extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text(
-          'Payment Fees',
+          'Thanh toán hóa đơn',
           style: TextStyle(
             fontSize: 25,
             color: Colors.white,
@@ -44,21 +44,21 @@ class Pay extends StatelessWidget {
             children: [
               UserComponentCard(
                 imagelink: 'assets/images/fee.jpg',
-                title: 'Apartment Fees',
+                title: 'Phí căn hộ',
               ),
               SizedBox(
                 height: 20,
               ),
               UserComponentCard(
                 imagelink: 'assets/images/charity_activities.png',
-                title: 'Contribution Fees',
+                title: 'Phí đóng góp',
               ),
               SizedBox(
                 height: 20,
               ),
               UserComponentCard(
                 imagelink: 'assets/images/electric_water_bill.jpg',
-                title: 'Electric and Water Fees',
+                title: 'Hóa đơn điện và nước',
               ),
             ],
           ),

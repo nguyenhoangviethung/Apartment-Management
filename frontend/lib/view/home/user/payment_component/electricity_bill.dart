@@ -12,7 +12,7 @@ class ElectricityBillScreen extends StatefulWidget {
 }
 
 class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
-  late double amount;
+  late String amount;
   late String customer_id;
   bool isload = false;
   bool hasBillData = false;
@@ -24,11 +24,11 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
       hasBillData = false;
     });
     try {
-      final url = 'https://apartment-management-kjj9.onrender.com/user/get-electric-bill/$customerId';
-      final response = await http.get(
+      const url = 'https://apartment-management-kjj9.onrender.com/user/get-electric-bill/';
+      final response = await http.post(
           Uri.parse(url),
-          headers: {
-            'Content-Type': 'application/json'
+          body: {
+            'customer_id': customerId
           }
       );
       print(response.body);
@@ -113,7 +113,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                     ),
                   if (hasBillData && !isload)
                     _buildPaymentCard(
-                      amount: '${amount.toStringAsFixed(0)} VNĐ',
+                      amount: '${amount} VNĐ',
                       nameFee: 'Tiền điện',
                       status: 'Chưa thanh toán',
                     ),
@@ -216,7 +216,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Amount',
+                        'Số tiền',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -251,7 +251,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                           ),
                         ),
                         child: const Text(
-                          'Pay Online',
+                          'Thanh toán Online',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -274,7 +274,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                           ),
                         ),
                         child: const Text(
-                          'Pay Online',
+                          'Thanh toán Online',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,

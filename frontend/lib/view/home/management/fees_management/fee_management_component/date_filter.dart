@@ -43,7 +43,7 @@ class _DateFilterPopupState extends State<DateFilterPopup> {
             ),
             alignment: Alignment.center,
             child: const Text(
-              'Select Date Range',
+              'Chọn khoảng thời gian',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -63,7 +63,7 @@ class _DateFilterPopupState extends State<DateFilterPopup> {
                   child: CustomDatePicker(
                     initialDate: startDate,
                     onDateSelected: (date) => setState(() => startDate = date),
-                    label: 'Start date',
+                    label: 'Bắt đầu',
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -71,7 +71,7 @@ class _DateFilterPopupState extends State<DateFilterPopup> {
                   child: CustomDatePicker(
                     initialDate: endDate,
                     onDateSelected: (date) => setState(() => endDate = date),
-                    label: 'End date',
+                    label: 'Kết thúc',
                   ),
                 ),
               ],

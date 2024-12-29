@@ -13,14 +13,14 @@ class User extends StatelessWidget {
           children: [
             UserComponentCard(
               imagelink: 'assets/images/update_information.jpg',
-              title: 'Update Information',
+              title: 'Cập nhật thông tin',
             ),
             SizedBox(
               height: 20,
             ),
             UserComponentCard(
               imagelink: 'assets/images/payment.jpg',
-              title: 'Payment',
+              title: 'Thanh toán hóa đơn',
             ),
           ],
         ),

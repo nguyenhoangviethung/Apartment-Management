@@ -22,7 +22,7 @@ class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
               return AlertDialog(
                 title: const Center(
                   child: Text(
-                    'Information',
+                    'Thông tin',
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
                 ),
@@ -32,10 +32,10 @@ class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Room id:', widget.item.room ?? 'Unknown'),
-                      _buildInfoRow('FeeID:', widget.item.fee_id?.toString() ?? '0'),
-                      _buildInfoRow('Amount:', widget.item.amount?.toString() ?? '0'),
-                      _buildInfoRow('Fee type:', widget.item.fee_type ?? 'Unknown'),
+                      _buildInfoRow('Phòng:', widget.item.room ?? 'Không xác định'),
+                      _buildInfoRow('ID phí:', widget.item.fee_id?.toString() ?? '0'),
+                      _buildInfoRow('Số tiền:', widget.item.amount?.toString() ?? '0'),
+                      _buildInfoRow('Loại phí:', widget.item.fee_type ?? 'Không xác định'),
                     ],
                   ),
                 ),
@@ -69,7 +69,7 @@ class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      widget.item.room ?? 'Unknown',
+                      widget.item.room ?? 'Không xác định',
                       style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
@@ -84,7 +84,7 @@ class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
                               builder: (BuildContext context) {
                                 return EditPaymentDate(
                                   it: widget.item,
-                                  typeFee: 'parking',
+                                  typeFee: 'đỗ xe',
                                 );
                               }
                           );
@@ -128,7 +128,7 @@ class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.item.fee_type ?? 'no fee_type',
+                              widget.item.fee_type ?? 'không có loại phí',
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,

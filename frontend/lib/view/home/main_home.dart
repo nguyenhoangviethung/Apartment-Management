@@ -38,20 +38,20 @@ class _MainHomeState extends State<MainHome> {
     if (role == 'admin') {
       switch (_currentIndex) {
         case 1:
-          return 'Management';
+          return 'Quản lý';
         case 2:
-          return 'Account';
+          return 'Tài khoản';
         default:
           return 'Welcome back';
       }
     } else {
       switch (_currentIndex) {
         case 1:
-          return 'User Services';
+          return 'Dịch vụ người dùng';
         case 2:
-          return 'Account';
+          return 'Tài khoản';
         default:
-          return 'Welcome back';
+          return 'Chào mừng trở lại';
       }
     }
   }
@@ -65,30 +65,30 @@ class _MainHomeState extends State<MainHome> {
       return [
         const BottomNavigationBarItem(
           icon: Icon(Icons.home),
-          label: 'Home',
+          label: 'Trang chủ',
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.manage_accounts),
-          label: 'Management',
+          label: 'Quản lý',
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),
-          label: 'Account',
+          label: 'Tài khoản',
         ),
       ];
     } else {
       return [
         const BottomNavigationBarItem(
           icon: Icon(Icons.home),
-          label: 'Home',
+          label: 'Trang chủ',
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.rule),
-          label: 'User Services',
+          label: 'Dịch vụ người dùng',
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),
-          label: 'Account',
+          label: 'Tài khoản',
         ),
       ];
     }

@@ -23,12 +23,13 @@ class _WaterBillScreenState extends State<WaterBillScreen> {
       isload = true;
       hasBillData = false;
     });
+    print(customerId);
     try {
-      final url = 'https://apartment-management-kjj9.onrender.com/user/get-water-bill/$customerId';
-      final response = await http.get(
+      const url = 'https://apartment-management-kjj9.onrender.com/user/get-water-bill/';
+      final response = await http.post(
           Uri.parse(url),
-          headers: {
-            'Content-Type': 'application/json'
+          body: {
+            'customer_id': customerId
           }
       );
       print(response.body);
@@ -92,8 +93,9 @@ class _WaterBillScreenState extends State<WaterBillScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  const TextField(
-                    decoration: InputDecoration(
+                  TextField(
+                    controller: customerId,
+                    decoration: const InputDecoration(
                       labelText: 'Mã khách hàng',
                       prefixIcon: Icon(Icons.person),
                     ),
@@ -216,7 +218,7 @@ class _WaterBillScreenState extends State<WaterBillScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Amount',
+                        'Số tiền',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -251,7 +253,7 @@ class _WaterBillScreenState extends State<WaterBillScreen> {
                           ),
                         ),
                         child: const Text(
-                          'Pay Online',
+                          'Thanh toán Online',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -274,7 +276,7 @@ class _WaterBillScreenState extends State<WaterBillScreen> {
                           ),
                         ),
                         child: const Text(
-                          'Pay Online',
+                          'Thanh toán Online',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,

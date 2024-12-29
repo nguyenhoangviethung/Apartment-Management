@@ -243,11 +243,16 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),
-                CustomPagination(
+                MinimalPagination(
                   currentPage: _currentPage,
                   totalPages: _totalPages,
                   onPrevious: _goToPreviousPage,
                   onNext: _goToNextPage,
+                  onPageChange: (page) {
+                    setState(() {
+                      _currentPage=page;
+                    });
+                  },
                 ),
               ],
             ),

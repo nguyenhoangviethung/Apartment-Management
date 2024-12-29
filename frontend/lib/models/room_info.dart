@@ -1,5 +1,6 @@
 class RoomInfo {
   String? apartment_number;
+  String? apartment_name;
   int? area;
   String? status;
   String? owner;
@@ -8,6 +9,7 @@ class RoomInfo {
 
   RoomInfo({
     required this.apartment_number,
+    required this.apartment_name,
     required this.area,
     required this.status,
     required this.owner,
@@ -17,6 +19,7 @@ class RoomInfo {
 
   RoomInfo.fromJson(Map<String, dynamic> json) {
     apartment_number=json['apartment_number'];
+    apartment_name=json['apartment_name'];
     area = json['area']!=null? double.parse(json['area']).toInt() : null;
     status = json['status'];
     owner = json['owner'];

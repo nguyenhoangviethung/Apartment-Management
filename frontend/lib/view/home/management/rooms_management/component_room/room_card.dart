@@ -34,7 +34,7 @@ class _RoomCardState extends State<RoomCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Phòng:', widget.item.apartment_number!),
+                      _buildInfoRow('Phòng:', widget.item.apartment_name!),
                       _buildInfoRow('Diện tích:', widget.item.area.toString()),
                       _buildInfoRow('Tình trạng:', widget.item.status!),
                       _buildInfoRow('Chủ sở hữu:', widget.item.owner!),
@@ -91,7 +91,7 @@ class _RoomCardState extends State<RoomCard> {
                       Icon(Icons.home_outlined, color: Colors.blue[500]!, size: 45,),
                       const SizedBox(width: 8),
                       Text(
-                        widget.item.apartment_number!,
+                        widget.item.apartment_name!,
                         style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,

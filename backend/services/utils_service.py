@@ -272,8 +272,11 @@ class UtilsService:
         return data, 200
     def update_electric(self, customer_id):
         result = db.session.query(Electrics).filter(Electrics.customer_id == customer_id).first()
-        db.session.delete(result)
-        db.session.commit()
+        if not result:
+            print("no")
+        else:
+            db.session.delete(result)
+            db.session.commit()
     def get_water_fee(self, customer_id):
         if len(customer_id) != 9:
             return "message: customer_id is not available", 404
@@ -288,6 +291,9 @@ class UtilsService:
         return data, 200
     def update_water(self, customer_id):
         result = db.session.query(Waters).filter(Waters.customer_id == customer_id).first()
-        db.session.delete(result)
-        db.session.commit()
+        if not result:
+            print("no")
+        else:
+            db.session.delete(result)
+            db.session.commit()
     

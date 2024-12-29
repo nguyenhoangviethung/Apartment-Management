@@ -36,7 +36,7 @@ def payment():
         # 250000 thanh toan hoa don, need more flexible
     payment.requestData['vnp_OrderType'] = 'billpayment'
     #todo
-    payment.requestData['vnp_ReturnUrl'] = 'http://127.0.0.1:5000/pay/payment-return'
+    payment.requestData['vnp_ReturnUrl'] = 'https://apartment-management-kjj9.onrender.com/pay/payment-return'
     payment.requestData['vnp_ExpireDate'] = vnp_ExpireDate
     payment.requestData['vnp_TxnRef'] = vnp_TxnRef
             
@@ -70,7 +70,11 @@ def payment_return():
                 if desc[1] == 'Electric':
                     tp = utils_service.get_electric_fee(desc[2])
                     utils_service.update_electric(desc[2])
-                    return jsonify({'message':f'thanh toan thanh cong'}), 302 
+                    return jsonify({'message':f'thanh toan thanh cong'}), 302
+                if desc[1] == 'Water':
+                    tp = utils_service.get_water_fee(desc[2])
+                    utils_service.update_water(desc[2])
+                    return jsonify({'message':f'thanh toan thanh cong'}), 302  
                 data = dict()
                 data = {
                     "description": desc[-1],

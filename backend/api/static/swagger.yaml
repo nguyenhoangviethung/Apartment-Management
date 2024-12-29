@@ -2256,6 +2256,52 @@ paths:
                   error:
                     type: string
                     example: "Unable to process the electric fee payment."
+  /{customer_id}/pay-water-fee:
+    get:
+      summary: "Pay Water Fee"
+      description: "Process the payment for an water bill for a specified customer ID and return the payment URL."
+      tags:
+        - User
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          description: "ID of the customer whose water bill is being paid."
+          schema:
+            type: string
+            example: "CUST00003"
+      responses:
+        '200':
+          description: "water fee payment URL generated successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payment_url:
+                    type: string
+                    format: uri
+                    example: "https://example.com/pay?txn_ref=abc123&amount=15000"
+        '400':
+          description: "Invalid customer ID or insufficient data."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid customer ID or missing amount information."
+        '500':
+          description: "Internal server error while generating the payment URL."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the water fee payment."
   /get-electric-bill/:
     get:
       summary: "Get Electric Bill"
@@ -2331,10 +2377,10 @@ paths:
                   amount:
                     type: number
                     format: float
-                    example: 75.50
+                    example: 75000.00
                   customer:
                     type: string
-                    example: "CUST0000003"
+                    example: "CUST00003"
         '400':
           description: "Invalid customer ID provided."
           content:

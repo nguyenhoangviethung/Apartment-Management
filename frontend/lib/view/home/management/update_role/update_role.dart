@@ -97,7 +97,7 @@ class _UpdateRoleState extends State<UpdateRole> {
                       fontWeight: FontWeight.w500,
                       color: Colors.black),
                   decoration: InputDecoration(
-                    hintText: 'Search',
+                    hintText: 'Tìm kiếm',
                     hintStyle:
                         const TextStyle(color: Colors.black54, fontSize: 20),
                     suffixIcon:

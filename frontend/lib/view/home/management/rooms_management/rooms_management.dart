@@ -99,7 +99,7 @@ class _RoomsManagementState extends State<RoomsManagement> {
               child: TextFormField(
                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Colors.black),
                 decoration: InputDecoration(
-                  hintText: 'Search',
+                  hintText: 'Tìm kiếm',
                   hintStyle: const TextStyle(color: Colors.black54, fontSize: 20),
                   suffixIcon: const Icon(Icons.search, color: Colors.blue, size: 35),
                   border: OutlineInputBorder(

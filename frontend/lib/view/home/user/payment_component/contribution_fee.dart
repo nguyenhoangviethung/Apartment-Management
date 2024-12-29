@@ -70,7 +70,7 @@ class _ContributionFeeState extends State<ContributionFee> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text(
-          'Contribution Fees',
+          'Phí đóng góp',
           style: TextStyle(color: Colors.white),
         ),
         leading: IconButton(
@@ -111,7 +111,7 @@ class _ContributionFeeState extends State<ContributionFee> {
                                     'N/A',
                                 status: 'N/A',
                                 feeId: userContributionFee?[index].fee_id ?? 0,
-                                typeFee: 'contribution'),
+                                typeFee: 'đóng góp'),
                             const SizedBox(
                               height: 10,
                             )
@@ -217,7 +217,7 @@ class _ContributionFeeState extends State<ContributionFee> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Amount',
+                        'Số tiền',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -237,7 +237,7 @@ class _ContributionFeeState extends State<ContributionFee> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       const Text(
-                        'Due Date',
+                        'Đáo hạn',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -272,7 +272,7 @@ class _ContributionFeeState extends State<ContributionFee> {
                           ),
                         ),
                         child: const Text(
-                          'Pay Online',
+                          'Thanh toán Online',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -297,7 +297,7 @@ class _ContributionFeeState extends State<ContributionFee> {
                           ),
                         ),
                         child: const Text(
-                          'Pay Online',
+                          'Thanh toán Online',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,

@@ -31,14 +31,14 @@ class _AccountCardState extends State<AccountCard> {
       );
       print(response.body);
       if(response.statusCode==200){
-        showinform(context, 'Success', 'Updated this user to admin');
+        showinform(context, 'Thành công', 'Đã cập nhật người dùng này thành quản trị viên');
         setState(() {
           widget.item.user_role = 'admin'; // Cập nhật trạng thái của user
         });
       }
     }catch(e){
       print('Error');
-      showinform(context, 'Failed', 'Cannot update this resident to admin');
+      showinform(context, 'Thất bại', 'Không thể cập nhật cư dân này thành quản trị viên');
     }finally{
       _isloading=false;
     }
@@ -64,13 +64,13 @@ class _AccountCardState extends State<AccountCard> {
       );
       print(response.body);
       if(response.statusCode==200){
-        showinform(context, 'Success', 'Updated this user to resident');
+        showinform(context, 'Thành công', 'Đã cập nhật người dùng này thành cư dân');
       }else{
-        showinform(context, 'Failed', 'This resident is already an user');
+        showinform(context, 'Thất bại', 'Cư dân này đã là người dùng');
       }
     }catch(e){
       print('Error: $e');
-      showinform(context, 'Failed', 'Cannot update this user to resident');
+      showinform(context, 'Thất bại', 'Không thể cập nhật người dùng này thành cư dân');
     }finally{
       _isloading=false;
     }
@@ -85,7 +85,7 @@ class _AccountCardState extends State<AccountCard> {
               return AlertDialog(
                 title: const Center(
                   child: Text(
-                    'Update Account to',
+                    'Cập nhật tài khoản thành',
                     style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500, color: Colors.blue),
                   ),
                 ),
@@ -95,11 +95,11 @@ class _AccountCardState extends State<AccountCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Name:', widget.item.username?? 'No name provided'),
-                      _buildInfoRow('Email:', widget.item.user_email?? 'No name provided'),
-                      _buildInfoRow('UserId:', widget.item.user_id?.toString()?? 'No date provided'),
-                      _buildInfoRow('Phone number:', widget.item.phone_number ?? 'No ID provided'),
-                      _buildInfoRow('Role:', widget.item.user_role ?? 'No status provided'),
+                      _buildInfoRow('Tên:', widget.item.username?? 'Không được cung cấp'),
+                      _buildInfoRow('Email:', widget.item.user_email?? 'Không được cung cấp'),
+                      _buildInfoRow('UserId:', widget.item.user_id?.toString()?? 'Không được cung cấp'),
+                      _buildInfoRow('Số điện thoại:', widget.item.phone_number ?? 'Không được cung cấp'),
+                      _buildInfoRow('Vai trò:', widget.item.user_role ?? 'Không được cung cấp'),
                     ],
                   ),
                 ),
@@ -109,7 +109,7 @@ class _AccountCardState extends State<AccountCard> {
                     children: [
                       TextButton(
                         child: const Center(
-                          child: Text("Resident", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
+                          child: Text("Cư dân", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue)),
                         ),
                         onPressed: () async{
                           Navigator.of(context).pop();
@@ -187,7 +187,7 @@ class _AccountCardState extends State<AccountCard> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.item.phone_number ?? 'No phone number',
+                              widget.item.phone_number ?? 'Không được cung cấp',
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
@@ -235,7 +235,7 @@ class _AccountCardState extends State<AccountCard> {
         TextEditingController residentIdController = TextEditingController();
         return AlertDialog(
           title: const Text(
-            'Enter Resident ID',
+            'Nhập ID cư dân',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
           ),
           contentPadding:
@@ -243,7 +243,7 @@ class _AccountCardState extends State<AccountCard> {
           content: TextField(
             controller: residentIdController,
             decoration: const InputDecoration(
-              labelText: 'Resident ID',
+              labelText: 'ID cư dân',
               border: OutlineInputBorder(),
             ),
           ),
@@ -261,7 +261,7 @@ class _AccountCardState extends State<AccountCard> {
                     String residentId = residentIdController.text.trim();
                     if (residentId.isEmpty) {
                       showinform(
-                          context, 'Error', 'Resident ID cannot be empty.');
+                          context, 'Lỗi', 'ID cư dân không được để trống.');
                       return;
                     }else{
                       await updateUserToResident(int.parse(residentId));
@@ -271,7 +271,7 @@ class _AccountCardState extends State<AccountCard> {
                 ),
                 TextButton(
                   child: const Text(
-                    "Cancel",
+                    "Hủy bỏ",
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

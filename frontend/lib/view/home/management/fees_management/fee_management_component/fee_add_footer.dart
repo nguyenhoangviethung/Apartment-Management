@@ -53,15 +53,15 @@ class AddFee extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildTextField('Enter name', nameController),
+            _buildTextField('Nhập tên', nameController),
             const SizedBox(height: 16),
-            _buildTextField('Enter fee', feeController),
+            _buildTextField('Nhập phí', feeController),
             const SizedBox(height: 16),
-            _buildTextField('Enter id number', idController),
+            _buildTextField('Nhập số ID', idController),
             const SizedBox(height: 16),
-            _buildTextField('Enter start date', startDateController),
+            _buildTextField('Nhập ngày bắt đầu', startDateController),
             const SizedBox(height: 16),
-            _buildTextField('Enter end date', endDateController),
+            _buildTextField('NHập ngày đáo hạn', endDateController),
             ElevatedButton(
               onPressed: () {
                 handleOnClick();
@@ -76,7 +76,7 @@ class AddFee extends StatelessWidget {
                 ),
               ),
               child: const Text(
-                'Add',
+                'Thêm',
                 style: TextStyle(
                   fontFamily: 'Times New Roman',
                   fontWeight: FontWeight.bold,

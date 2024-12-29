@@ -24,7 +24,7 @@ class _EmailVerificationState extends State<EmailVerification> {
       setState(() {
         _isload=false;
       });
-      showinform(context, 'Error', 'Please fill the code');
+      showinform(context, 'Lỗi', 'Vui lòng điền mã code');
       return;
     }
     String url='https://apartment-management-kjj9.onrender.com/auth/validation-code';
@@ -49,7 +49,7 @@ class _EmailVerificationState extends State<EmailVerification> {
       if(response.statusCode==200){
         Navigator.push(context, MaterialPageRoute(builder: (context) => const ResetPassword()));
       }else if(response.statusCode==400){
-        showinform(context, 'Error', 'Invalid code');
+        showinform(context, 'Lỗi', 'Mã không hợp lệ');
       }
     }catch(e){
       print('Error occurred:  $e');

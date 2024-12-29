@@ -216,7 +216,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Amount',
+                        'Số tiền',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -251,7 +251,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                           ),
                         ),
                         child: const Text(
-                          'Pay Online',
+                          'Thanh toán Online',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -274,7 +274,7 @@ class _ElectricityBillScreenState extends State<ElectricityBillScreen> {
                           ),
                         ),
                         child: const Text(
-                          'Pay Online',
+                          'Thanh toán Online',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,

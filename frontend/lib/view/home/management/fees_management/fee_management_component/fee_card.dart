@@ -22,7 +22,7 @@ class _FeeCardState extends State<FeeCard> {
               return AlertDialog(
                 title: const Center(
                   child: Text(
-                    'Information',
+                    'Thông tin',
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
                 ),
@@ -32,9 +32,9 @@ class _FeeCardState extends State<FeeCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Description:',widget.feeResponse.description?.join(', ') ?? 'N/A'),
-                      _buildInfoRow('Room id:', widget.item.room ?? 'N/A'),
-                      _buildInfoRow('Fee:', widget.item.fee ?? 'N/A'),
+                      _buildInfoRow('Mô tả:',widget.feeResponse.description?.join(', ') ?? 'N/A'),
+                      _buildInfoRow('Phòng:', widget.item.room ?? 'N/A'),
+                      _buildInfoRow('Phí:', widget.item.fee ?? 'N/A'),
                     ],
                   ),
                 ),
@@ -72,7 +72,7 @@ class _FeeCardState extends State<FeeCard> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            widget.item.room ?? 'Unknown room',
+                            widget.item.room ?? 'Phòng không xác định',
                             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,

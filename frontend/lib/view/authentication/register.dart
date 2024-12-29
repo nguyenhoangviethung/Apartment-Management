@@ -27,7 +27,7 @@ class _RegisterState extends State<Register> {
     });
 
     if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      showinform(context,"Registration Failed", "Please fill in all the fields!");
+      showinform(context,"Đăng ký thất bại", "Vui lòng điền đầy đủ tất cả các trường!");
       setState(() {
         isSingup = false;
       });
@@ -35,7 +35,7 @@ class _RegisterState extends State<Register> {
     }
 
     if (password != confirmPassword) {
-      showinform(context,"Registration Failed", "Passwords do not match!");
+      showinform(context,"Đăng ký thất bại", "Mật khẩu không khớp!");
       setState(() {
         isSingup = false;
       });
@@ -60,11 +60,11 @@ class _RegisterState extends State<Register> {
     });
 
     if (response.statusCode == 200) {
-      showinform(context,"Registration Successful", "Check email to verify your account");
+      showinform(context,"Đăng ký thành công", "Kiểm tra email để xác thực tài khoản của bạn");
     } else if (response.statusCode == 400) {
-      showinform(context,"Registration Failed", "User already exists.");
+      showinform(context,"Đăng ký thất bại", "Người dùng đã tồn tại.");
     } else {
-      showinform(context,"Registration Failed", "Error: ${response.statusCode}");
+      showinform(context,"Đăng ký thất bại", "Lỗi: ${response.statusCode}");
     }
   }
 

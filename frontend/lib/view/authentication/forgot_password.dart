@@ -29,7 +29,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       setState(() {
         _isforgot = false;
       });
-      showinform(context, 'Invalid email', "Please fill in all the fields!");
+      showinform(context, 'Email không hợp lệ', "Vui lòng điền đầy đủ tất cả các trường!");
       return;
     }
 
@@ -59,18 +59,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           await prefs.setString('token', token);
           Navigator.push(context, MaterialPageRoute(builder: (context) => const EmailVerification()));
         } else {
-          showinform(context, 'Error', 'Token not found in response');
+          showinform(context, 'Lỗi', 'Không tìm thấy token trong phản hồi');
         }
       } else if (response.statusCode == 404) {
-        showinform(context, 'Wrong email', 'No account registered with the provided email');
+        showinform(context, 'Email không hợp lệ', 'Không có tài khoản nào được đăng ký với email đã cung cấp');
       } else {
-        showinform(context, 'Error', 'Unexpected error occurred');
+        showinform(context, 'Lỗi', 'Đã xảy ra lỗi không mong muốn');
       }
     } catch (e) {
       setState(() {
         _isforgot = false;
       });
-      showinform(context, 'Error', 'Error occurred: $e');
+      showinform(context, 'Lỗi', 'Đã xảy ra lỗi: $e');
       print('Error occurred: $e');
     }
   }

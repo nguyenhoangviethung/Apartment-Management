@@ -58,7 +58,7 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
             style: const TextStyle(color: Colors.white, fontSize: 20),
           )
               : const Text(
-            'Required Fees',
+            'Phí cần thiết',
             style: TextStyle(
               fontSize: 25,
               color: Colors.white,
@@ -108,13 +108,13 @@ class _RequiredFeesState extends State<RequiredFees> with TickerProviderStateMix
             labelPadding: const EdgeInsets.only(bottom: 2),
             tabs: const <Widget>[
               Tab(
-                child: Text('All Rooms', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('Tất cả', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
-                child: Text('Not-paid Rooms', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('Chưa thanh toán', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
               Tab(
-                child: Text('Change Details', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
+                child: Text('Thay đổi', style: TextStyle(fontSize: 18), textAlign:TextAlign.center),
               ),
             ],
           ),

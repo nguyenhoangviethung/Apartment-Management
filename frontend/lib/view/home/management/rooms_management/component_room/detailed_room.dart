@@ -61,7 +61,7 @@ class _DetailedRoomState extends State<DetailedRoom> {
           ),
         ),
         title: const Text(
-          'Detailed Member Information',
+          'Thông tin chi tiết thành viên',
           style: TextStyle(
             fontSize: 25,
             color: Colors.white,
@@ -84,15 +84,15 @@ class _DetailedRoomState extends State<DetailedRoom> {
                     child: Column(
                       children: [
                         _buildInfoRow(
-                            'Room:', widget.detailedroom.apartment_number!),
+                            'Phòng:', widget.detailedroom.apartment_number!),
                         _buildInfoRow(
-                            'Area:', widget.detailedroom.area.toString()),
-                        _buildInfoRow('Status:', widget.detailedroom.status!),
+                            'Diện tích:', widget.detailedroom.area.toString()),
+                        _buildInfoRow('Tình trạng:', widget.detailedroom.status!),
                         _buildInfoRow(
-                            'Owner:', widget.detailedroom.owner ?? 'null'),
-                        _buildInfoRow('Number of residents:',
+                            'Chủ sở hữu:', widget.detailedroom.owner ?? 'null'),
+                        _buildInfoRow('Số lượng thành viên:',
                             widget.detailedroom.num_residents.toString()),
-                        _buildInfoRow('Phone number:',
+                        _buildInfoRow('Số điện thoại:',
                             widget.detailedroom.phone_number ?? 'null'),
                         const SizedBox(height: 20),
                         ..._buildResidentsList(),
@@ -133,7 +133,7 @@ class _DetailedRoomState extends State<DetailedRoom> {
     if (householdDetail == null) {
       return [
         const Text(
-          "Household information not found.",
+          "Thông tin hộ khẩu không được tìm thấy.",
           style: TextStyle(fontSize: 20, color: Colors.black54),
         ),
       ];
@@ -141,7 +141,7 @@ class _DetailedRoomState extends State<DetailedRoom> {
     const OwnerTitle = Padding(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Text(
-        "Owner:",
+        "Chủ sử hữu:",
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
       ),
     );
@@ -151,23 +151,23 @@ class _DetailedRoomState extends State<DetailedRoom> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Name: ${householdDetail!.owner?.residentName ?? 'Unknown'}",
+            "Tên: ${householdDetail!.owner?.residentName ?? 'Không xác định'}",
             style: const TextStyle(fontSize: 20),
           ),
           Text(
-            "Date of birth: ${householdDetail!.owner?.dateOfBirth ?? 'Unknown'}",
+            "Ngày sinh: ${householdDetail!.owner?.dateOfBirth ?? 'Không xác định'}",
             style: const TextStyle(fontSize: 20),
           ),
           Text(
-            "ID Number: ${householdDetail!.owner?.idNumber ?? 'Unknown'}",
+            "Số ID: ${householdDetail!.owner?.idNumber ?? 'Không xác định'}",
             style: const TextStyle(fontSize: 20),
           ),
           Text(
-            "Phone: ${householdDetail!.owner?.phoneNumber ?? 'Unknown'}",
+            "Số điện thoại: ${householdDetail!.owner?.phoneNumber ?? 'Không xác định'}",
             style: const TextStyle(fontSize: 20),
           ),
           Text(
-            "Status: ${householdDetail!.owner?.status ?? 'Unknown'}",
+            "Tình trạng: ${householdDetail!.owner?.status ?? 'Không xác định'}",
             style: const TextStyle(fontSize: 20),
           ),
           const Divider(),
@@ -178,7 +178,7 @@ class _DetailedRoomState extends State<DetailedRoom> {
     const otherResidentsTitle = Padding(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Text(
-        "Other Residents:",
+        "Cư dân khác:",
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
       ),
     );
@@ -187,7 +187,7 @@ class _DetailedRoomState extends State<DetailedRoom> {
             householdDetail!.residents!.isEmpty)
         ? [
             const Text(
-              "No residents found.",
+              "Không tìm thấy cư dân",
               style: TextStyle(fontSize: 20, color: Colors.black54),
             ),
           ]
@@ -198,23 +198,23 @@ class _DetailedRoomState extends State<DetailedRoom> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Name: ${resident.residentName ?? 'Unknown'}",
+                    "Tên: ${resident.residentName ?? 'Không xác định'}",
                     style: const TextStyle(fontSize: 20),
                   ),
                   Text(
-                    "Date of Birth: ${resident.dateOfBirth ?? 'Unknown'}",
+                    "Ngày sinh: ${resident.dateOfBirth ?? 'Không xác định'}",
                     style: const TextStyle(fontSize: 20),
                   ),
                   Text(
-                    "ID Number: ${resident.idNumber ?? 'Unknown'}",
+                    "Số ID: ${resident.idNumber ?? 'Không xác định'}",
                     style: const TextStyle(fontSize: 20),
                   ),
                   Text(
-                    "Phone: ${resident.phoneNumber ?? 'Unknown'}",
+                    "Số điện thoại: ${resident.phoneNumber ?? 'Không xác định'}",
                     style: const TextStyle(fontSize: 20),
                   ),
                   Text(
-                    "Status: ${resident.status ?? 'Unknown'}",
+                    "Tình trạng: ${resident.status ?? 'Không xác định'}",
                     style: const TextStyle(fontSize: 20),
                   ),
                   const Divider(),

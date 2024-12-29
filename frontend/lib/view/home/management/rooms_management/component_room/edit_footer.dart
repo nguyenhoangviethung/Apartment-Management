@@ -58,15 +58,15 @@ class _EditFooterState extends State<EditFooter> {
       if (response.statusCode == 200) {
         widget.editRoomInfo(widget.id, newPhoneNumber);
         Navigator.of(context).pop();
-        showinform(context, 'Success', 'Update Successful');
+        showinform(context, 'Thành công', 'Cập nhật thông tin thành công');
       } else {
         setState(() {
           _isload = false;
         });
-        showinform(context, 'Failed', 'Try again');
+        showinform(context, 'Thất bại', 'Hãy thử lại');
       }
     } catch (e) {
-      print('Error: $e');
+      print('Lỗi: $e');
       setState(() {
         _isload = false;
       });
@@ -98,11 +98,11 @@ class _EditFooterState extends State<EditFooter> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text('Edit room ${widget.id} information', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
+            Text('Thày đổi thông tin phòng ${widget.id}', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
             const SizedBox(height: 16),
-            _buildTextField('Enter ID number', idNumber),
+            _buildTextField('Nhập số ID', idNumber),
             const SizedBox(height: 16),
-            _buildTextField('Enter new phone number', phoneController),
+            _buildTextField('Nhập số điện thoai mới', phoneController),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
@@ -118,7 +118,7 @@ class _EditFooterState extends State<EditFooter> {
                 ),
               ),
               child: _isload?const CircularProgressIndicator(color: Colors.white):const Text(
-                'Save',
+                'Lưu',
                 style: TextStyle(
                   fontFamily: 'Times New Roman',
                   fontWeight: FontWeight.bold,

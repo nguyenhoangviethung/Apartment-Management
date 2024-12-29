@@ -39,16 +39,16 @@ class _DeleteState extends State<Delete> {
       );
 
       if (response.statusCode == 200) {
-        showinform(context, 'Success', 'Delete Successful');
+        showinform(context, 'Thành công', 'Xóa thành công');
       } else {
         if (response.statusCode == 400) {
-          showinform(context, 'Failed', 'Description not provided');
+          showinform(context, 'Thất bại', 'Chưa cung cấp mô tả');
         } else {
-          showinform(context, 'Failed', 'No fees found with the given description');
+          showinform(context, 'Thất bại', 'Không tìm thấy phí nào với mô tả đã cho');
         }
       }
     } catch (e) {
-      showinform(context, 'Error', 'An error occurred. Please try again.');
+      showinform(context, 'Lỗi', 'Đã xảy ra lỗi. Vui lòng thử lại.');
     } finally {
       setState(() {
         _isLoad = false;
@@ -69,7 +69,7 @@ class _DeleteState extends State<Delete> {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  'Delete Fee Information',
+                  'Xóa Thông tin Phí',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -80,8 +80,8 @@ class _DeleteState extends State<Delete> {
               ),
               const SizedBox(height: 20),
               _buildLabeledTextField(
-                'Description',
-                'Enter description',
+                'Mô tả',
+                'Nhập mô tả',
                 descriptionController,
                 maxLines: 2,
               ),
@@ -100,7 +100,7 @@ class _DeleteState extends State<Delete> {
                   child: _isLoad
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                    'Delete Fee',
+                    'Xóa phí',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),

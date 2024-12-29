@@ -22,7 +22,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
               return AlertDialog(
                 title: const Center(
                   child: Text(
-                    'Information',
+                    'Thông tin',
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.blue),
                   ),
                 ),
@@ -32,13 +32,13 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Room id:', widget.item.room ?? 'Unknown'),
-                      _buildInfoRow('Amount:', widget.item.amount?.toString() ?? '0'),
-                      _buildInfoRow('Due date:', widget.item.due_date ?? 'N/A'),
-                      _buildInfoRow('Service fee:', widget.item.service_fee?.toString() ?? '0'),
-                      _buildInfoRow('Manage fee:', widget.item.manage_fee?.toString() ?? '0'),
-                      _buildInfoRow('Fee type:', widget.item.fee_type ?? 'Unknown'),
-                      _buildInfoRow('Fee ID:', widget.item.fee_id?.toString() ?? '0'),
+                      _buildInfoRow('Phòng:', widget.item.room ?? 'Không xác định'),
+                      _buildInfoRow('Số tiền:', widget.item.amount?.toString() ?? '0'),
+                      _buildInfoRow('Đáo hạn:', widget.item.due_date ?? 'N/A'),
+                      _buildInfoRow('Phí dịch vụ:', widget.item.service_fee?.toString() ?? '0'),
+                      _buildInfoRow('Phí quản lý:', widget.item.manage_fee?.toString() ?? '0'),
+                      _buildInfoRow('Loại phí:', widget.item.fee_type ?? 'Không xác định'),
+                      _buildInfoRow('ID phí:', widget.item.fee_id?.toString() ?? '0'),
 
                     ],
                   ),
@@ -73,7 +73,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      widget.item.room ?? 'Unknown',
+                      widget.item.room ?? 'Không xác định',
                       style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
@@ -88,7 +88,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                               builder: (BuildContext context) {
                                 return EditPaymentDate(
                                   it: widget.item,
-                                  typeFee: 'required',
+                                  typeFee: 'bắt buộc',
                                 );
                               }
                           );
@@ -132,7 +132,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              widget.item.due_date ?? 'no due_date',
+                              widget.item.due_date ?? 'không có hạn chót',
                               style: const TextStyle(fontSize: 17, color: Colors.black87),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,

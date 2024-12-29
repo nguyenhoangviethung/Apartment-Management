@@ -99,7 +99,7 @@ class _ApartmentFeeState extends State<ApartmentFee> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text(
-          'Apartment Fees',
+          'Phí căn hộ',
           style: TextStyle(color: Colors.white),
         ),
         leading: IconButton(
@@ -125,23 +125,23 @@ class _ApartmentFeeState extends State<ApartmentFee> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  const Text('Required Fee'),
+                  const Text('Phí cần thiết'),
                   _buildPaymentCard(
                       amount: userHouseholdFee?.amount.toString() ?? 'N/A',
                       nameFee: userHouseholdFee?.name_fee ?? 'N/A',
                       dueDate: userHouseholdFee?.due_date ?? 'N/A',
                       status: userHouseholdFee?.status ?? 'N/A',
                       feeId: userHouseholdFee?.fee_id ?? 0,
-                      typeFee: 'required'),
+                      typeFee: 'bắt buộc'),
                   const SizedBox(height: 20),
-                  const Text('Park Fee'),
+                  const Text('Phí đỗ xe'),
                   _buildPaymentCard(
                       amount: userParkFee?.amount.toString() ?? 'N/A',
                       nameFee: userParkFee?.name_fee ?? 'N/A',
                       dueDate: userParkFee?.due_date ?? 'N/A',
                       status: userParkFee?.status ?? 'N/A',
                       feeId: userParkFee?.fee_id ?? 0,
-                      typeFee: 'park'),
+                      typeFee: 'đỗ xe'),
                 ],
               ),
             ),
@@ -241,7 +241,7 @@ class _ApartmentFeeState extends State<ApartmentFee> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Amount',
+                        'Số tiền',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -261,7 +261,7 @@ class _ApartmentFeeState extends State<ApartmentFee> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       const Text(
-                        'Due Date',
+                        'Đáo hạn',
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
@@ -296,7 +296,7 @@ class _ApartmentFeeState extends State<ApartmentFee> {
                           ),
                         ),
                         child: const Text(
-                          'Pay Online',
+                          'Thanh toán online',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -319,7 +319,7 @@ class _ApartmentFeeState extends State<ApartmentFee> {
                           ),
                         ),
                         child: const Text(
-                          'Pay Online',
+                          'Thanh toán online',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,

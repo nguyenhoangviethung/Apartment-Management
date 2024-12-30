@@ -1,4 +1,4 @@
-from flask import redirect, url_for, jsonify, request
+from flask import redirect, url_for, jsonify, request, render_template
 from api.user import user_bp
 from helpers import getIP
 from datetime import datetime, timedelta
@@ -15,16 +15,9 @@ contribution_service = contribution_service.ContributionService()
 utils_service = utils_service.UtilsService()
 user_service = user_service.UserService()
 
-@user_bp.route('/')
+@user_bp.route('/index')
 def index():
-    try:
-        # Dữ liệu để cập nhật
-        data = {'amount': 660000, 'status': 'Chưa thanh toán'}
-        result = fee_service.update_status(data, fee_id = 111)
-        
-        return result
-    except Exception as e:
-        return f'Lỗi: {str(e)}'
+    return "this is user index"
     
 def process_payment(user_id, identifier, amount, description, transaction_type):
     vnp_Amount = int(amount * 100)

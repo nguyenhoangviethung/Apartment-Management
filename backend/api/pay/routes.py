@@ -1,4 +1,4 @@
-from flask import request, redirect, jsonify
+from flask import request, redirect, jsonify,render_template
 import os
 from dotenv import load_dotenv
 from random import randint
@@ -70,11 +70,21 @@ def payment_return():
                 if desc[1] == 'Electric':
                     tp = utils_service.get_electric_fee(desc[2])
                     utils_service.update_electric(desc[2])
-                    return jsonify({'message':f'thanh toan thanh cong'}), 302
+                    data = {
+                        "description": "Electricity Bill",
+                        "amount": amount,
+                        "status": "Paid"
+                    }
+                    return render_template("transaction_success.html", **data), 302
                 if desc[1] == 'Water':
                     tp = utils_service.get_water_fee(desc[2])
                     utils_service.update_water(desc[2])
-                    return jsonify({'message':f'thanh toan thanh cong'}), 302  
+                    data = {
+                        "description": "Water Bill",
+                        "amount": amount,
+                        "status": "Paid"
+                    }
+                    return render_template("transaction_success.html", **data), 302
                 data = dict()
                 description = desc[7:-1]
                 description.append(desc[-1])
@@ -93,7 +103,6 @@ def payment_return():
                     "bank_code": vnp_BankCode,
                     "type": vnp_CardType,
                 }
-                print(desc[-2])
                 if desc[1] == 'Fee':
                     fee = fee_service.get_fee_by_fee_id(fee_id = desc[2])
                     remain_amount = float(fee.amount) - amount
@@ -103,7 +112,6 @@ def payment_return():
                     fee_service.update_status(data_, fee_id = desc[2])    
                     data['fee_id'] = desc[2]
                     transaction_service.add_transaction(data)
-                    return jsonify({'message':f'thanh toan thanh cong'}), 302
                 if desc[1] == 'Contribution':
                     contribution = contribution_service.get_contribution_by_contribution_id(desc[2])
                     remain_amount = float(contribution.contribution_amount) + amount
@@ -114,7 +122,7 @@ def payment_return():
                     contribution_service.update_status(data_, contribution_id = desc[2])   
                     data["contribution_id"] = desc[2]
                     transaction_service.add_transaction(data)
-                    return jsonify({'message':f'thanh toan thanh cong'}), 302
+
                 if desc[1] == 'Parking':
                     park_fee = utils_service.get_park_fee_by_park_id(park_id = desc[2])
                     remain_amount = float(park_fee.amount) - amount
@@ -124,10 +132,20 @@ def payment_return():
                     utils_service.update_status(data_, park_id = desc[2])   
                     data['park_id'] = desc[2]
                     transaction_service.add_transaction(data)
-                    return jsonify({'message':f'thanh toan thanh cong'}), 302
+                data = {
+                    "description": description_str,
+                    "amount": amount,
+                    "status": "Paid"
+                }
+                return render_template("transaction_success.html", **data), 302
                                   
             else:
-                return jsonify({'message':'thanh toan that bai'}), 406
+                data = {
+                    "description": description_str,
+                    "amount": amount,
+                    "status": "Unpaid"
+                }
+                return render_template("transaction_success.html", **data), 406
         else:
             return jsonify({'Message': 'sai checksum'}), 400
     else:

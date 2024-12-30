@@ -224,7 +224,8 @@ class UtilsService:
     @handle_exceptions
     def get_current_household_fee(self, household_id):
         now = datetime.now().date()
-        return db.session.query(ParkingFees).filter(ParkingFees.household_id == household_id, now <= ParkingFees.due_date).one_or_none()
+        res = db.session.query(ParkingFees).filter(ParkingFees.household_id == household_id, now <= ParkingFees.due_date).first() or None
+        return res
 
     @handle_exceptions
     def user_get_current_fee(self, resident_id):
@@ -241,8 +242,8 @@ class UtilsService:
             return {'error': 'Missing required fields'}, 400
 
         user_id = data["user_id"]
+        # lấy ra resident_id
         resident_id = db.session.query(Residents.resident_id).filter(Residents.user_id == user_id).scalar()
-
         if not resident_id:
             return ({'message': 'you do not have permission'}), 403
         

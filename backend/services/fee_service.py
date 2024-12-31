@@ -186,11 +186,6 @@ class FeeService:
         if not fees:
             return ({'error': 'No fees found with the given description'}), 404
 
-        fee_ids = [fee.fee_id for fee in fees]
-
-        for fee_id in fee_ids:
-            trans = db.session.querry()
-
         for fee in fees:
             db.session.delete(fee)
         

@@ -83,6 +83,7 @@ class FeeService:
                 Fees.manage_rate, 
                 Fees.due_date,
                 Households.area,
+                Households.household_name,
                 Fees.description
             ).join(
                 Households, 
@@ -126,14 +127,15 @@ class FeeService:
             manage_rate = db.session.query(Fees.manage_rate).filter(Fees.fee_id == f_id).scalar() or None
             amount = db.session.query(Fees.amount).filter(Fees.fee_id == f_id).scalar() or None
             household_id = db.session.query(Fees.household_id).filter(Fees.fee_id == f_id).scalar() or None
-
+            household_name = db.session.query(Households.household_name).filter(Households.household_id == household_id).scalar() or None
             if not service_rate or not manage_rate or not amount:
                 continue
 
             info = { 
                     'fee_id': f_id,
                     'fee' : f'{amount}',
-                    'room': f'{household_id}'
+                    'room': f'{household_id}',
+                    'household_name': f'{household_name}'
             }
 
             res['infor']['detail'].append(info)
@@ -247,7 +249,8 @@ class FeeService:
                 'service_fee': decimal_to_float(service_fee),
                 'manage_fee': decimal_to_float(manage_fee),
                 'fee_type': str(fee.description),
-                'fee_id': fee.fee_id
+                'fee_id': fee.fee_id,
+                'household_name': fee.household_name
             }
 
             res['infor'].append(infor)

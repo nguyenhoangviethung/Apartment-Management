@@ -1,0 +1,2569 @@
+openapi: 3.0.0
+info:
+  title: "Authentication API"
+  description: "APIs for user authentication, including registration, login, forgot password, and password reset."
+  version: "1.0.1"
+servers:
+  - url: http://localhost:5000
+  - url: https://apartment-management-kjj9.onrender.com/
+  - url: https://apartment-management-oy7f.onrender.com/
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: "Register a new user"
+      description: "Registers a new user with a username, email, and password."
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "john_doe"
+                email:
+                  type: string
+                  example: "john@example.com"
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        '200':
+          description: "Confirmation email sent"
+        '400':
+          description: "Username or email already exists"
+        '500':
+          description: "Failed to send confirmation email"
+
+  /auth/confirm_email/{token}:
+    get:
+      tags:
+        - Auth
+      summary: "Confirm user's email"
+      description: "Confirms the user's email via the token received."
+      parameters:
+        - in: path
+          name: token
+          schema:
+            type: string
+          required: true
+          description: "Email confirmation token"
+      responses:
+        '200':
+          description: "User registration successful"
+        '401':
+          description: "Invalid or expired token"
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: "User login"
+      description: "Allows a registered user to log in by providing username and password."
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "john_doe"
+                password:
+                  type: string
+                  example: "password123"
+                remember:
+                  type: boolean
+                  example: false
+      responses:
+        '200':
+          description: "Login successful"
+        '403':
+          description: "Login failed, check credentials"
+
+  /auth/forgot-password:
+    post:
+      tags:
+        - Auth
+      summary: "Forgot password"
+      description: "Sends a validation code to the user's email to reset the password."
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "john@example.com"
+      responses:
+        '200':
+          description: Password reset email sent
+        '404':
+          description: No account registered with the provided email
+  
+  /auth/validation-code:
+    post:
+      tags:
+        - Auth
+      summary: Try to validate the code
+      requestBody:
+        description: The code which requires checking
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                input_code:
+                  type: string
+      responses:
+        '200':
+          description: validate successfully
+        '400':
+          description: invalid code 
+
+  /auth/reset-password:
+    post:
+      tags:
+        - Auth
+      summary: Update the password in database
+      requestBody:
+        description: The new password
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                new_password:
+                  type: string
+      responses:
+        '200':
+          description: Password has been reset!!!
+
+  /auth/logout:
+    get:
+      tags:
+        - Auth
+      summary: "Logout"
+      description: "Logs out the current user and clears the session."
+      responses:
+        '200':
+          description: "Logout successful"
+
+  /auth/check_autolog:
+    get:
+      tags:
+        - Auth
+      summary: "Check token validity"     
+      description: "A token have limited time, first login will try to save the token sent and try to sent it back"  
+      responses:
+        '200':
+          description: "The token still valid and can be used, proceed to homepage"   
+        '401':
+          description: "Token expired, force logging in again"
+
+  /admin/residents:
+    get:
+      summary: Get all residents
+      description: Retrieves a list of all residents with their information.
+      tags:
+        - Admin
+      parameters:
+        - name: apartment_number
+          in: query
+          required: true
+          description: The apartment number of the house.
+          schema:
+            type: integer
+            example: 101
+      responses:
+        '200':
+          description: A list of residents
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resident_info:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        full_name:
+                          type: string
+                          example: Vũ Văn Hoàng
+                        date_of_birth:
+                          type: string
+                          format: date
+                          example: 1990-01-01
+                        id_number:
+                          type: string
+                          example: ABC123456
+                        age:
+                          type: integer
+                          example: 30
+                        room:
+                          type: integer
+                          example: 101
+                        phone_number:
+                          type: string
+                          example: "09436255193"
+                        status:
+                          type: string
+                          example: Thường trú
+                        res_id:
+                          type: integer
+                          example: 1  
+                        household_registration:
+                          type: string
+                          example: Số 21, Ngõ 32 Lê Thanh Nghị, Nam Từ Liêm, Hà Nội 
+        '500':
+          description: Server error
+
+  /admin/house/{apartment_number}:
+    get:
+      summary: House info
+      tags:
+        - Admin
+      description: Retrieve an apartment information
+      parameters:
+        - name: apartment_number
+          in: path
+          required: true
+          description: The apartment number
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Info of the apartment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: object
+                    properties:
+                      area:
+                        type: number
+                        format: float
+                        example: 40.00
+                      status:
+                        type: string
+                        example: occupied
+                      owner:
+                        type: string
+                        example: Hoàng Ánh
+                      num_residents:
+                        type: integer
+                        example: 5
+                      phone_number:
+                        type: string
+                        example: "01684793145"
+        '404':
+          description: House not found
+        '500':
+          description: Server error
+
+  /admin/update/{house_id}:
+    post:
+      summary: Update house
+      tags:
+        - Admin
+      parameters:
+        - name: house_id
+          in: path
+          required: true
+          description: The ID of the household to update.
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        description: Update apartment information
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone_number:
+                  type: string        
+                  example: "0916243155"
+                id_num:
+                  type: integer
+                  example: 5
+      responses:
+        '200':
+          description: Updated successfully
+        '404':
+          description: House not found
+        '500':
+          description: Server error
+
+  /admin/update-res/{res_id}:
+    post:
+      summary: Update resident info
+      tags:
+        - Admin
+      parameters:
+        - name: res_id
+          in: path
+          required: true
+          description: The ID of the resident to update.
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        description: Update resident information
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone_number:
+                  type: string        
+                  example: "0916243155"
+                full_name:
+                  type: string
+                  example: "Lmao"
+                status:
+                  type: string
+                  example: "Tạm vắng" 
+                date_of_birth:
+                  type: string
+                  example: "2004-12-21"   
+      responses:
+        '200':
+          description: Updated successfully
+        '404':
+          description: Resident not found
+        '500':
+          description: Server error        
+
+  /admin/add-resident:
+    post:
+      summary: "Add a new resident"
+      description: "Adds a new resident to the system by providing their information."
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - resident_id
+                - household_id
+                - resident_name
+                - status
+              properties:
+                resident_id:
+                  type: integer
+                  example: 1
+                household_id:
+                  type: integer
+                  example: 101
+                resident_name:
+                  type: string
+                  example: "Nguyễn Quyết Thắng"
+                status:
+                  type: string
+                  example: "Thường trú"
+      responses:
+        '201':
+          description: "Resident created successfully"
+        '400':
+          description: "Missing required field"
+        '500':
+          description: "Unexpected error"
+
+  /admin/remove-resident/{resident_id}:
+    post:
+      summary: "Remove a resident"
+      description: "Removes a resident from the system using their resident ID."
+      tags:
+        - Admin
+      parameters:
+        - name: resident_id
+          in: path
+          required: true
+          description: "The ID of the resident to remove."
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '201':
+          description: "Resident removed successfully"
+        '404':
+          description: "Resident not found"
+        '500':
+          description: "Unexpected error"
+
+  /admin/update-resident/{resident_id}:
+    post:
+      summary: "Update a resident's information"
+      description: "Updates a resident's information based on the provided resident ID."
+      tags:
+        - Admin
+      parameters:
+        - name: resident_id
+          in: path
+          required: true
+          description: "The ID of the resident to update."
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                phone_number:
+                  type: string
+                  example: "0916243155"
+                resident_name:
+                  type: string
+                  example: "Lmao"
+                status:
+                  type: string
+                  example: "Tạm vắng"
+                date_of_birth:
+                  type: string
+                  format: date
+                  example: "2004-12-21"
+                household_registration:
+                  type: string
+                  example: Số 12, ngõ 22 Khuất Duy Tiến, Nam Từ Liêm, Hà Nội  
+      responses:
+        '201':
+          description: "Resident updated successfully"
+        '404':
+          description: "Resident not found"
+        '500':
+          description: "Unexpected error"
+
+  /admin/{household_id}/residents:
+    get:
+      tags:
+        - Admin
+      summary: Get residents of a household
+      description: Retrieves the owner and residents of a household by the household ID.
+      parameters:
+        - name: household_id
+          in: path
+          required: true
+          description: The ID of the household.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: List of residents in the household
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  owner:
+                    type: object
+                    properties:
+                      resident_id:
+                        type: integer
+                        example: 1
+                      resident_name:
+                        type: string
+                        example: Nguyễn Quyết Thắng
+                      date_of_birth:
+                        type: string
+                        format: date
+                        example: 1985-08-15
+                      id_number:
+                        type: string
+                        example: '002948492849'
+                      phone_number:
+                        type: string
+                        example: '018276478727'
+                      status:
+                        type: string
+                        example: Thường trú
+                  info:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        resident_id:
+                          type: integer
+                          example: 2
+                        resident_name:
+                          type: string
+                          example: Trần Thanh Phong
+                        date_of_birth:
+                          type: string
+                          format: date
+                          example: 1990-07-01
+                        id_number:
+                          type: string
+                          example: '001204019225'
+                        phone_number:
+                          type: string
+                          example: '0989233677'
+                        status:
+                          type: string
+                          example: Thường trú
+        '404':
+          description: Household or residents not found
+        '500':
+          description: Internal server error
+
+  /admin/give-admin-authority/{int:user_id}:
+    post:
+      summary: Give an user admin authority
+      tags: 
+        - Admin       
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID of the user.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Server error         
+          
+  /admin/not-pay:
+    get:
+      summary: Return apartments not paid
+      description: Return apartments where fee hasn't been paid
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Return information of apartments that haven't paid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  infor:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        room:
+                          type: integer
+                          example: 101
+                        amount:
+                          type: number
+                          format: float
+                          example: 550000.00
+                        due_date:
+                          type: string
+                          format: date
+                          example: 2024-10-20
+                        service_fee:
+                          type: number
+                          format: float
+                          example: 55000.00
+                        manage_fee:
+                          type: number
+                          format: float
+                          example: 55000.00
+                        fee_type:
+                          type: string
+                          example: Tiền tháng 10
+        '500':
+          description: Internal server error
+
+  /admin/fee/{household_id}:
+    get:
+      summary: Calculate fees for a household
+      description: Retrieve service and management charges for a specific household.
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: household_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the household
+      responses:
+        '200':
+          description: Fees calculated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        service_charge:
+                          type: string
+                        manage_charge:
+                          type: string
+                        fee:
+                          type: string
+        '400':
+          description: Missing or invalid household information
+
+  /admin/add-fee:
+    post:
+      summary: Add new fee for households
+      description: Add service and management fees for all households.
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - start_date
+                - due_date
+                - service_rate
+                - manage_rate
+                - description
+              properties:
+                start_date:
+                  type: string
+                  format: date
+                due_date:
+                  type: string
+                  format: date
+                service_rate:
+                  type: number
+                manage_rate:
+                  type: number
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Fees added successfully
+        '400':
+          description: Cannot add fee
+
+  /admin/fees:
+    get:
+      summary: Retrieve fees
+      description: Get the description of the fees due as of today.
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Fees retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  infor:
+                    type: array
+                    items:
+                      type: string
+                  detail:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: Error in retrieving fees
+
+    post:
+      summary: Retrieve fees for a specific date
+      description: Get the description of the fees due as of a specified date.
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - date
+              properties:
+                date:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Fees retrieved successfully
+        '400':
+          description: Invalid or missing date
+
+  /admin/update-fee:
+    post:
+      summary: Update existing fee details
+      description: Update the management and service rates for fees based on their description.
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - description
+                - manage_rate
+                - service_rate
+              properties:
+                description:
+                  type: string
+                manage_rate:
+                  type: number
+                service_rate:
+                  type: number
+      responses:
+        '200':
+          description: Fees updated successfully
+        '400':
+          description: Invalid or missing data
+        '404':
+          description: Fees not found with the given description
+
+  /admin/delete-fee:
+    post:
+      summary: Delete fees based on description
+      description: Delete fees by their description.
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - description
+              properties:
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Delete successful
+        '400':
+          description: Description not provided
+        '404':
+          description: No fees found with the given description
+
+  /admin/add-contributions:
+    post:
+      summary: Add Contribution Fees
+      description: Add contribution fees for all households
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - start_date
+                - due_date
+                - description
+                - amount
+              properties:
+                start_date:
+                  type: string
+                  format: date
+                  description: Start date of the contribution fee
+                due_date:
+                  type: string
+                  format: date
+                  description: Due date of the contribution fee
+                description:
+                  type: string
+                  description: Type or description of the contribution fee
+                amount:
+                  type: number
+                  description: Amount of the contribution fee
+      responses:
+        '200':
+          description: Contribution fees added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Add fee successful
+        '400':
+          description: Bad Request - Missing or invalid fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Missing required fields
+      security:
+        - bearerAuth: []  
+        
+  /admin/update-contributions-fee:
+    post:
+      summary: Update Contribution Fees
+      description: Update contribution fees for all households of a specific type
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - description
+                - amount
+              properties:
+                description:
+                  type: string
+                  description: Type or description of the contribution fee to update
+                amount:
+                  type: number
+                  description: New amount for the contribution fee
+      responses:
+        '200':
+          description: Contribution fees updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Update successful
+        '400':
+          description: Bad Request - Missing or invalid fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid rate values
+        '404':
+          description: Not Found - No contribution fees found with the given description
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No contribution fees found with the given description
+      security:
+        - bearerAuth: []
+
+  /admin/delete-contribution-fee:
+    post:
+      summary: Delete Contribution Fees
+      description: Delete contribution fees based on their description
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - description
+              properties:
+                description:
+                  type: string
+                  description: The description of the contribution fees to be deleted
+      responses:
+        '200':
+          description: Fees deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Delete successful
+        '400':
+          description: Bad Request - Description not provided
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Description not provided
+        '404':
+          description: Not Found - No fees found with the given description
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: No fees found with the given description
+      security:
+        - bearerAuth: []
+
+  /admin/contributions:
+    get:
+      summary: Retrieve Contributions
+      description: Fetches contributions due on or before the current date
+      operationId: getContributions
+      tags: 
+        - Admin
+      responses:
+        '200':
+          description: Successful retrieval of contributions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        description:
+                          type: string
+                          description: Type of contribution
+                          example: Tiền khuyết tật
+                        amount:
+                          type: number
+                          description: Amount of contribution
+                          example: 100000.00
+                      required:
+                        - description
+                        - amount
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string           
+
+  /admin/add_vehicle:
+    post:
+      summary: Add vehicle
+      description: Add vehicles based on households
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - vehicles_id 
+                - household_id 
+                - license_plate 
+                - vehicle_type 
+              properties:
+                vehicles_id:
+                  type: integer
+                  example: 1
+                household_id:
+                  type: integer
+                  example: 101
+                license_plate:
+                  type: string
+                  example: "84-G172879"
+                vehicle_type:
+                  type: string
+                  example: "car"  
+    responses:
+      400: 
+        description: existing vehicle or license plate error
+      201:
+        description: add vehicle successfully
+      500:           
+        description: Internal server error    
+
+  /admin/all_vehicles:
+    get:
+      summary: List all vehicles
+      description: Retrieve a list of all vehicles in the system.
+      tags:
+        - Admin
+      responses:
+        200:
+          description: A JSON array of vehicle objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vehicles_id:
+                      type: integer
+                      description: Unique identifier for the vehicle.
+                      example: "2"
+                    household_id:
+                      type: integer
+                      description: The household ID associated with the vehicle.
+                      example: "101"
+                    license_plate:
+                      type: string
+                      description: The license plate number of the vehicle.
+                      example: "ABC-1234"
+                    vehicle_type:
+                      type: string
+                      description: Type of vehicle (e.g., car, motor, bicycle).
+                      example: "car"
+        500:
+          description: Internal server error                
+
+  /admin/remove_vehicle/{vehicle_id}:
+    post:
+        summary: Remove a vehicle
+        description: Delete a vehicle by its unique identifier.
+        tags:
+          - Admin
+        parameters:
+          - in: path
+            name: vehicle_id
+            required: true
+            schema:
+              type: int
+            description: The unique identifier of the vehicle to be removed.
+            example: 4
+        responses:
+          201:
+            description: Vehicle removed successfully.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Vehicle removed successfully"
+          404:
+            description: Vehicle not found.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                      example: "Vehicle does not exist"
+          500:
+            description: Internal server error.        
+
+  /admin/park-fee/{household_id}:
+    get:
+      summary: Get parking fee by household ID
+      description: Retrieve the parking fee based on the vehicles associated with a specific household ID.
+      tags:
+      - Admin
+      parameters:
+        - name: household_id
+          in: path
+          required: true
+          description: The ID of the household.
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully retrieved parking fee details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: integer
+                    description: Total parking fee amount in VND.
+                    example: 1270000
+                  room:
+                    type: string
+                    description: The household ID provided in the request.
+                    example: "123"
+                  num_car:
+                    type: string
+                    description: Number of cars associated with the household.
+                    example: "1"
+                  num_motors:
+                    type: string
+                    description: Number of motorcycles associated with the household.
+                    example: "1"
+        400:
+          description: Invalid household ID or request format.
+        404:
+          description: Household ID not found.
+        500:
+          description: Internal server error.
+
+  /admin/park-fee-room:
+    post:
+      summary: Get parking fee by household ID (v2)
+      description: Retrieve the parking fee based on the vehicles associated with a specific household ID. This is the second version of the endpoint.
+      tags:
+        - Admin
+      parameters:
+        - name: household_id
+          in: query
+          required: true
+          description: household_id.
+          schema:
+            type: string
+            example: "101"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                household_id:
+                  type: string
+                  description: The ID of the household.
+                  example: "123"
+      responses:
+        200:
+          description: Successfully retrieved parking fee details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: integer
+                    description: Total parking fee amount in VND.
+                    example: 1270000
+                  room:
+                    type: string
+                    description: The household ID provided in the request.
+                    example: "123"
+                  num_car:
+                    type: string
+                    description: Number of cars associated with the household.
+                    example: "1"
+                  num_motors:
+                    type: string
+                    description: Number of motorcycles associated with the household.
+                    example: "1"
+        400:
+          description: Missing or invalid household ID.
+        404:
+          description: Household ID not found.
+        500:
+          description: Internal server error.
+
+  /admin/park-fee:
+      get:
+        summary: Retrieve park fees
+        description: Get the description of the park fees due as of today.
+        tags:
+          - Admin
+        responses:
+          '200':
+            description: Fees retrieved successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    infor:
+                      type: array
+                      items:
+                        type: string
+                    detail:
+                      type: array
+                      items:
+                        type: string
+          '400':
+            description: Error in retrieving fees
+
+  /admin/add-park-fee:
+    post:
+      summary: Add a new parking fee
+      description: Add a new parking fee for all households, ensuring no duplicate fees are created for the same month.
+      tags:
+        - Admin
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          description: The start date for the parking fee.
+          schema:
+            type: string
+            format: date
+            example: "2024-01-01"
+        - name: due_date
+          in: query
+          required: true
+          description: The due date for the parking fee.
+          schema:
+            type: string
+            format: date
+            example: "2024-01-31"
+        - name: description
+          in: query
+          required: true
+          description: A description of the parking fee.
+          schema:
+            type: string
+            example: "January parking fee"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start_date:
+                  type: string
+                  format: date
+                  description: The start date for the parking fee.
+                  example: "2024-01-01"
+                due_date:
+                  type: string
+                  format: date
+                  description: The due date for the parking fee.
+                  example: "2024-01-31"
+                description:
+                  type: string
+                  description: A description of the parking fee.
+                  example: "January parking fee"
+      responses:
+        200:
+          description: Parking fee added successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: string
+                    description: Success message.
+                    example: "add park fee successful"
+        400:
+          description: Missing required fields or invalid data.
+        500:
+          description: Internal server error.
+
+  /admin/delete-park-fee:
+    post:
+      summary: Delete parking fees by description
+      description: Delete all parking fees that match the given description.
+      tags:
+        - Admin
+      parameters:
+        - name: description
+          in: query
+          required: true
+          description: The description of the parking fees to be deleted.
+          schema:
+            type: string
+            example: "January parking fee"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  description: The description of the parking fees to be deleted.
+                  example: "January parking fee"
+      responses:
+        200:
+          description: Parking fees deleted successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message.
+                    example: "Delete successful"
+        400:
+          description: Missing required fields or invalid data.
+        404:
+          description: No fees found with the given description.
+        500:
+          description: Internal server error.
+
+  /admin/get-unpaid-park-fee:
+    get:
+      summary: Get unpaid parking fees for the current date
+      description: Retrieve a list of unpaid parking fees for the current date.
+      tags:
+        - Admin
+      responses:
+        200:
+          description: Successfully retrieved unpaid parking fee details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  infor:
+                    type: array
+                    description: List of unpaid parking fees.
+                    items:
+                      type: object
+                      properties:
+                        room:
+                          type: string
+                          description: Household ID associated with the unpaid fee.
+                          example: "101"
+                        amount:
+                          type: number
+                          format: float
+                          description: Amount of the unpaid fee in VND.
+                          example: 1200000
+                        fee_type:
+                          type: string
+                          description: Description of the fee type.
+                          example: "January parking fee"
+        404:
+          description: No unpaid fees found.
+        500:
+          description: Internal server error.
+
+    post:
+      summary: Get unpaid parking fees by specific date
+      description: Retrieve a list of unpaid parking fees for a specific query date.
+      tags:
+        - Admin
+      parameters:
+        - name: query_date
+          in: query
+          required: true
+          description: get park fee by query date.
+          schema:
+            type: string
+            format: date
+            example: "2025-01-12"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query_date:
+                  type: string
+                  format: date
+                  description: The specific query date to retrieve unpaid parking fees.
+                  example: "2024-02-01"
+      responses:
+        200:
+          description: Successfully retrieved unpaid parking fee details for the specific date.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  infor:
+                    type: array
+                    description: List of unpaid parking fees.
+                    items:
+                      type: object
+                      properties:
+                        room:
+                          type: string
+                          description: Household ID associated with the unpaid fee.
+                          example: "101"
+                        amount:
+                          type: number
+                          format: float
+                          description: Amount of the unpaid fee in VND.
+                          example: 1200000
+                        fee_type:
+                          type: string
+                          description: Description of the fee type.
+                          example: "February parking fee"
+        400:
+          description: Invalid query date provided.
+        404:
+          description: No unpaid fees found for the specified date.
+        500:
+          description: Internal server error.
+
+
+  /news/get-data:
+    get:
+      summary: "Crawl news data"
+      description: "Crawl news data from Baomoi website and return it in JSON format."
+      tags:
+        - News
+      responses:
+        '200':
+          description: "Successfully retrieved news data"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    content:
+                      type: string
+                      description: "The content of the news article."
+                      example: "Trung tâm Dự báo khí tượng thủy văn quốc gia vừa phát bản tin mới nhất về diễn biến cơn bão gần Biển Đông..."
+                    linkArticle:
+                      type: string
+                      description: "The URL of the news article."
+                      example: "https://baomoi.com/bao-toraji-gan-bien-dong-kha-nang-tro-thanh-bao-so-8-trong-2-ngay-toi-c50683366.epi"
+                    linkImage:
+                      type: string
+                      description: "The URL of the image related to the news article."
+                      example: "https://baomoi-photo-fbcrawler.bmcdn.me/w700_r3x2/2024_11_10_23_50683366/c83de46a6925807bd934.jpg"
+                    summary:
+                      type: string
+                      description: "The summary of the news article."
+                      example: "Bão Toraji đang trên vùng biển phía Đông đảo Lu Đông (Philippines)..."
+                    title:
+                      type: string
+                      description: "The title of the news article."
+                      example: "Bão Toraji gần Biển Đông, khả năng trở thành bão số 8 trong 2 ngày tới"
+        '500':
+          description: "Internal server error"
+         
+  /user/info:
+     get:
+      summary: User's info
+      description: Return user's information
+      tags:
+        - User
+      responses:
+        '200':
+          description: Info delivered successfully !!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: object
+                    properties:
+                      user_id:
+                        type: int
+                        example: 1
+                      username:
+                        type: string
+                        example: Giang Lake
+                      user_role:
+                        type: string
+                        example: admin
+                      user_email:
+                        type: string
+                        example: TheLake2004@gmail.com
+                      phone_number:
+                        type: string
+                        example: 0989898989
+        '500':
+          description: Error in retrieving fees
+  /user/update:
+    post:
+      summary: Update user information
+      description: Updates a user's information including username, email, and phone number.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                new_name:
+                  type: string
+                  description: The new username for the user.
+                  example: johndoe
+                new_email:
+                  type: string
+                  format: email
+                  description: The new email address for the user.
+                  example: johndoe@example.com
+                new_number:
+                  type: string
+                  description: The new phone number for the user.
+                  example: "1234567890"
+      responses:
+        200:
+          description: User info updated successfully
+        401:
+          description: Unauthorized access
+        500:
+          description: Internal server error
+
+  /user/upload-image:
+      post:
+        summary: Upload user avatar
+        description: Upload a user's avatar to Cloudinary and return the image URL. If no `path_to_image` is provided, a default image will be used.
+        tags:
+          - User
+        parameters:
+          - name: Authorization
+            in: header
+            required: true
+            schema:
+              type: string
+            description: Bearer token for user authentication
+        requestBody:
+          required: false
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                properties:
+                  path_to_image:
+                    type: string
+                    description: Path to the image file (URL or local path). Defaults to a predefined URL if not provided.
+                    example: https://example.com/sample.jpg
+                  file:
+                    type: file
+                    description: Image file
+                    example: cứ gửi một cái ảnh
+        responses:
+          '200':
+            description: Successfully uploaded image.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    image_url:
+                      type: string
+                      example: https://res.cloudinary.com/your_cloud_name/image/upload/v123456789/avatar/1.jpg
+          '400':
+            description: Bad request due to missing required fields (e.g., user_id).
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: Missing user_id
+          '500':
+            description: Server error while processing the image.
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: Failed to upload image
+                    details:
+                      type: string
+                      example: Image format not supported
+        
+  /user/fees:
+    get:
+      summary: User retrieve fees
+      description: Get the description of the fees due as of today.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Fee details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    format: float
+                    description: The amount of the fee.
+                    example: 100000.00
+                  due_date:
+                    type: string
+                    format: date
+                    description: The due date of the fee in YYYY-MM-DD format.
+                    example: 2024-12-31
+                  status:
+                    type: string
+                    description: The payment status of the fee (e.g., "Paid", "Unpaid").
+                    example: "Unpaid"
+                  name_fee:
+                    type: string
+                    description: The description or name of the fee.
+                    example: "Maintenance Fee"
+        '400':
+          description: Missing required fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message for missing fields.
+                    example: "Missing required fields"
+        '403':
+          description: User does not have permission.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message for permission issues.
+                    example: "you do not have permission"
+            
+  /user/park-fees:
+    get:
+      summary: User retrieve parking fees
+      description: Get the description of the fees due as of today.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Fee details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    format: float
+                    description: The amount of the fee.
+                    example: 100000.00
+                  due_date:
+                    type: string
+                    format: date
+                    description: The due date of the fee in YYYY-MM-DD format.
+                    example: 2024-12-31
+                  status:
+                    type: string
+                    description: The payment status of the fee (e.g., "Paid", "Unpaid").
+                    example: "Unpaid"
+                  name_fee:
+                    type: string
+                    description: The description or name of the fee.
+                    example: "Maintenance Fee"
+        '400':
+          description: Missing required fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message for missing fields.
+                    example: "Missing required fields"
+        '403':
+          description: User does not have permission.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message for permission issues.
+                    example: "you do not have permission"
+
+  /user/contributions:
+    get:
+      summary: User retrieve contribution fees
+      description: Get the description of the fees due as of today.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Fee details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      description: Description of the fee (e.g., month or type of contribution).
+                      example: "Khuyến tật tháng 11"
+                    detail:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          amount:
+                            type: string
+                            description: The amount of the fee.
+                            example: "100000.00"
+                          room:
+                            type: integer
+                            description: The room number associated with the fee.
+                            example: 101
+        '400':
+          description: Missing required fields.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message for missing fields.
+                    example: "Missing required fields"
+        '403':
+          description: User does not have permission.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message for permission issues.
+                    example: "you do not have permission"
+  /user/become-resident/{res_id}:
+    post:
+      summary: Convert a user to a resident by updating their role
+      description: Updates the `user_id` of a resident with the given `id`.
+      tags: 
+        - User
+      parameters:
+        - name: res_id
+          in: path
+          required: true
+          description: The ID of the resident to update.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Role updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "role updated successfully !!"
+        '403':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid input data"
+        '404':
+          description: Resident not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Resident not found"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unexpected error: <error details>"
+  /admin//user-to-res/<int:res_id>:
+    post:
+      summary: Convert a user to a resident by updating their role
+      description: Updates the `user_id` of a resident with the given `id`.
+      tags: 
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - user_id
+              properties:
+                user_id:
+                  type: integer
+                  example: 1  
+      parameters:
+        - name: res_id
+          in: path
+          required: true
+          description: The ID of the resident to update.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Role updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "role updated successfully !!"
+        '403':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid input data"
+        '404':
+          description: Resident not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Resident not found"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unexpected error: <error details>"      
+
+  /{user_id}/{fee_id}/{amount}/{description}/pay-fee:
+    get:
+      summary: "Pay Fee"
+      description: "Initiate payment for a fee by user with specific details."
+      tags:
+        - User
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user making the payment."
+          schema:
+            type: integer
+            example: 1
+        - name: fee_id
+          in: path
+          required: true
+          description: "ID of the fee being paid."
+          schema:
+            type: integer
+            example: 101
+        - name: amount
+          in: path
+          required: true
+          description: "Amount to be paid (in base unit, e.g., VND)."
+          schema:
+            type: integer
+            example: 500000
+        - name: description
+          in: path
+          required: true
+          description: "Description of the fee."
+          schema:
+            type: string
+            example: "Electricity"
+      responses:
+        '200':
+          description: "Redirect to payment gateway with payment information."
+          headers:
+            Location:
+              description: "The URL to the payment gateway with payment query parameters."
+              schema:
+                type: string
+                example: "https://payment-gateway.com/payment?vnp_Amount=50000000&vnp_IpAddr=127.0.0.1&vnp_OrderInfo=Transaction 101 500000 for by 1 Electricity&vnp_CreateDate=20241109123000&vnp_ExpireDate=20241109124000&vnp_TxnRef=550e8400-e29b-41d4-a716-446655440000"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction redirected to payment gateway."
+        '400':
+          description: "Invalid request."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                    example: "Invalid parameters in request."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error while processing payment."
+
+  /{user_id}/{park_id}/{amount}/{description}/pay-park-fee:
+    get:
+      summary: "Pay Parking Fee"
+      description: "Initiate payment for a parking fee by user with specific details."
+      tags:
+        - User
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user making the payment."
+          schema:
+            type: integer
+            example: 2
+        - name: park_id
+          in: path
+          required: true
+          description: "ID of the parking spot."
+          schema:
+            type: integer
+            example: 301
+        - name: amount
+          in: path
+          required: true
+          description: "Amount to be paid for parking (in base unit, e.g., VND)."
+          schema:
+            type: int
+            example: 500000
+        - name: description
+          in: path
+          required: true
+          description: "Description of the fee."
+          schema:
+            type: string
+            example: "Electricity"
+      responses:
+        '200':
+          description: "Redirect to payment gateway with payment information."
+          headers:
+            Location:
+              description: "The URL to the payment gateway with payment query parameters."
+              schema:
+                type: string
+                example: "https://payment-gateway.com/payment?vnp_Amount=50000000&vnp_IpAddr=127.0.0.1&vnp_OrderInfo=Transaction 101 500000 for by 1 Electricity&vnp_CreateDate=20241109123000&vnp_ExpireDate=20241109124000&vnp_TxnRef=550e8400-e29b-41d4-a716-446655440000"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction redirected to payment gateway."
+        '400':
+          description: "Invalid request."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                    example: "Invalid parameters in request."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error while processing payment."
+  /{user_id}/{contribution_id}/{amount}/{description}/pay-contribution-fee:
+    get:
+      summary: "Pay Contribution Fee"
+      description: "Initiate payment for a contribution fee by user with specific details."
+      tags:
+        - User
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user making the payment."
+          schema:
+            type: integer
+            example: 2
+        - name: contribution_id
+          in: path
+          required: true
+          description: "ID of the contribution spot."
+          schema:
+            type: integer
+            example: 301
+        - name: amount
+          in: path
+          required: true
+          description: "Amount to be paid for contribution (in base unit, e.g., VND)."
+          schema:
+            type: int
+            example: 500000
+        - name: description
+          in: path
+          required: true
+          description: "Description of the fee."
+          schema:
+            type: string
+            example: "Electricity"
+      responses:
+        '200':
+          description: "Redirect to payment gateway with payment information."
+          headers:
+            Location:
+              description: "The URL to the payment gateway with payment query parameters."
+              schema:
+                type: string
+                example: "https://payment-gateway.com/payment?vnp_Amount=50000000&vnp_IpAddr=127.0.0.1&vnp_OrderInfo=Transaction 101 500000 for by 1 Electricity&vnp_CreateDate=20241109123000&vnp_ExpireDate=20241109124000&vnp_TxnRef=550e8400-e29b-41d4-a716-446655440000"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Transaction redirected to payment gateway."
+        '400':
+          description: "Invalid request."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Message:
+                    type: string
+                    example: "Invalid parameters in request."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Server error while processing payment."
+
+  /admin/{fee_id}/{datetime}/update-status-fee:
+    post:
+      summary: "Update Fee Payment Status"
+      description: "Update the payment status of a specific fee and log the transaction."
+      tags:
+        - Admin
+      parameters:
+        - name: fee_id
+          in: path
+          required: true
+          description: "ID of the fee to update."
+          schema:
+            type: integer
+            example: 101
+        - name: datetime
+          in: path
+          required: true
+          description: "Datetime of the transaction in ISO 8601 format."
+          schema:
+            type: string
+            format: date-time
+            example: "20241229011111"
+      responses:
+        '201':
+          description: "Fee payment status updated successfully, and transaction logged."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "success"
+        '400':
+          description: "Invalid fee ID or datetime format."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid input data."
+        '403':
+          description: "Admin privileges required."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Access denied."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the request."
+
+  /admin/{park_id}/{datetime}/update-status-park-fee:
+    post:
+      summary: "Update Parking Fee Payment Status"
+      description: "Update the payment status of a parking fee and log the transaction."
+      tags:
+        - Admin
+      parameters:
+        - name: park_id
+          in: path
+          required: true
+          description: "ID of the parking fee to update."
+          schema:
+            type: integer
+            example: 301
+        - name: datetime
+          in: path
+          required: true
+          description: "Datetime of the transaction in ISO 8601 format."
+          schema:
+            type: string
+            format: date-time
+            example: "20241229011111"
+      responses:
+        '201':
+          description: "Parking fee payment status updated successfully, and transaction logged."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "success"
+        '400':
+          description: "Invalid park ID or datetime format."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid input data."
+        '403':
+          description: "Admin privileges required."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Access denied."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the request."
+  /admin/{contribution_id}/{datetime}/update-status-contribution-fee:
+    post:
+      summary: "Update contribution Fee Payment Status"
+      description: "Update the payment status of a contribution fee and log the transaction."
+      tags:
+        - Admin
+      parameters:
+        - name: contribution_id
+          in: path
+          required: true
+          description: "ID of the contribution fee to update."
+          schema:
+            type: integer
+            example: 301
+        - name: datetime
+          in: path
+          required: true
+          description: "Datetime of the transaction in ISO 8601 format."
+          schema:
+            type: string
+            format: date-time
+            example: "20241229011111"
+      responses:
+        '201':
+          description: "contribution fee payment status updated successfully, and transaction logged."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "success"
+        '400':
+          description: "Invalid contribution ID or datetime format."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid input data."
+        '403':
+          description: "Admin privileges required."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Access denied."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the request."
+
+  /{customer_id}/pay-electric-fee:
+    get:
+      summary: "Pay Electric Fee"
+      description: "Process the payment for an electric bill for a specified customer ID and return the payment URL."
+      tags:
+        - User
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          description: "ID of the customer whose electric bill is being paid."
+          schema:
+            type: string
+            example: "CUST0000003"
+      responses:
+        '200':
+          description: "Electric fee payment URL generated successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payment_url:
+                    type: string
+                    format: uri
+                    example: "https://example.com/pay?txn_ref=abc123&amount=15000"
+        '400':
+          description: "Invalid customer ID or insufficient data."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid customer ID or missing amount information."
+        '500':
+          description: "Internal server error while generating the payment URL."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the electric fee payment."
+  /{customer_id}/pay-water-fee:
+    get:
+      summary: "Pay Water Fee"
+      description: "Process the payment for an water bill for a specified customer ID and return the payment URL."
+      tags:
+        - User
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          description: "ID of the customer whose water bill is being paid."
+          schema:
+            type: string
+            example: "CUST00003"
+      responses:
+        '200':
+          description: "water fee payment URL generated successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payment_url:
+                    type: string
+                    format: uri
+                    example: "https://example.com/pay?txn_ref=abc123&amount=15000"
+        '400':
+          description: "Invalid customer ID or insufficient data."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid customer ID or missing amount information."
+        '500':
+          description: "Internal server error while generating the payment URL."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the water fee payment."
+  /get-electric-bill/:
+    get:
+      summary: "Get Electric Bill"
+      description: "Retrieve the electric bill for a given customer based on their customer ID."
+      tags:
+        - User
+      parameters:
+        - name: customer_id
+          in: query
+          required: true
+          description: "ID of the customer to retrieve the electric bill for."
+          schema:
+            type: string
+            example: "CUST0000003"
+      responses:
+        '200':
+          description: "Electric bill retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    format: float
+                    example: 1500000.00
+                  customer_id:
+                    type: string
+                    example: "CUST0000003"
+        '400':
+          description: "Invalid customer ID provided."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Customer ID is missing or invalid."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to retrieve the electric bill."
+
+  /get-water-bill/:
+    get:
+      summary: "Get Water Bill"
+      description: "Retrieve the water bill for a given customer based on their customer ID."
+      tags:
+        - User
+      parameters:
+        - name: customer_id
+          in: query
+          required: true
+          description: "ID of the customer to retrieve the water bill for."
+          schema:
+            type: string
+            example: "CUST00003"
+      responses:
+        '200':
+          description: "Water bill retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    format: float
+                    example: 75000.00
+                  customer:
+                    type: string
+                    example: "CUST00003"
+        '400':
+          description: "Invalid customer ID provided."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Customer ID is missing or invalid."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to retrieve the water bill."
+
+  /admin/{user_id}/get-transaction:
+    post:
+      summary: "Get Transactions by User ID"
+      description: "Retrieve all transactions made by a specific user."
+      tags:
+        - Admin
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: "ID of the user whose transactions are to be retrieved."
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '200':
+          description: "Successfully retrieved transactions for the user."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    transaction_id:
+                      type: string
+                      example: "a1b2c3d4-e5f6-7890-1234-56789abcdef0"
+                    description:
+                      type: string
+                      example: "Parking fee payment"
+                    amount:
+                      type: number
+                      format: float
+                      example: 100.50
+                    fee_id:
+                      type: integer
+                      nullable: true
+                      example: 101
+                    park_id:
+                      type: integer
+                      nullable: true
+                      example: null
+                    contribution_id:
+                      type: integer
+                      nullable: true
+                      example: null
+                    user_pay:
+                      type: integer
+                      example: 123
+                    user_name:
+                      type: string
+                      example: "john_doe"
+                    transaction_time:
+                      type: string
+                      format: date-time
+                      example: "2024-11-10T15:30:00"
+                    bank_code:
+                      type: string
+                      nullable: true
+                      example: null
+                    type:
+                      type: string
+                      example: "Real-Money"
+        '400':
+          description: "Invalid user ID format."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid user ID."
+        '403':
+          description: "Admin privileges required."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Access denied."
+        '500':
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unable to process the request."

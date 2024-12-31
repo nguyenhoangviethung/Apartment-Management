@@ -1,12 +1,44 @@
-from flask import Flask
-from backend.config import Config
+from flask import Flask, jsonify
+from config import Config
+from api.extensions import db, migrate
+from models.models import *
+from flask_swagger_ui import get_swaggerui_blueprint
+from flask_cors import CORS
+
+import json
 
 def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(config_class)
+    CORS(app)
+    
+    db.init_app(app)
+    migrate.init_app(app, db)
+    with app.app_context():
+        db.create_all()
 
-    @app.route('/test')
+    from api.auth import auth_bp
+    app.register_blueprint(auth_bp)
+
+    CORS(app)
+    
+    swagger_bp = get_swaggerui_blueprint(app.config.get('SWAGGER_URL'), app.config.get('API_URL'), config={'app_name': 'auth api'})
+    app.register_blueprint(swagger_bp, url_prefix= app.config.get('SWAGGER_URL'))                                       
+
+    from api.admin import admin_bp
+    app.register_blueprint(admin_bp)
+
+    from api.user import user_bp
+    app.register_blueprint(user_bp)
+
+    from api.pay import pay_bp
+    app.register_blueprint(pay_bp)
+
+    from api.news import news_bp
+    app.register_blueprint(news_bp)
+
+    @app.route('/')
     def test():
-        return '<h1>THIS IS TEST FROM INIT</h1>'
+        return '<h1>THIS IS INDEX FROM INIT</h1>'
     
     return app

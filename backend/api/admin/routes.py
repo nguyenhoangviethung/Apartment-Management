@@ -196,6 +196,12 @@ def fee(household_id):
 def not_pay():
     response, status_code = fee_service.not_pay()
     return jsonify(response), status_code
+@admin_bp.route('/not-pay-park')
+@admin_required
+@handle_exceptions
+def not_pay_park():
+    response, status_code = fee_service.not_pay_park()
+    return jsonify(response), status_code
 
 @admin_bp.route('/add-fee', methods=['GET', 'POST'])
 @admin_required

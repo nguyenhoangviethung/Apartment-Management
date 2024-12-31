@@ -1,4 +1,4 @@
-from models.models import Fees, Households, Residents, Transactions
+from models.models import Fees, Households, Residents, Transactions, ParkingFees
 from api.extensions import db
 from datetime import datetime, timedelta
 import logging
@@ -91,6 +91,22 @@ class FeeService:
             ).filter(
                 Fees.status == 'Chưa thanh toán', 
                 Fees.due_date >= date
+            ).all()
+    def get_unpaid_park_fees(self, date):
+            return db.session.query(
+                ParkingFees.park_id, 
+                ParkingFees.amount,
+                ParkingFees.create_date,
+                ParkingFees.created_by,
+                Households.household_name,
+                ParkingFees.description,
+                ParkingFees.household_id
+            ).join(
+                Households, 
+                ParkingFees.household_id == Households.household_id
+            ).filter(
+                ParkingFees.status == 'Chưa thanh toán', 
+                ParkingFees.due_date >= date
             ).all()
 
     def get_householdID(self, fee_id):
@@ -258,6 +274,31 @@ class FeeService:
         logger.info(f"Retrieved {len(res['infor'])} unpaid fees")
         return (res), 200
 
+    @handle_exceptions
+    def not_pay_park(self):
+        date = datetime.now().date()
+        not_pay_households = self.get_unpaid_park_fees(date)
+
+        if not not_pay_households:
+            return ({"message": "No unpaid fees found"}), 404
+        res = {"infor": []}
+        for fee in not_pay_households:
+            amount = Decimal(fee.amount)
+            infor = {
+                'room': str(fee.household_id),
+                'amount': decimal_to_float(amount),
+                'park_type': str(fee.description),
+                'create_date': str(fee.create_date),
+                'created_by': str(fee.created_by),
+                'park_id': fee.park_id,
+                'household_name': fee.household_name
+            }
+
+            res['infor'].append(infor)
+
+        logger.info(f"Retrieved {len(res['infor'])} unpaid fees")
+        return (res), 200
+    
     @handle_exceptions
     def fee_by_household_id(self, household_id):
         service_rate = db.session.query(Fees.service_rate).filter_by(household_id=household_id).scalar() or None

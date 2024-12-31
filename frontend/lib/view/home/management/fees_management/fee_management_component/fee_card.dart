@@ -33,7 +33,7 @@ class _FeeCardState extends State<FeeCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildInfoRow('Mô tả:',widget.feeResponse.description?.join(', ') ?? 'N/A'),
-                      _buildInfoRow('Phòng:', widget.item.room ?? 'N/A'),
+                      _buildInfoRow('Phòng:', widget.item.household_name ?? 'N/A'),
                       _buildInfoRow('Phí:', widget.item.fee ?? 'N/A'),
                     ],
                   ),
@@ -72,7 +72,7 @@ class _FeeCardState extends State<FeeCard> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            widget.item.room ?? 'Phòng không xác định',
+                            widget.item.household_name ?? 'Phòng không xác định',
                             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Colors.black),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,

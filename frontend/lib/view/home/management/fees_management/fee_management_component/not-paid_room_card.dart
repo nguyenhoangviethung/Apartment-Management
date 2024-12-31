@@ -32,7 +32,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Phòng:', widget.item.room ?? 'Không xác định'),
+                      _buildInfoRow('Phòng:', widget.item.household_name ?? 'Không xác định'),
                       _buildInfoRow('Số tiền:', widget.item.amount?.toString() ?? '0'),
                       _buildInfoRow('Đáo hạn:', widget.item.due_date ?? 'N/A'),
                       _buildInfoRow('Phí dịch vụ:', widget.item.service_fee?.toString() ?? '0'),
@@ -73,7 +73,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      widget.item.room ?? 'Không xác định',
+                      widget.item.household_name ?? 'Không xác định',
                       style: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,

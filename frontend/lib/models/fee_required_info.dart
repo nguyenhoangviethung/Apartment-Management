@@ -22,14 +22,16 @@ class FeeInfo {
   String? room;
   String? fee;
   int? fee_id;
+  String? household_name;
 
-  FeeInfo({this.room, this.fee, this.fee_id});
+  FeeInfo({this.room, this.fee, this.fee_id, this.household_name});
 
   factory FeeInfo.fromJson(Map<String, dynamic> json) {
     return FeeInfo(
       room: json['room'] as String?,
       fee: json['fee'] as String?,
-      fee_id: json['fee_id']
+      fee_id: json['fee_id'],
+        household_name: json['household_name']
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/View/Authentication/common/show_dialog.dart';
+import '../../common/show_dialog.dart';
 import 'reset_password.dart';
 import 'package:http/http.dart' as http;
 import 'forgot_password.dart';
@@ -24,7 +24,7 @@ class _EmailVerificationState extends State<EmailVerification> {
       setState(() {
         _isload=false;
       });
-      showinform(context, 'Error', 'Please fill the code');
+      showinform(context, 'Lỗi', 'Vui lòng điền mã code');
       return;
     }
     String url='https://apartment-management-kjj9.onrender.com/auth/validation-code';
@@ -49,7 +49,7 @@ class _EmailVerificationState extends State<EmailVerification> {
       if(response.statusCode==200){
         Navigator.push(context, MaterialPageRoute(builder: (context) => const ResetPassword()));
       }else if(response.statusCode==400){
-        showinform(context, 'Error', 'Invalid code');
+        showinform(context, 'Lỗi', 'Mã không hợp lệ');
       }
     }catch(e){
       print('Error occurred:  $e');
@@ -65,7 +65,7 @@ class _EmailVerificationState extends State<EmailVerification> {
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: const Text(
-            'Email Verification',
+            'Xác minh địa chỉ email',
             style: TextStyle(
             fontSize: 25,
             color: Colors.white,
@@ -97,7 +97,7 @@ class _EmailVerificationState extends State<EmailVerification> {
             children: [
               const SizedBox(height: 20),
               Text(
-                'Get Your Code',
+                'Nhận Mã Của Bạn',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -106,7 +106,7 @@ class _EmailVerificationState extends State<EmailVerification> {
               ),
               const SizedBox(height: 10),
               const Text(
-                'Please enter the 4 digit code that was sent to your email address.',
+                'Vui lòng nhập mã 4 chữ số đã được gửi đến địa chỉ email của bạn.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, color: Colors.black54),
               ),
@@ -140,14 +140,14 @@ class _EmailVerificationState extends State<EmailVerification> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'If you don\'t recieve code: ',
+                    'Nếu bạn không nhận được mã: ',
                     style: TextStyle(fontSize: 18, color: Colors.black45),
                   ),
                   Builder(
                       builder: (context) {
                         return GestureDetector(
                           child: const Text(
-                            "Resend",
+                            "Gửi lại",
                             style: TextStyle(
                               fontSize: 18,
                               color: Colors.blue,
@@ -182,7 +182,7 @@ class _EmailVerificationState extends State<EmailVerification> {
                     validationcode(_code);
                   },
                   child: _isload? const CircularProgressIndicator(color: Colors.white,): const Text(
-                    'Verify and Proceed',
+                    'Xác minh và Tiếp tục',
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.white,

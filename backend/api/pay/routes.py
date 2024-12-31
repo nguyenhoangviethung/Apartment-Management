@@ -116,7 +116,7 @@ def payment_return():
                     contribution = contribution_service.get_contribution_by_contribution_id(desc[2])
                     remain_amount = float(contribution.contribution_amount) + amount
                     data_ = {}
-                    if remain_amount == 0 or remain_amount < 0:
+                    if remain_amount:
                         data_['status'] = 'Đã thanh toán'
                         data_['amount'] = remain_amount
                     contribution_service.update_status(data_, contribution_id = desc[2])   

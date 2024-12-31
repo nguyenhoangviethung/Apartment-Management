@@ -22,14 +22,14 @@ class Households(db.Model):
     area = Column(DECIMAL(5, 2), nullable=False)
     phone_number = Column(String(15), default = None)
     num_residents = Column(INTEGER, default = None)
-    managed_by = Column(INTEGER, ForeignKey('Users.user_id'))
+    managed_by = Column(INTEGER, ForeignKey('Users.user_id', ondelete="CASCADE"))
 
 
 class Residents(db.Model):
     __tablename__ = 'Residents'
     resident_id = Column(INTEGER,  primary_key = True)
-    user_id = Column(INTEGER, ForeignKey(Users.user_id))
-    household_id = Column(INTEGER, ForeignKey('Households.household_id'))
+    user_id = Column(INTEGER, ForeignKey(Users.user_id, ondelete="CASCADE"))
+    household_id = Column(INTEGER, ForeignKey('Households.household_id', ondelete="CASCADE"))
     resident_name = Column(String(40), nullable=False)
     date_of_birth = Column(Date, default = None)
     id_number = Column(String(20), unique=True, default = None)
@@ -42,13 +42,13 @@ class Fees(db.Model):
     __tablename__ = 'Fees'
     fee_id = Column(INTEGER,  primary_key=True)
     description = Column(NVARCHAR(150), nullable=False)
-    household_id = Column(INTEGER, ForeignKey('Households.household_id'))
+    household_id = Column(INTEGER, ForeignKey('Households.household_id', ondelete="CASCADE"))
     amount = Column(DECIMAL(10, 2), nullable=False)
     create_date = Column(Date, default = None)
     due_date = Column(Date, default = None)
     status = Column(Enum('Đã thanh toán', 'Chưa thanh toán'), default='Chưa thanh toán')
-    created_by = Column(INTEGER, ForeignKey('Users.user_id'))
-    updated_by = Column(INTEGER, ForeignKey('Users.user_id'))
+    created_by = Column(INTEGER, ForeignKey('Users.user_id', ondelete="CASCADE"))
+    updated_by = Column(INTEGER, ForeignKey('Users.user_id', ondelete="CASCADE"))
     manage_rate = Column(FLOAT)
     service_rate = Column(FLOAT)
 
@@ -56,14 +56,14 @@ class Fees(db.Model):
 class Contributions(db.Model):
     __tablename__ = 'Contributions'
     contribution_id = Column(INTEGER, primary_key=True)
-    household_id = Column(INTEGER, ForeignKey('Households.household_id'))
+    household_id = Column(INTEGER, ForeignKey('Households.household_id', ondelete="CASCADE"))
     contribution_type = Column(String(40), default = None)
     contribution_amount = Column(DECIMAL(10, 2),  default = None)
     contribution_event = Column(JSON,  default = None)
     due_date = Column(Date, default = None)
     create_date = Column(Date, default = None)
-    created_by = Column(INTEGER, ForeignKey('Users.user_id'))
-    updated_by = Column(INTEGER, ForeignKey('Users.user_id'))
+    created_by = Column(INTEGER, ForeignKey('Users.user_id', ondelete="CASCADE"))
+    updated_by = Column(INTEGER, ForeignKey('Users.user_id', ondelete="CASCADE"))
     status = Column(Enum('Đã thanh toán', 'Chưa thanh toán'), default='Chưa thanh toán')
 
 class TokenBlacklist(db.Model):
@@ -79,23 +79,23 @@ class ParkingFees(db.Model):
     status = Column(Enum('Đã thanh toán', 'Chưa thanh toán'), default='Chưa thanh toán')
     due_date = Column(Date, default = None)
     create_date = Column(Date, default = None)
-    created_by = Column(INTEGER, ForeignKey('Users.user_id'))
-    updated_by = Column(INTEGER, ForeignKey('Users.user_id'))
-    household_id = Column(INTEGER, ForeignKey('Households.household_id'))
+    created_by = Column(INTEGER, ForeignKey('Users.user_id', ondelete="CASCADE"))
+    updated_by = Column(INTEGER, ForeignKey('Users.user_id', ondelete="CASCADE"))
+    household_id = Column(INTEGER, ForeignKey('Households.household_id', ondelete="CASCADE"))
 
 class Vehicles(db.Model):
     __tablename__ = 'Vehicles'
     vehicles_id = Column(INTEGER, primary_key=True)
-    household_id = Column(INTEGER, ForeignKey('Households.household_id'))
+    household_id = Column(INTEGER, ForeignKey('Households.household_id', ondelete="CASCADE"))
     license_plate = Column(String(10), default=None, unique=True)
     vehicle_type = Column(Enum("car", "motor", "bicycle"), default="bicycle")
 
 class Transactions(db.Model):
     __tablename__ = 'Transactions'
     transaction_id = Column(db.String(36), nullable=False, primary_key=True)
-    fee_id = Column(db.Integer, ForeignKey('Fees.fee_id'))
-    park_id = Column(INTEGER, ForeignKey('ParkingFees.park_id'))
-    contribution_id = Column(INTEGER, ForeignKey('Contributions.contribution_id'))
+    fee_id = Column(db.Integer, ForeignKey('Fees.fee_id', ondelete="CASCADE"))
+    park_id = Column(INTEGER, ForeignKey('ParkingFees.park_id', ondelete="CASCADE"))
+    contribution_id = Column(INTEGER, ForeignKey('Contributions.contribution_id', ondelete="CASCADE"))
     amount = Column(DECIMAL(10,2), nullable=False)
     user_pay = Column(INTEGER, ForeignKey('Users.user_id'))
     user_name = Column(db.String(40), nullable=False)

@@ -177,47 +177,54 @@ class FeeService:
         logger.info(f"Updated {len(fees)} fees")
         return ({'message': 'Update successful'}), 200
 
-    # @handle_exceptions
-    # def delete_fee(self, description):
-    #     if not description:
-    #         return ({'error': 'Description not provided'}), 400
-    #     fees = Fees.query.filter(Fees.description == description).all()
-        
-    #     if not fees:
-    #         return ({'error': 'No fees found with the given description'}), 404
-
-    #     for fee in fees:
-    #         db.session.delete(fee)
-        
-    #     db.session.commit()
-    #     logger.info(f"Deleted {len(fees)} fees")
-    #     return ({'message': 'Delete successful'}), 200
-
     @handle_exceptions
     def delete_fee(self, description):
         if not description:
-            return {'error': 'Description not provided'}, 400
-
-        # Tìm tất cả các bản ghi trong Fees khớp với description
+            return ({'error': 'Description not provided'}), 400
         fees = Fees.query.filter(Fees.description == description).all()
-        # print(fee)
+    
         if not fees:
-            return {'error': 'No fees found with the given description'}, 404
+            return ({'error': 'No fees found with the given description'}), 404
 
-        # Xóa tất cả các bản ghi trong bảng Transactions liên quan đến fee_id
         fee_ids = [fee.fee_id for fee in fees]
-        # print(fee_ids)
-        for tran in fee_ids:
-            transactions_to_delete = Transactions.query.filter(Transactions.fee_id == tran).all()
-            db.session.delete(transactions_to_delete)
-        
-        # Xóa các bản ghi trong bảng Fees
+
+        for fee_id in fee_ids:
+            trans = db.session.querry()
+
         for fee in fees:
             db.session.delete(fee)
         
         db.session.commit()
-        logger.info(f"Deleted {len(fees)} fees and {len(transactions_to_delete)} related transactions")
-        return {'message': 'Delete successful'}, 200
+        logger.info(f"Deleted {len(fees)} fees")
+        return ({'message': 'Delete successful'}), 200
+
+    # @handle_exceptions
+    # def delete_fee(self, description):
+    #     if not description:
+    #         return {'error': 'Description not provided'}, 400
+
+    #     # Tìm tất cả các bản ghi trong Fees khớp với description
+    #     fees = Fees.query.filter(Fees.description == description).all()
+        
+    #     if not fees:
+    #         return {'error': 'No fees found with the given description'}, 404
+
+    #     # Xóa tất cả các bản ghi trong bảng Transactions liên quan đến fee_id
+    #     fee_ids = [fee.fee_id for fee in fees]
+    #     print(fee_ids)
+    #     transactions_to_delete = Transactions.query.filter(Transactions.fee_id.in_(fee_ids)).all()
+    #     print(transactions_to_delete)
+    #     for transaction in transactions_to_delete:
+    #         db.session.delete(transaction)
+
+    #     # Xóa các bản ghi trong bảng Fees
+    #     for fee in fees:
+    #         db.session.delete(fee)
+        
+    #     db.session.commit()
+    #     logger.info(f"Deleted {len(fees)} fees and {len(transactions_to_delete)} related transactions")
+    #     return {'message': 'Delete successful'}, 200
+
 
 
     @handle_exceptions

@@ -132,7 +132,7 @@ class _ApartmentFeeState extends State<ApartmentFee> {
                       dueDate: userHouseholdFee?.due_date ?? 'N/A',
                       status: userHouseholdFee?.status ?? 'N/A',
                       feeId: userHouseholdFee?.fee_id ?? 0,
-                      typeFee: 'bắt buộc'),
+                      typeFee: 'required'),
                   const SizedBox(height: 20),
                   const Text('Phí đỗ xe'),
                   _buildPaymentCard(
@@ -141,7 +141,7 @@ class _ApartmentFeeState extends State<ApartmentFee> {
                       dueDate: userParkFee?.due_date ?? 'N/A',
                       status: userParkFee?.status ?? 'N/A',
                       feeId: userParkFee?.fee_id ?? 0,
-                      typeFee: 'đỗ xe'),
+                      typeFee: 'park'),
                 ],
               ),
             ),

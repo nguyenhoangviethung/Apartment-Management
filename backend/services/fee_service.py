@@ -200,17 +200,17 @@ class FeeService:
 
         # Tìm tất cả các bản ghi trong Fees khớp với description
         fees = Fees.query.filter(Fees.description == description).all()
-        
+        # print(fee)
         if not fees:
             return {'error': 'No fees found with the given description'}, 404
 
         # Xóa tất cả các bản ghi trong bảng Transactions liên quan đến fee_id
         fee_ids = [fee.fee_id for fee in fees]
-        transactions_to_delete = Transactions.query.filter(Transactions.fee_id.in_(fee_ids)).all()
+        # print(fee_ids)
+        for tran in fee_ids:
+            transactions_to_delete = Transactions.query.filter(Transactions.fee_id == tran).all()
+            db.session.delete(transactions_to_delete)
         
-        for transaction in transactions_to_delete:
-            db.session.delete(transaction)
-
         # Xóa các bản ghi trong bảng Fees
         for fee in fees:
             db.session.delete(fee)

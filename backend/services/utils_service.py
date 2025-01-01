@@ -13,6 +13,7 @@ class UtilsService:
     @handle_exceptions
     def get_park_fee_by_park_id(self,park_id):
         return db.session.query(ParkingFees).filter(ParkingFees.park_id == park_id).first()
+    
     @handle_exceptions
     def get_park_fee_by_household_id(self, household_id):
         return db.session.query(ParkingFees).filter(ParkingFees.household_id == household_id).all()
@@ -34,6 +35,7 @@ class UtilsService:
         db.session.commit()
         db.session.refresh(fee)
         return ('message: transaction successfully'), 302
+    
     @handle_exceptions   
     def get_park_fee_by_householdID(self, household_id):
         vehicles = db.session.query(
@@ -71,7 +73,7 @@ class UtilsService:
             f_id = fee_id[0]
             amount = db.session.query(ParkingFees.amount).filter(ParkingFees.park_id == f_id).scalar() or None
             household_id = db.session.query(ParkingFees.household_id).filter(ParkingFees.park_id == f_id).scalar() or None
-
+            
             if not amount:
                 continue
 

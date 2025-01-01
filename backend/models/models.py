@@ -82,13 +82,14 @@ class ParkingFees(db.Model):
     created_by = Column(INTEGER, ForeignKey('Users.user_id', ondelete="CASCADE"))
     updated_by = Column(INTEGER, ForeignKey('Users.user_id', ondelete="CASCADE"))
     household_id = Column(INTEGER, ForeignKey('Households.household_id', ondelete="CASCADE"))
-
+    
 class Vehicles(db.Model):
     __tablename__ = 'Vehicles'
     vehicles_id = Column(INTEGER, primary_key=True)
     household_id = Column(INTEGER, ForeignKey('Households.household_id', ondelete="CASCADE"))
     license_plate = Column(String(10), default=None, unique=True)
     vehicle_type = Column(Enum("car", "motor", "bicycle"), default="bicycle")
+    
 
 class Transactions(db.Model):
     __tablename__ = 'Transactions'

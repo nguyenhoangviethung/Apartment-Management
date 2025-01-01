@@ -22,8 +22,10 @@ class _ContributionFeeState extends State<ContributionFee> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? tokenlogin = prefs.getString('tokenlogin');
     String? userId = prefs.getString('user_id');
+    String descrip = description.replaceAll('/', '');
+
     final url =
-        'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$description/pay-contribution-fee';
+        'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$descrip/pay-contribution-fee';
     try {
       final response = await http.get(Uri.parse(url),
           headers: {'Authorization': 'Bearer $tokenlogin'});

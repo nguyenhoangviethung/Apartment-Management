@@ -98,7 +98,7 @@ class _NotPaidRoomsState extends State<NotPaidRooms> {
               setState(() {
                 text=text.toLowerCase();
                 _notpaidrooms=_allnotpaidrooms.where((notpaidroominfo){
-                  var roomword= notpaidroominfo.room!;
+                  var roomword= notpaidroominfo.household_name!.toLowerCase();
                   return roomword.contains(text);
                 }).toList();
               });

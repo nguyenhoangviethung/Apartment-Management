@@ -128,7 +128,7 @@ class _RoomsManagementState extends State<RoomsManagement> {
                   setState(() {
                     text=text.toLowerCase();
                     _rooms=_allrooms.where((roominfo){
-                      var word= roominfo.apartment_number!.toLowerCase();
+                      var word= roominfo.apartment_name!.toLowerCase();
                       return word.contains(text);
                     }).toList();
                   });

@@ -24,9 +24,10 @@ class _ApartmentFeeState extends State<ApartmentFee> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? tokenlogin = prefs.getString('tokenlogin');
     String? userId = prefs.getString('user_id');
+    String descrip = description.replaceAll('/', '');
     if (type == 'park') {
       final url =
-          'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$description/pay-park-fee';
+          'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$descrip/pay-park-fee';
       print(url);
       try {
         final response = await http.get(Uri.parse(url),
@@ -47,7 +48,6 @@ class _ApartmentFeeState extends State<ApartmentFee> {
         print('Error $e');
       }
     } else {
-      String descrip = description.replaceAll('/', '');
       final url2 =
           'https://apartment-management-kjj9.onrender.com/user/${int.parse(userId!)}/$feeId/${double.parse(amount).toInt()}/$descrip/pay-fee';
       print(url2);

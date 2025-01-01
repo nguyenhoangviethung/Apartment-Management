@@ -63,7 +63,7 @@ class _VehiclesManagementState extends State<VehiclesManagement> {
               selectedVehicleType,
               int.parse(IdController.text),
             );
-            allVehicles.add(newVehicle);
+
             filteredVehicles.add(newVehicle);
           });
         }

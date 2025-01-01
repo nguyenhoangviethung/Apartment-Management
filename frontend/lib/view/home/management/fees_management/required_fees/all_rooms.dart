@@ -59,7 +59,7 @@ class _AllRoomsState extends State<AllRooms> {
         _displayedFees = _originalFees;
       } else {
         _displayedFees = _originalFees.where((feeInfo) {
-          return (feeInfo.room?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
+          return (feeInfo.household_name?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
               (feeInfo.fee?.toString().contains(query) ?? false);
         }).toList();
       }

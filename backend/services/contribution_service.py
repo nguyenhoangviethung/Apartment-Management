@@ -198,7 +198,7 @@ class ContributionService:
     
     @handle_exceptions
     def get_fee_by_userID(self, data):
-        
+        date = datetime.now().date()
         required_fields = ["user_id"]
 
         if not all(field in data for field in required_fields):
@@ -211,7 +211,7 @@ class ContributionService:
             return ({'message': 'you do not have permission'}), 403
         
         household_id = db.session.query(Residents.household_id).filter(Residents.resident_id == resident_id).scalar()
-        fees = db.session.query(Contributions).filter(Contributions.household_id == household_id).all()
+        fees = db.session.query(Contributions).filter(Contributions.household_id == household_id, date <= Contributions.due_date).all()
         response = []
 
         for fee in fees:

@@ -401,6 +401,15 @@ def update_status_fee(fee_id, user_id, datetime):
     data['status'] = "Đã thanh toán"
     fee = fee_service.get_fee_by_fee_id(fee_id)
     fee_service.update_status(data, fee_id)
+    data_ = prepare_data(datetime)
+    data_.update({
+        "description": fee.description,
+        "amount": fee.amount,
+        "fee_id": fee_id,
+        "user_pay": user_id,
+        "user_name": user_service.get_username(user_id),
+    })
+    transaction_service.add_transaction(data_)
     return "message: success" , 201
 
 @admin_bp.post("/<int:park_id>/<int:user_id>/<string:datetime>/update-status-park-fee")
@@ -411,6 +420,15 @@ def update_status_park_fee(park_id, user_id, datetime):
     data['status'] = "Đã thanh toán"
     park_fee = utils_service.get_park_fee_by_park_id(park_id)
     utils_service.update_status(data, park_id)
+    data_ = prepare_data(datetime)
+    data_.update({
+        "description": park_fee.description,
+        "amount": park_fee.amount,
+        "park_id": park_id,
+        "user_pay": user_id,
+        "user_name": user_service.get_username(user_id),
+    })
+    transaction_service.add_transaction(data_)
     return "message: success" , 201
 
 @admin_bp.post("/<int:contribution_id>/<int:user_id>/<string:datetime>/update-status-contribution-fee")
@@ -421,12 +439,21 @@ def update_status_contribution_fee(contribution_id, user_id, datetime):
     data['status'] = "Đã thanh toán"
     contribution = contribution_service.get_contribution_by_contribution_id(contribution_id)
     contribution_service.update_status(data, contribution_id)
+    data_ = prepare_data(datetime)
+    data_.update({
+        "description": contribution.contribution_type,
+        "amount": contribution.contribution_amount,
+        "contribution_id": contribution_id,
+        "user_pay": user_id,
+        "user_name": user_service.get_username(user_id),
+    })
+    transaction_service.add_transaction(data_)
     return "message: success" , 201
 
 @admin_bp.get("/get-transaction")
 @admin_required
 @handle_exceptions
-def get_all_transactions(self):
+def get_all_transactions():
     transactions = db.session.query(
         Transactions.transaction_id,
         Transactions.fee_id,

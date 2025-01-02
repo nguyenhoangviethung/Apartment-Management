@@ -422,8 +422,42 @@ def update_status_contribution_fee(contribution_id, user_id, datetime):
     contribution_service.update_status(data, contribution_id)
     return "message: success" , 201
 
-@admin_bp.post("/<int:user_id>/get-transaction")
+@admin_bp.get("/get-transaction")
 @admin_required
 @handle_exceptions
-def get_transaction_by_user_id(user_id):
-    return transaction_service.get_transaction_by_user_pay(user_id), 200
+def get_all_transactions(self):
+    transactions = db.session.query(
+        Transactions.transaction_id,
+        Transactions.fee_id,
+        Transactions.amount,
+        Transactions.user_pay,
+        Transactions.user_name,
+        Transactions.transaction_time,
+        Transactions.bank_code,
+        Transactions.type,
+        Transactions.description,
+        Transactions.park_id,
+        Transactions.contribution_id
+    ).all()
+
+    if not transactions:
+        return {'message': 'No transactions found'}, 404
+
+    result = []
+    for transaction in transactions:
+        transaction_info = {
+            'transaction_id': transaction.transaction_id,
+            'fee_id': transaction.fee_id,
+            'amount': float(transaction.amount),
+            'user_pay': transaction.user_pay,
+            'user_name': transaction.user_name,
+            'transaction_time': transaction.transaction_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'bank_code': transaction.bank_code,
+            'type': transaction.type,
+            'description': transaction.description,
+            'park_id': transaction.park_id,
+            'contribution_id': transaction.contribution_id
+        }
+        result.append(transaction_info)
+
+    return {'data': result}, 200

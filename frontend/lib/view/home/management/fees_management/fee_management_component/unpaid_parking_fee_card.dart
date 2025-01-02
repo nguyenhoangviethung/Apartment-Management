@@ -84,7 +84,7 @@ class _UnpaidParkingFeeCardState extends State<UnpaidParkingFeeCard> {
                               builder: (BuildContext context) {
                                 return EditPaymentDate(
                                   it: widget.item,
-                                  typeFee: 'đỗ xe',
+                                  typeFee: 'park',
                                 );
                               }
                           );

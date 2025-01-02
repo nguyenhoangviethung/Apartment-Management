@@ -88,7 +88,7 @@ class _NotPaidRoomCardState extends State<NotPaidRoomCard> {
                               builder: (BuildContext context) {
                                 return EditPaymentDate(
                                   it: widget.item,
-                                  typeFee: 'bắt buộc',
+                                  typeFee: 'required',
                                 );
                               }
                           );

@@ -390,8 +390,6 @@ def prepare_data(datetime):
         "fee_id": None,
         "park_id": None,
         "contribution_id": None,
-        "electric_id": None,
-        "water_id": None,
     }
     return data
 @admin_bp.post("/<int:fee_id>/<int:user_id>/<string:datetime>/update-status-fee")
@@ -404,7 +402,6 @@ def update_status_fee(fee_id, user_id, datetime):
     fee_service.update_status(data, fee_id)
     data_ = prepare_data(datetime)
     data_.update({
-        "description":fee.description,
         "amount": fee.amount,
         "fee_id": fee_id,
         "user_pay": user_id,
@@ -423,7 +420,6 @@ def update_status_park_fee(park_id, user_id, datetime):
     utils_service.update_status(data, park_id)
     data_ = prepare_data(datetime)
     data_.update({
-        "description":park_fee.description,
         "amount": park_fee.amount,
         "park_id": park_id,
         "user_pay": user_id,
@@ -442,7 +438,6 @@ def update_status_contribution_fee(contribution_id, user_id, datetime):
     contribution_service.update_status(data, contribution_id)
     data_ = prepare_data(datetime)
     data_.update({
-        "description":contribution.contribution_type,
         "amount": contribution.contribution_amount,
         "contribution_id": contribution_id,
         "user_pay": user_id,

@@ -27,6 +27,7 @@ transaction_service = transaction_service.TransactionService()
 @admin_bp.route('/')
 @admin_required
 def index():
+    hello = "hello word"
     return "ADMIN INDEX VIEW" 
 
 @admin_bp.get('/<household_id>/residents')

@@ -24,15 +24,13 @@ class ResidentService:
         if not db.session.query(Households).filter(Households.household_id == resident_data.get('household_id')).first():
             return ('error: Household_id not found') , 400
         new_resident = Residents(
-            resident_id = resident_data.get('resident_id'),
+            id_number = resident_data.get('resident_id'),
             user_id = resident_data.get('user_id'),
             household_id = resident_data.get('household_id'),
             resident_name = resident_data.get('resident_name'),
             date_of_birth=date_of_birth,
-            id_number = resident_data.get('id_number'),
             status = resident_data.get('status'),
-            phone_number = resident_data.get('phone_number'),
-            household_registration = resident_data.get('household_registration')
+            phone_number = resident_data.get('phone_number')
         )
         
         db.session.add(new_resident)
